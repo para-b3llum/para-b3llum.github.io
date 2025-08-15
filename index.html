@@ -80,6 +80,44 @@
       main { grid-template-columns: 1fr; }
       aside.counter { position: static; }
     }
+    
+    .social-link {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        display: inline-block;
+        text-decoration: none;
+        z-index: 1000;
+    }
+    .social-link img {
+        width: 80px; /* размер кнопки */
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        transition: transform 0.2s ease;
+    }
+    .social-link:hover img {
+        transform: scale(1.05);
+    }
+    .tooltip {
+        position: absolute;
+        right: 100%;
+        bottom: 50%;
+        transform: translateY(50%);
+        background: rgba(0,0,0,0.85);
+        color: #fff;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        opacity: 0;
+        white-space: nowrap;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        margin-right: 8px;
+    }
+    .social-link:hover .tooltip {
+        opacity: 1;
+    }
   </style>
 
   <script type="module">
@@ -172,7 +210,16 @@
     </aside>
   </main>
   <footer>Сделано с уважением к Гоги.</footer>
+  <a href="https://vk.com/away.php?to=https%3A%2F%2Fmax.ru%2Fjoin%2FBM-gaLtM2uxSlduksltyi7JXTunqTJ4VuEcwkg28y_Y&utf=1" 
+     class="social-link" target="_blank" rel="noopener noreferrer">
+      <img src="./images/social.png" alt="Социальная сеть" />
+      <span class="tooltip">Присоединиться!</span>
+  </a>
+
 </body>
 </html>
+</body>
+</html>
+
 
 
