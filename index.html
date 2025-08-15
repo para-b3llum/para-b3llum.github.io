@@ -232,8 +232,8 @@
         for (let i = 0; i < count; i++) {
           const conf = document.createElement('div');
           conf.className = 'confetti';
-          const angle = Math.random() * 2 * Math.PI; // случайное направление
-          const distance = Math.random() * 50 + 20; // радиус разлета
+          const angle = Math.random() * 2 * Math.PI; 
+          const distance = Math.random() * 1000 + 20; 
           conf.style.setProperty('--x', `${Math.cos(angle) * distance}px`);
           conf.style.setProperty('--y', `${Math.sin(angle) * distance}px`);
           conf.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
@@ -245,18 +245,15 @@
       }
       
       img.addEventListener('click', async () => {
-        playRandomSound();
-
-        img.classList.remove('jump'); 
-        void img.offsetWidth;         
+        img.classList.remove('jump');
+        void img.offsetWidth;
         img.classList.add('jump');
-        try {
-          await runTransaction(counterRef, (current) => {
-            return (Number(current) || 0) + 1;
-          });
-        } catch (e) {
-          setStatus('Ошибка записи: ' + e.message);
-        }
+
+        const rect = img.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        spawnMiniConfetti(centerX, centerY, 5); 
       });
     });
   </script>
@@ -267,7 +264,7 @@
   </header>
   <main>
     <div class="photo-wrap">
-      <img id="main-photo" class="photo" src="2fD5YHuyK-4IIZlc05pZuQl-Ksj2X0qUlZe6Anm3R7SV-Q6bnQ6fjzfeNXfPAypv10qd4KghEUEZdziaMY1e9eok.jpg" alt="Гоги" />
+      <img id="main-photo" class="photo" src="2fD5YHuyK-4IIZlc05pZuQl-Ksj2X0qUlZe6Anm3R7SV-Q6bnQ6fjzfeNXfPAypv10qd4KghEUEZdziaMY1e9eok.jpg" alt="Гоги" id="main-img"/>
     </div>
     <aside class="counter">
       <h2>Почухан раз:</h2>
@@ -279,7 +276,7 @@
   <footer>С днём робждения!</footer>
   <a href="https://vk.com/away.php?to=https%3A%2F%2Fmax.ru%2Fjoin%2FBM-gaLtM2uxSlduksltyi7JXTunqTJ4VuEcwkg28y_Y&utf=1" 
      class="social-link" target="_blank" rel="noopener noreferrer">
-      <img src="./social.png" alt="МАХ" id="main-img"/>
+      <img src="./social.png" alt="МАХ"/>
       <span class="tooltip">Ловит даже в варпе!</span>
   </a>
 
