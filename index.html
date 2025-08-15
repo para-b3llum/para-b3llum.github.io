@@ -8,6 +8,8 @@
   <style>
     @font-face {
       font-family: 'Impact';
+      src: url('./fonts/impact.woff2') format('woff2'),
+           url('./fonts/impact.woff') format('woff');
       font-display: swap;
     }
     :root {
@@ -68,10 +70,16 @@
     }
     .counter h2 { margin: 0 0 12px; font-size: 18px; color: var(--muted); }
     .counter .value {
-      font-family: Impact, sans-serif;
+      font-family: 'Impact', sans-serif;
       font-size: clamp(42px, 6vw, 80px);
       color: var(--accent);
       text-shadow: 0 0 18px rgba(179,255,87,0.25);
+      display: inline-block;
+      transition: transform 0.15s ease, color 0.15s ease;
+    }
+    .counter .value.active {
+      transform: scale(1.3);
+      color: #fff;
     }
     .hint { margin-top: 10px; font-size: 12px; color: var(--muted); }
     footer { color: var(--muted); text-align: center; font-size: 12px; padding: 16px 0 28px; }
@@ -79,6 +87,33 @@
       main { grid-template-columns: 1fr; }
       aside.counter { position: static; }
     }
+    @keyframes jump {
+      0% { transform: scale(1) translateY(0); }
+      30% { transform: scale(1.05) translateY(-15px); }
+      50% { transform: scale(1.02) translateY(0); }
+      70% { transform: scale(1.03) translateY(-8px); }
+      100% { transform: scale(1) translateY(0); }
+    }
+
+    .photo.jump {
+      animation: jump 0.4s ease;
+    }
+    .confetti {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background-color: red;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.9;
+      animation: confetti-move 1s forwards;
+    }
+
+    @keyframes confetti-move {
+      0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+      100% { transform: translate(var(--x), var(--y)) rotate(360deg); opacity: 0; }
+    }
+
     
     .social-link {
         position: fixed;
@@ -172,6 +207,20 @@
         }
       });
 
+      img.addEventListener('click', async () => {
+        playRandomSound();
+        valueNode.classList.add('active');
+        setTimeout(() => valueNode.classList.remove('active'), 150);
+
+        try {
+          await runTransaction(counterRef, (current) => {
+            return (Number(current) || 0) + 1;
+          });
+        } catch (e) {
+          setStatus('Ошибка записи: ' + e.message);
+        }
+      });
+
       const sounds = ['./sounds/1.mp3', './sounds/2.mp3', './sounds/3.mp3', './sounds/4.mp3', './sounds/5.mp3'];
       function playRandomSound() {
         if (!sounds.length) return;
@@ -179,9 +228,28 @@
         const audio = new Audio(url);
         audio.play().catch(e => console.warn('Не удалось воспроизвести звук:', e));
       }
-
+      function spawnMiniConfetti(x, y, count = 5) {
+        for (let i = 0; i < count; i++) {
+          const conf = document.createElement('div');
+          conf.className = 'confetti';
+          const angle = Math.random() * 2 * Math.PI; // случайное направление
+          const distance = Math.random() * 50 + 20; // радиус разлета
+          conf.style.setProperty('--x', `${Math.cos(angle) * distance}px`);
+          conf.style.setProperty('--y', `${Math.sin(angle) * distance}px`);
+          conf.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
+          conf.style.left = x + 'px';
+          conf.style.top = y + 'px';
+          document.body.appendChild(conf);
+          conf.addEventListener('animationend', () => conf.remove());
+        }
+      }
+      
       img.addEventListener('click', async () => {
         playRandomSound();
+
+        img.classList.remove('jump'); 
+        void img.offsetWidth;         
+        img.classList.add('jump');
         try {
           await runTransaction(counterRef, (current) => {
             return (Number(current) || 0) + 1;
@@ -211,7 +279,7 @@
   <footer>С днём робждения!</footer>
   <a href="https://vk.com/away.php?to=https%3A%2F%2Fmax.ru%2Fjoin%2FBM-gaLtM2uxSlduksltyi7JXTunqTJ4VuEcwkg28y_Y&utf=1" 
      class="social-link" target="_blank" rel="noopener noreferrer">
-      <img src="./social.png" alt="МАХ" />
+      <img src="./social.png" alt="МАХ" id="main-img"/>
       <span class="tooltip">Ловит даже в варпе!</span>
   </a>
 
@@ -219,6 +287,7 @@
 </html>
 </body>
 </html>
+
 
 
 
