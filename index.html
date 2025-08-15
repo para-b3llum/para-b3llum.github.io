@@ -98,6 +98,22 @@
     .photo.jump {
       animation: jump 0.4s ease;
     }
+    .confetti {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background-color: red;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.9;
+      animation: confetti-move 1s forwards;
+    }
+
+    @keyframes confetti-move {
+      0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+      100% { transform: translate(var(--x), var(--y)) rotate(360deg); opacity: 0; }
+    }
+
     
     .social-link {
         position: fixed;
@@ -212,6 +228,21 @@
         const audio = new Audio(url);
         audio.play().catch(e => console.warn('Не удалось воспроизвести звук:', e));
       }
+      function spawnMiniConfetti(x, y, count = 5) {
+        for (let i = 0; i < count; i++) {
+          const conf = document.createElement('div');
+          conf.className = 'confetti';
+          const angle = Math.random() * 2 * Math.PI; 
+          const distance = Math.random() * 500 + 20; 
+          conf.style.setProperty('--x', `${Math.cos(angle) * distance}px`);
+          conf.style.setProperty('--y', `${Math.sin(angle) * distance}px`);
+          conf.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
+          conf.style.left = x + 'px';
+          conf.style.top = y + 'px';
+          document.body.appendChild(conf);
+          conf.addEventListener('animationend', () => conf.remove());
+        }
+      }
       
       img.addEventListener('click', async () => {
         img.classList.remove('jump');
@@ -253,7 +284,6 @@
 </html>
 </body>
 </html>
-
 
 
 
