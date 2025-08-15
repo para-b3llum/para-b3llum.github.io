@@ -4,228 +4,104 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Сайт для чуханья Гоги</title>
-
-  <!-- Шрифт Abaddon: положите файл /fonts/Abaddon.ttf в репозиторий -->
   <style>
     @font-face {
       font-family: 'Abaddon';
       src: url('./fonts/Abaddon.ttf') format('truetype');
-      font-display: swap;
     }
-
-    :root {
-      --bg: #0a0a0a;
-      --fg: #eaeaea;
-      --muted: #a8a8a8;
-      --accent: #b3ff57;
-    }
-
-    html, body { height: 100%; }
     body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--fg);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
-      display: flex;
-      flex-direction: column;
+      margin: 0; background: #0a0a0a; color: #fff; font-family: sans-serif;
     }
-
-    header {
-      padding: 32px 20px 12px;
-      text-align: center;
-    }
-
-    .title {
-      font-family: Abaddon, Impact, 'Arial Black', system-ui, sans-serif;
-      font-size: clamp(28px, 6vw, 80px);
-      line-height: 1;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--fg);
-      text-shadow: 0 0 18px rgba(255,255,255,0.06);
-    }
-
-    main {
-      flex: 1;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 24px;
-      align-items: center;
-      padding: 20px;
-      max-width: 1200px;
-      width: 100%;
-      margin: 0 auto 20px;
-    }
-
-    .photo-wrap {
-      display: grid;
-      place-items: center;
-      min-height: 50vh;
-    }
-
-    .photo {
-      max-width: min(90vw, 800px);
-      max-height: 70vh;
-      width: auto;
-      height: auto;
-      border-radius: 18px;
-      box-shadow: 0 10px 50px rgba(0,0,0,0.6);
-      border: 1px solid rgba(255,255,255,0.08);
-      cursor: pointer;
-      transition: transform 120ms ease, box-shadow 120ms ease;
-      user-select: none;
-    }
-    .photo:active {
-      transform: scale(0.99);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-    }
-
-    aside.counter {
-      align-self: start;
-      position: sticky;
-      top: 20px;
-      padding: 16px 18px;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-      backdrop-filter: blur(6px);
-      min-width: 220px;
-    }
-    .counter h2 {
-      margin: 0 0 12px;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--muted);
-    }
-    .counter .value {
-      font-family: Abaddon, Impact, 'Arial Black', system-ui, sans-serif;
-      font-size: clamp(42px, 6vw, 80px);
-      line-height: 1;
-      color: var(--accent);
-      text-shadow: 0 0 18px rgba(179,255,87,0.25);
-    }
-    .hint {
-      margin-top: 10px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    footer { color: var(--muted); text-align: center; font-size: 12px; padding: 16px 0 28px; }
-
-    @media (max-width: 900px) {
-      main { grid-template-columns: 1fr; }
-      aside.counter { position: static; }
-    }
+    header { text-align: center; padding: 20px; font-family: Abaddon, sans-serif; font-size: 48px; }
+    main { display: flex; justify-content: center; align-items: center; gap: 20px; padding: 20px; }
+    img { max-width: 600px; width: 100%; cursor: pointer; border-radius: 12px; }
+    aside { font-size: 24px; }
+    .value { font-size: 48px; color: #b3ff57; }
+    .hint { font-size: 14px; color: #aaa; }
   </style>
-
-  <!-- Firebase SDK (v9 модульная) -->
   <script type="module">
-    // === 1) ВАШИ НАСТРОЙКИ FIREBASE ===
-    // Создайте проект на https://console.firebase.google.com
-    // Добавьте Web‑приложение и включите Authentication (Anonymous) + Realtime Database
-    // Замените ниже объект firebaseConfig на свой.
-    import { initializeApp } from "firebase/app";
-    import { getAnalytics } from "firebase/analytics";  
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyDjM1XK6AhEv_goV5ITHjmfYyp1WZV0pOM",
       authDomain: "chux-d64af.firebaseapp.com",
       databaseURL: "https://chux-d64af-default-rtdb.firebaseio.com",
       projectId: "chux-d64af",
-      storageBucket: "chux-d64af.firebasestorage.app",
+      storageBucket: "chux-d64af.appspot.com",
       messagingSenderId: "851414160802",
       appId: "1:851414160802:web:167e118a83b210b2694efb",
       measurementId: "G-H3YQE42M5T"
     };
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
 
-    // === 2) ИМПОРТ SDK ===
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-
-    // Инициализация
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const auth = getAuth(app);
 
-    // DOM элементы
-    const valueEl = document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
       const img = document.getElementById('main-photo');
       const valueNode = document.getElementById('counter-value');
       const statusNode = document.getElementById('status');
 
-      // Подписка на live‑обновления счётчика
+      function setStatus(msg) {
+        statusNode.textContent = msg;
+        console.log(msg);
+      }
+
       const counterRef = ref(db, 'gogaCounter');
       onValue(counterRef, (snap) => {
-        const val = snap.exists() ? snap.val() : 0;
-        valueNode.textContent = Number(val) || 0;
+        if (snap.exists()) {
+          valueNode.textContent = snap.val();
+          setStatus('Подключено');
+        } else {
+          valueNode.textContent = 0;
+          setStatus('Узел пуст, создастся при первом клике');
+        }
+      }, (err) => {
+        setStatus('Ошибка чтения: ' + err.message);
       });
 
-      // Включаем анонимную авторизацию (нужно в консоли Firebase → Auth → Sign-in method → Anonymous → Enable)
       signInAnonymously(auth).catch((e) => {
-        console.error(e);
-        statusNode.textContent = 'Ошибка входа в Firebase';
+        setStatus('Ошибка входа: ' + e.message);
       });
 
       onAuthStateChanged(auth, (user) => {
         if (user) {
-          statusNode.textContent = 'Готово: нажимай на фото';
+          setStatus('Готово: нажимай на фото');
         }
       });
 
-      // Список звуков (обновите под ваши файлы в /sounds)
-      const sounds = [
-        './sounds/1.mp3',
-        './sounds/2.mp3',
-        './sounds/3.mp3'
-      ];
-
+      const sounds = [ './sounds/1.mp3', './sounds/2.mp3', './sounds/3.mp3' ];
       function playRandomSound() {
         if (!sounds.length) return;
         const url = sounds[Math.floor(Math.random() * sounds.length)];
         const audio = new Audio(url);
-        audio.play().catch(() => {/* игнорируем, браузер без жеста может ругаться */});
+        audio.play().catch(e => console.warn('Не удалось воспроизвести звук:', e));
       }
 
-      // Инкремент счётчика по клику
       img.addEventListener('click', async () => {
         playRandomSound();
-        const counterRef = ref(db, 'gogaCounter');
         try {
           await runTransaction(counterRef, (current) => {
             return (Number(current) || 0) + 1;
           });
         } catch (e) {
-          console.error(e);
+          setStatus('Ошибка записи: ' + e.message);
         }
       });
     });
   </script>
 </head>
 <body>
-  <header>
-    <div class="title">сайт для чуханья гоги</div>
-  </header>
-
+  <header>сайт для чуханья гоги</header>
   <main>
-    <div class="photo-wrap">
-      <img id="main-photo" class="photo" src="2fD5YHuyK-4IIZlc05pZuQl-Ksj2X0qUlZe6Anm3R7SV-Q6bnQ6fjzfeNXfPAypv10qd4KghEUEZdziaMY1e9eok.jpg" alt="Гога" draggable="false" />
-    </div>
-
-    <aside class="counter">
-      <h2>почухан раз:</h2>
+    <img id="main-photo" src="./images/main.jpg" alt="Гога" />
+    <aside>
+      <div>почухан раз:</div>
       <div id="counter-value" class="value">0</div>
       <div id="status" class="hint">Подключаюсь…</div>
-      <div class="hint">Почухан за всё время, имеется в виду.</div>
     </aside>
   </main>
-
-  <footer>
-    Сделано с уважением к Гоги.
-  </footer>
 </body>
 </html>
-
-
-
