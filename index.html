@@ -124,15 +124,20 @@
     // Создайте проект на https://console.firebase.google.com
     // Добавьте Web‑приложение и включите Authentication (Anonymous) + Realtime Database
     // Замените ниже объект firebaseConfig на свой.
+    import { initializeApp } from "firebase/app";
+    import { getAnalytics } from "firebase/analytics";  
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "YOUR_PROJECT",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyDjM1XK6AhEv_goV5ITHjmfYyp1WZV0pOM",
+      authDomain: "chux-d64af.firebaseapp.com",
+      databaseURL: "https://chux-d64af-default-rtdb.firebaseio.com",
+      projectId: "chux-d64af",
+      storageBucket: "chux-d64af.firebasestorage.app",
+      messagingSenderId: "851414160802",
+      appId: "1:851414160802:web:167e118a83b210b2694efb",
+      measurementId: "G-H3YQE42M5T"
     };
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
 
     // === 2) ИМПОРТ SDK ===
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
@@ -222,3 +227,4 @@
   </footer>
 </body>
 </html>
+
