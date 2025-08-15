@@ -116,7 +116,7 @@
       onValue(counterRef, (snap) => {
         if (snap.exists()) {
           valueNode.textContent = snap.val();
-          setStatus('Подключено');
+          setStatus('Подключено к Firebase');
         } else {
           valueNode.textContent = 0;
           setStatus('Узел пуст, создастся при первом клике');
@@ -131,7 +131,7 @@
 
       onAuthStateChanged(auth, (user) => {
         if (user) {
-          setStatus('Готово: нажимай на фото');
+          setStatus('Готово!');
         }
       });
 
@@ -158,19 +158,20 @@
 </head>
 <body>
   <header>
-    <div class="title">сайт для чуханья гоги</div>
+    <div class="title">Сайт для чуханья Гоги</div>
   </header>
   <main>
     <div class="photo-wrap">
       <img id="main-photo" class="photo" src="./images/main.jpg" alt="Гога" />
     </div>
     <aside class="counter">
-      <h2>почухан раз:</h2>
+      <h2>Почухан раз:</h2>
       <div id="counter-value" class="value">0</div>
       <div id="status" class="hint">Подключаюсь…</div>
-      <div class="hint">Нажми на фото — число вырастет у всех.</div>
+      <div class="hint">Общее количество чуханья</div>
     </aside>
   </main>
-  <footer>Сделано с уважением к Гоге.</footer>
+  <footer>Сделано с уважением к Гоги.</footer>
 </body>
 </html>
+
