@@ -431,8 +431,8 @@ body {
             <div class="chat-buttons">
                 <button data-chat="messages" class="chat-btn active">general-chat</button>
                 <button data-chat="testchat" class="chat-btn">test-chat</button>
-                <button data-chat="interdimensional" class="chat-btn">interdimentional-chat</button>
-        </div>
+                <button data-chat="interdimensional" class="chat-btn no-password">interdimentional-chat</button>
+            </div>
     </div>
 
     <div class="chat-password">
@@ -504,6 +504,7 @@ function switchChat(chatId) {
         const data = snapshot.val();
         renderMessage(data);
     });
+    checkPassword();
 }
 
 function sendMessage() {
@@ -577,6 +578,14 @@ const sendBtn = document.querySelector(".chat-input button");
 const msgInput = document.getElementById("input");
 
 function checkPassword() {
+    if (!isPasswordRequired()) {
+        passInput.style.background = "#68AF51";
+        sendBtn.disabled = false;
+        msgInput.disabled = false;
+        passInput.placeholder = "Код не требуется";
+        return;
+    }
+    
     const entered = passInput.value.trim();
     const isCorrect = entered === correctPass && correctPass !== "";
 
@@ -584,11 +593,19 @@ function checkPassword() {
         passInput.style.background = "#68AF51";
         sendBtn.disabled = false;
         msgInput.disabled = false;
+        passInput.placeholder = "Код доступа";
     } else {
         passInput.style.background = "#663041";
         sendBtn.disabled = true;
         msgInput.disabled = true;
+        passInput.placeholder = "Код доступа";
     }
+}
+
+function isPasswordRequired() {
+    //чаты без пароля
+    const openChats = ["interdimensional"];
+    return !openChats.includes(currentChat);
 }
 
 passInput.addEventListener("input", checkPassword);
@@ -657,7 +674,6 @@ function selectUser(userId) {
     currentUserId = userId;
     updateSelectedUserDisplay();
     
-    // Закрываем выпадающий список
     const customSelect = document.getElementById("userSelect");
     customSelect.classList.remove("open");
 }
