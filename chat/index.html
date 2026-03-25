@@ -114,8 +114,6 @@ body {
     
     overflow-wrap: anywhere;
     word-break: normal;
-    max-height: 400px; 
-    overflow-y: auto;
 }
 .message-body {
     display: flex;
@@ -123,7 +121,6 @@ body {
     align-items: flex-start; 
     max-width: 80%;          
     min-width: 0;
-    max-height: 500px;
 }
 .message {
     display: flex;
@@ -352,46 +349,6 @@ body {
     background: #363646;
 }
 
-.message-image {
-    max-width: 100%;
-    max-height: 300px;
-    border-radius: 12px;
-    margin: 5px 0;
-    cursor: pointer;
-    transition: transform 0.2s;
-    object-fit: contain;
-}
-.message-image:hover {
-    transform: scale(1.02);
-}
-.message-content img {
-    max-width: 100%;
-    max-height: 300px;
-    border-radius: 12px;
-    display: block;
-}
-.image-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-}
-.image-modal img {
-    max-width: 90%;
-    max-height: 90%;
-    object-fit: contain;
-}
-.image-modal.active {
-    display: flex;
-}
-
 .main-wrapper {
     display: flex;
     flex-direction: column;
@@ -443,7 +400,7 @@ body {
     <img src="Frame 6.png" class="logo" alt="Логотип">
     <div class="text">
         <h1>ШМЯКС</h1>
-        <p>первый гармоничный</p>
+        <p>первый пейкоковский</p>
     </div>
 </div>
 <div class="chat-container">
@@ -472,9 +429,8 @@ body {
     <div class="chat-select">
         Выберите чат:
             <div class="chat-buttons">
-                <button data-chat="messages" class="chat-btn active">general-chat</button>
-                <button data-chat="testchat" class="chat-btn">test-chat</button>
-                <button data-chat="interdimensional" class="chat-btn no-password">interdimentional-chat</button>
+                <button data-chat="general" class="chat-btn active">общий-чат</button>
+                <button data-chat="noobs" class="chat-btn no-password">чат-для-нубасов</button>
             </div>
     </div>
 
@@ -484,9 +440,7 @@ body {
     </div>
 </div>
 </div>
-<div id="imageModal" class="image-modal">
-    <img id="modalImage" src="" alt="Увеличенное изображение">
-</div>
+
 
 
 <script type="module">
@@ -495,21 +449,14 @@ import { getDatabase, ref, push, onChildAdded, query, orderByChild } from "https
 import { get, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const users = {
-    "@flushhhhh": {id: "@flushhhhh",name: "Shirley Flow",avatar: "https://i.imgur.com/QQyreZH.png",color: "#FFAFDB"},
-    "@cyanitestar03": {id: "@cyanitestar03",name: "Цианит Сваг🔫🔫",avatar: "https://i.imgur.com/1OWyYjS.png",color: "#00C3FF"},
-    "@vox": {id: "@vox",name: "Вокс",avatar: "https://i.imgur.com/lBk0HRI.png",color: "#C6EEEF"},
-    "@mlum": {id: "@mlum",name: "Марсель де Люмин",avatar: "https://i.imgur.com/KWSGcQo.png",color: "#CA1AF2"},
-    "@princess_of_explosions": {id: "@princess_of_explosions",name: "Флёрри",avatar: "https://i.imgur.com/vG04poX.png",color: "#FF93C4"},
-    "@hatemondays": {id: "@hatemondays",name: "Новэл Начальник",avatar: "https://i.imgur.com/cts2oeC.png",color: "#A8FFD9"},
-    "@sunnystarscout": {id: "@sunnystarscout",name: "✨✨✨✨",avatar: "https://i.imgur.com/Ht3mpnk.png",color: "#FF9E66"},
-    "@honeys": {id: "@honeys",name: "хани",avatar: "https://i.imgur.com/lBk0HRI.png",color: "#E2CB12"},
-    "@nightie": {id: "@nightie",name: "Найти",avatar: "https://i.imgur.com/57FXkwg.png",color: "#C64143"},
-    "@sea": {id: "@sea",name: "sea",avatar: "https://i.imgur.com/qSuwkPc.png",color: "#95A4C1"},
-    "@pipp_petals_official": {id: "@pipp_petals_official",name: "ПИПП ПЕТАЛС🌈🌈🪽🪽🪽",avatar: "https://i.imgur.com/FQEohpO.png",color: "#BF74DD"}
+    "@parab3llum": {id: "@parab3llum",name: "Пейкок",avatar: "https://sun9-29.userapi.com/s/v1/ig2/iurf0JBoEelyq9CSoD8pFm7AjKqWfTyDC6OSrHtjCfWldOvCoPUtBC4PT6BvgIeoBkyQcNe3s5F9DNZ5jD6eQWiy.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1080x1080,1280x1280,1440x1440,2000x2000&from=bu&cs=2000x0",color: "#FFD119"},
+    "@chel1": {id: "@chel1",name: "Чел1",avatar: "https://i.pinimg.com/170x/c2/09/4b/c2094bc8e115b36a068432c205e88b03.jpg",color: "#FFFFFF"},
+    "@chel2": {id: "@chel2",name: "Чел2",avatar: "https://i.pinimg.com/170x/c2/09/4b/c2094bc8e115b36a068432c205e88b03.jpg",color: "#FFFFFF"},
+    "@sbrony": {id: "@sbrony",name: "Современный брони",avatar: "https://yt3.googleusercontent.com/ytc/AIdro_nrdbryJkBsZIybJY3NkXaqbRCL4xFUAbWaoKJLKnM7KJY=s160-c-k-c0x00ffffff-no-rj",color: "#AFFFCC"},
 };
 
 let currentUserId = loadSelectedUser();
-let currentChat = "messages"; 
+let currentChat = "general"; 
 let currentMessagesRef = null; 
 let unsubscribe = null; 
 
@@ -521,7 +468,7 @@ function loadSelectedUser() {
     if (savedUser && users[savedUser]) {
         return savedUser;
     }
-    return "@flushhhhh"; // значение по умолчанию
+    return "@chel1"; // значение по умолчанию
 }
 
 const firebaseConfig = {
@@ -539,7 +486,6 @@ const db = getDatabase(app);
 function switchChat(chatId) {
     currentChat = chatId;
     
-
     document.querySelectorAll('.chat-btn').forEach(btn => {
         if (btn.getAttribute('data-chat') === chatId) {
             btn.classList.add('active');
@@ -571,7 +517,7 @@ function sendMessage() {
     const now = new Date();
 
     const fakeTimestamp = new Date(
-        1998,              
+        now.getYear(),             
         now.getMonth(),    
         now.getDate(),     
         now.getHours(),    
@@ -597,29 +543,9 @@ function renderMessage(data) {
     const time = dateObj.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     const date = dateObj.toLocaleDateString();
 
-    let text = data.text;
-    let imageHtml = "";
-    
-    const imageUrlPattern = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp|svg))$/i;
-    const isOnlyImage = imageUrlPattern.test(text.trim());
-    
-    if (isOnlyImage) {
-        const imgUrl = text.trim();
-        imageHtml = `
-            <div class="message-content" style="padding: 10px; background: transparent;">
-                <img class="message-image" src="${imgUrl}" alt="Изображение" onclick="openImageModal('${imgUrl}')" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'padding:10px;background:#2a2a35;border-radius:12px;\'>❌ Ошибка загрузки изображения</div>'">
-            </div>
-        `;
-        text = ""; 
-    } else {
-        // Выделяем #хештеги и @упоминания в тексте
-        text = text.replace(/([#@][\wА-Яа-яЁё\d_]+)/g, '<span class="highlight">$1</span>');
-        // Также находим ссылки на изображения внутри текста и заменяем их на превью
-        text = text.replace(/(https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp|svg))/gi, (match) => {
-            return `<img class="message-image" src="${match}" alt="Изображение" onclick="openImageModal('${match}')" style="max-width: 100%; max-height: 200px; display: block; margin-top: 5px;" onerror="this.style.display='none'">`;
-        });
-        imageHtml = `<div class="message-content">${text}</div>`;
-    }
+    //#хештеги и @упоминания
+    let text = data.text.replace(/([#@][\wА-Яа-яЁё\d_]+)/g, 
+        '<span class="highlight">$1</span>');
 
     const message = document.createElement("div");
     message.className = "message";
@@ -628,7 +554,7 @@ function renderMessage(data) {
         <img class="avatar" src="${user.avatar}" title="${user.id}">
         <div class="message-body">
             <div class="meta"><span class="user-name" style="color:${user.color}">${user.name}</span> • <span class="time">${date} ${time}</span></div>
-            ${imageHtml}
+            <div class="message-content">${text}</div>
         </div>
     `;
 
@@ -641,21 +567,6 @@ document.querySelectorAll('.chat-btn').forEach(btn => {
         const chatId = btn.getAttribute('data-chat');
         switchChat(chatId);
     });
-});
-window.openImageModal = function(imgUrl) {
-    const modal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('modalImage');
-    modalImg.src = imgUrl;
-    modal.classList.add('active');
-};
-document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('imageModal');
-    if (modal) {
-        modal.addEventListener('click', () => {
-            modal.classList.remove('active');
-            document.getElementById('modalImage').src = "";
-        });
-    }
 });
 
 const passwordRef = ref(db, "chatPass");
@@ -695,7 +606,7 @@ function checkPassword() {
 
 function isPasswordRequired() {
     //чаты без пароля
-    const openChats = ["interdimensional"];
+    const openChats = ["noobs"];
     return !openChats.includes(currentChat);
 }
 
@@ -802,7 +713,7 @@ window.sendMessage = sendMessage;
 populateUserSelect();
 setupCustomSelect();
 checkPassword();
-switchChat("messages");
+switchChat("general");
 updateSelectedUserDisplay();
 </script>
 
