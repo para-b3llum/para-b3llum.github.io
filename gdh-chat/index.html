@@ -2,13 +2,10 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>ШМЯКС</title>
+<title>Чат</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/x-icon" href="./favicon.ico">
 <style>
-link[rel="icon"] {
-    display: block;
-}
 body {
     margin: 0;
     min-height: 100vh;
@@ -465,9 +462,9 @@ const users = {
 };
 
 let currentUserId = "@flushhhhh";
-let currentChat = "messages"; /
-let currentMessagesRef = null; 
-let unsubscribe = null; 
+let currentChat = "messages"; // текущий активный чат
+let currentMessagesRef = null; // ссылка на текущий чат
+let unsubscribe = null; // функция отписки от старого чата
 
 const firebaseConfig = {
     apiKey: "AIzaSyDivdBujXfqmNEFnMrwcrd40edGJh9RyJQ",
@@ -481,8 +478,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// Функция для переключения чата
 function switchChat(chatId) {
     currentChat = chatId;
+    
+    // Обновляем активную кнопку
     document.querySelectorAll('.chat-btn').forEach(btn => {
         if (btn.getAttribute('data-chat') === chatId) {
             btn.classList.add('active');
@@ -491,13 +491,16 @@ function switchChat(chatId) {
         }
     });
     
+    // Очищаем сообщения
     const messagesContainer = document.getElementById("messages");
     messagesContainer.innerHTML = "";
     
+    // Отписываемся от старого чата
     if (unsubscribe) {
         unsubscribe();
     }
     
+    // Подписываемся на новый чат
     currentMessagesRef = ref(db, chatId);
     unsubscribe = onChildAdded(currentMessagesRef, (snapshot) => {
         const data = snapshot.val();
@@ -539,6 +542,7 @@ function renderMessage(data) {
     const time = dateObj.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     const date = dateObj.toLocaleDateString();
 
+    // Выделяем #хештеги и @упоминания
     let text = data.text.replace(/([#@][\wА-Яа-яЁё\d_]+)/g, 
         '<span class="highlight">$1</span>');
 
@@ -557,6 +561,7 @@ function renderMessage(data) {
     messages.scrollTop = messages.scrollHeight;
 }
 
+// Настройка обработчиков для кнопок чатов
 document.querySelectorAll('.chat-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const chatId = btn.getAttribute('data-chat');
@@ -564,6 +569,7 @@ document.querySelectorAll('.chat-btn').forEach(btn => {
     });
 });
 
+// Настройка пароля
 const passwordRef = ref(db, "chatPass");
 let correctPass = "";
 onValue(passwordRef, (snapshot) => {
@@ -591,6 +597,7 @@ function checkPassword() {
 
 passInput.addEventListener("input", checkPassword);
 
+// Настройка отправки сообщения по Enter
 input.addEventListener("keydown", function(event) {
     if (event.key === "Enter") {
         event.preventDefault();
@@ -600,7 +607,7 @@ input.addEventListener("keydown", function(event) {
     }
 });
 
-//заполнение выбора пользователей
+// Заполнение выбора пользователей
 function populateUserSelect() {
     const dropdown = document.getElementById("userDropdown");
     dropdown.innerHTML = "";
@@ -630,9 +637,11 @@ function populateUserSelect() {
         dropdown.appendChild(option);
     }
     
+    // Обновляем отображение выбранного пользователя
     updateSelectedUserDisplay();
 }
 
+// Обновление отображения выбранного пользователя
 function updateSelectedUserDisplay() {
     const user = users[currentUserId];
     if (user) {
@@ -642,6 +651,7 @@ function updateSelectedUserDisplay() {
         document.getElementById("selectedId").innerHTML = user.id;
     }
     
+    // Обновляем класс selected в выпадающем списке
     const options = document.querySelectorAll(".user-option");
     options.forEach(opt => {
         if (opt.getAttribute("data-user-id") === currentUserId) {
@@ -652,14 +662,17 @@ function updateSelectedUserDisplay() {
     });
 }
 
+// Выбор пользователя
 function selectUser(userId) {
     currentUserId = userId;
     updateSelectedUserDisplay();
     
+    // Закрываем выпадающий список
     const customSelect = document.getElementById("userSelect");
     customSelect.classList.remove("open");
 }
 
+// Настройка открытия/закрытия кастомного селекта
 function setupCustomSelect() {
     const customSelect = document.getElementById("userSelect");
     const selectedUser = customSelect.querySelector(".selected-user");
@@ -669,6 +682,7 @@ function setupCustomSelect() {
         customSelect.classList.toggle("open");
     });
     
+    // Закрываем при клике вне
     document.addEventListener("click", (e) => {
         if (!customSelect.contains(e.target)) {
             customSelect.classList.remove("open");
@@ -680,19 +694,13 @@ document.getElementById("userSelect").addEventListener("change", (e) => {
     currentUserId = e.target.value;
 });
 
-window.addEventListener('load', function() {
-    const link = document.createElement('link');
-    link.rel = 'icon';
-    link.type = 'image/x-icon';
-    link.href = 'favicon.ico';
-    document.head.appendChild(link);
-});
-    
+// Инициализация
 window.sendMessage = sendMessage;
 populateUserSelect();
 setupCustomSelect();
 checkPassword();
 switchChat("messages");
 </script>
+
 </body>
 </html>
