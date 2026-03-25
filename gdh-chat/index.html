@@ -463,10 +463,21 @@ const users = {
     "@pipp_petals_official": {id: "@pipp_petals_official",name: "ПИПП ПЕТАЛС🌈🌈🪽🪽🪽",avatar: "https://i.imgur.com/FQEohpO.png",color: "#BF74DD"}
 };
 
-let currentUserId = "@flushhhhh";
+let currentUserId = loadSelectedUser();
 let currentChat = "messages"; 
 let currentMessagesRef = null; 
 let unsubscribe = null; 
+
+function saveSelectedUser(userId) {
+    localStorage.setItem('selectedUser', userId);
+}
+function loadSelectedUser() {
+    const savedUser = localStorage.getItem('selectedUser');
+    if (savedUser && users[savedUser]) {
+        return savedUser;
+    }
+    return "@flushhhhh"; // значение по умолчанию
+}
 
 const firebaseConfig = {
     apiKey: "AIzaSyDivdBujXfqmNEFnMrwcrd40edGJh9RyJQ",
@@ -673,6 +684,7 @@ function updateSelectedUserDisplay() {
 function selectUser(userId) {
     currentUserId = userId;
     updateSelectedUserDisplay();
+    saveSelectedUser(userId);
     
     const customSelect = document.getElementById("userSelect");
     customSelect.classList.remove("open");
@@ -711,6 +723,7 @@ populateUserSelect();
 setupCustomSelect();
 checkPassword();
 switchChat("messages");
+updateSelectedUserDisplay();
 </script>
 
 </body>
