@@ -99,6 +99,26 @@ body {
     background: #c084fc;
     color: white;
     cursor: pointer;
+    transition: all 0.2s;
+}
+.chat-input button:hover:not(:disabled) {
+    background: #D922F9;
+}
+.chat-input button:disabled {
+    background: #444 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+}
+#uploadBtn {
+    background: #c084fc;
+}
+#uploadBtn:hover:not(:disabled) {
+    background: #D922F9;
+}
+#uploadBtn:disabled {
+    background: #444 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
 }
 .chat-input button:hover {
     background: #D922F9;
@@ -450,8 +470,10 @@ body {
     <div class="chat-messages" id="messages"></div>
     <div class="chat-input">
         <input type="text" id="input" placeholder="Введите сообщение тут!" autocomplete="off">
-        <button onclick="sendMessage()">➤</button>
+        <button id="uploadBtn" style="background: #c084fc; margin-left: 10px;">📎</button>
+        <button id="sendBtn" onclick="sendMessage()">➤</button>
     </div>
+<input type="file" id="fileInput" accept="image/*" style="display: none;">
 </div>
 <div class="sidebar">
     <div class="user-select">
@@ -608,7 +630,7 @@ function renderMessage(data) {
         const imgUrl = text.trim();
         imageHtml = `
             <div class="message-content" style="padding: 10px; background: transparent;">
-                <img class="message-image" src="${imgUrl}" alt="Изображение" onclick="openImageModal('${imgUrl}')" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'padding:10px;background:#2a2a35;border-radius:12px;\'>❌ Ошибка загрузки изображения</div>'">
+                <img class="message-image" src="${imgUrl}" alt="Изображение" onclick="openImageModal('${imgUrl}')" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'padding:10px;background:#2a2a35;border-radius:12px;\'>Ошибка загрузки изображения</div>'">
             </div>
         `;
         text = ""; 
@@ -665,14 +687,17 @@ onValue(passwordRef, (snapshot) => {
 });
 
 const passInput = document.getElementById("passwordInput");
-const sendBtn = document.querySelector(".chat-input button");
+const sendBtn = document.getElementById("sendBtn");
 const msgInput = document.getElementById("input");
 
 function checkPassword() {
+    const uploadBtn = document.getElementById('uploadBtn');
+    
     if (!isPasswordRequired()) {
         passInput.style.background = "#68AF51";
         sendBtn.disabled = false;
         msgInput.disabled = false;
+        if (uploadBtn) uploadBtn.disabled = false;
         passInput.placeholder = "Код не требуется";
         return;
     }
@@ -684,13 +709,19 @@ function checkPassword() {
         passInput.style.background = "#68AF51";
         sendBtn.disabled = false;
         msgInput.disabled = false;
+        if (uploadBtn) uploadBtn.disabled = false;
         passInput.placeholder = "Код доступа";
     } else {
         passInput.style.background = "#663041";
         sendBtn.disabled = true;
         msgInput.disabled = true;
+        if (uploadBtn) uploadBtn.disabled = true;
         passInput.placeholder = "Код доступа";
     }
+}
+const uploadBtnInit = document.getElementById('uploadBtn');
+if (uploadBtnInit && isPasswordRequired() && correctPass === "") {
+    uploadBtnInit.disabled = true;
 }
 
 function isPasswordRequired() {
@@ -797,6 +828,61 @@ window.addEventListener('load', function() {
     link.href = 'favicon.ico';
     document.head.appendChild(link);
 });
+
+const UPLOAD_URL = 'http://IP_СЕРВЕРА/upload.php'; // IP СЕРВЕРА
+const uploadBtn = document.getElementById('uploadBtn');
+const fileInput = document.getElementById('fileInput');
+
+if (uploadBtn && fileInput) {
+    uploadBtn.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        if (!file.type.startsWith('image/')) {
+            alert('Выберите пикчу');
+            return;
+        }
+        
+        if (file.size > 10 * 1024 * 1024) {
+            alert('Файл слишком большой (макс 5MB)');
+            return;
+        }
+        
+        const originalBtnText = uploadBtn.innerHTML;
+        uploadBtn.innerHTML = '⏳';
+        uploadBtn.disabled = true;
+        
+        const formData = new FormData();
+        formData.append('image', file);
+        
+        try {
+            const response = await fetch(UPLOAD_URL, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.url) {
+                const input = document.getElementById('input');
+                input.value = data.url;
+            } else {
+                alert('Ошибка загрузки: ' + (data.error || 'Неизвестная ошибка'));
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки:', error);
+            alert('Не подключиться к серверу загрузки!');
+        } finally {
+            uploadBtn.innerHTML = originalBtnText;
+            uploadBtn.disabled = false;
+            fileInput.value = ''; 
+        }
+    });
+}
 
 window.sendMessage = sendMessage;
 populateUserSelect();
