@@ -115,15 +115,15 @@ body {
 </head>
 
 <body>
-<form autocomplete="off">
 <input type="text" id="input" placeholder="Напиши сообщение..." autocomplete="off">
-</form>
 <div class="chat-container">
 
     <div class="chat-messages" id="messages"></div>
 
     <div class="chat-input">
-        <input type="text" id="input" placeholder="Напиши сообщение...">
+        <form autocomplete="off">
+        <input type="text" id="input" placeholder="Напиши сообщение..." autocomplete="off">
+        </form>
         <button onclick="sendMessage()">➤</button>
     </div>
 
