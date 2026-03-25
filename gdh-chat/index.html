@@ -124,7 +124,7 @@ body {
 }
 .message {
     display: flex;
-    margin-bottom: 12px;
+    margin-bottom: 3px;
     align-items: flex-start;
 }
 .chat-messages {
@@ -464,9 +464,9 @@ const users = {
 };
 
 let currentUserId = "@flushhhhh";
-let currentChat = "messages"; // текущий активный чат
-let currentMessagesRef = null; // ссылка на текущий чат
-let unsubscribe = null; // функция отписки от старого чата
+let currentChat = "messages"; 
+let currentMessagesRef = null; 
+let unsubscribe = null; 
 
 const firebaseConfig = {
     apiKey: "AIzaSyDivdBujXfqmNEFnMrwcrd40edGJh9RyJQ",
@@ -480,11 +480,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Функция для переключения чата
 function switchChat(chatId) {
     currentChat = chatId;
     
-    // Обновляем активную кнопку
+
     document.querySelectorAll('.chat-btn').forEach(btn => {
         if (btn.getAttribute('data-chat') === chatId) {
             btn.classList.add('active');
@@ -493,16 +492,13 @@ function switchChat(chatId) {
         }
     });
     
-    // Очищаем сообщения
     const messagesContainer = document.getElementById("messages");
     messagesContainer.innerHTML = "";
     
-    // Отписываемся от старого чата
     if (unsubscribe) {
         unsubscribe();
     }
     
-    // Подписываемся на новый чат
     currentMessagesRef = ref(db, chatId);
     unsubscribe = onChildAdded(currentMessagesRef, (snapshot) => {
         const data = snapshot.val();
@@ -544,7 +540,7 @@ function renderMessage(data) {
     const time = dateObj.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     const date = dateObj.toLocaleDateString();
 
-    // Выделяем #хештеги и @упоминания
+    //#хештеги и @упоминания
     let text = data.text.replace(/([#@][\wА-Яа-яЁё\d_]+)/g, 
         '<span class="highlight">$1</span>');
 
@@ -563,7 +559,6 @@ function renderMessage(data) {
     messages.scrollTop = messages.scrollHeight;
 }
 
-// Настройка обработчиков для кнопок чатов
 document.querySelectorAll('.chat-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const chatId = btn.getAttribute('data-chat');
@@ -571,7 +566,6 @@ document.querySelectorAll('.chat-btn').forEach(btn => {
     });
 });
 
-// Настройка пароля
 const passwordRef = ref(db, "chatPass");
 let correctPass = "";
 onValue(passwordRef, (snapshot) => {
@@ -599,7 +593,6 @@ function checkPassword() {
 
 passInput.addEventListener("input", checkPassword);
 
-// Настройка отправки сообщения по Enter
 input.addEventListener("keydown", function(event) {
     if (event.key === "Enter") {
         event.preventDefault();
@@ -609,7 +602,6 @@ input.addEventListener("keydown", function(event) {
     }
 });
 
-// Заполнение выбора пользователей
 function populateUserSelect() {
     const dropdown = document.getElementById("userDropdown");
     dropdown.innerHTML = "";
@@ -639,11 +631,9 @@ function populateUserSelect() {
         dropdown.appendChild(option);
     }
     
-    // Обновляем отображение выбранного пользователя
     updateSelectedUserDisplay();
 }
 
-// Обновление отображения выбранного пользователя
 function updateSelectedUserDisplay() {
     const user = users[currentUserId];
     if (user) {
@@ -653,7 +643,6 @@ function updateSelectedUserDisplay() {
         document.getElementById("selectedId").innerHTML = user.id;
     }
     
-    // Обновляем класс selected в выпадающем списке
     const options = document.querySelectorAll(".user-option");
     options.forEach(opt => {
         if (opt.getAttribute("data-user-id") === currentUserId) {
@@ -664,7 +653,6 @@ function updateSelectedUserDisplay() {
     });
 }
 
-// Выбор пользователя
 function selectUser(userId) {
     currentUserId = userId;
     updateSelectedUserDisplay();
@@ -674,7 +662,6 @@ function selectUser(userId) {
     customSelect.classList.remove("open");
 }
 
-// Настройка открытия/закрытия кастомного селекта
 function setupCustomSelect() {
     const customSelect = document.getElementById("userSelect");
     const selectedUser = customSelect.querySelector(".selected-user");
@@ -684,7 +671,6 @@ function setupCustomSelect() {
         customSelect.classList.toggle("open");
     });
     
-    // Закрываем при клике вне
     document.addEventListener("click", (e) => {
         if (!customSelect.contains(e.target)) {
             customSelect.classList.remove("open");
@@ -704,7 +690,6 @@ window.addEventListener('load', function() {
     document.head.appendChild(link);
 });
 
-// Инициализация
 window.sendMessage = sendMessage;
 populateUserSelect();
 setupCustomSelect();
