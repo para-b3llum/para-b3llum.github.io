@@ -95,12 +95,12 @@ body {
     padding: 10px 15px;
     border: none;
     border-radius: 10px;
-    background: #5a6cff;
+    background: #c084fc;
     color: white;
     cursor: pointer;
 }
 .chat-input button:hover {
-    background: #6f7fff;
+    background: #D922F9;
 }
 
 .message-content {
@@ -165,6 +165,116 @@ body {
     width: 100%;
     max-width: 400px;
 }
+
+.custom-select {
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+}
+.selected-user {
+    background: #2a2a35;
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+    border: 1px solid #3a3a45;
+}
+.selected-user:hover {
+    background: #363646;
+    border-color: #5a6cff;
+}
+.selected-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.selected-user-info {
+    flex: 1;
+}
+.selected-user-name {
+    font-weight: bold;
+    font-size: 15px;
+    display: block;
+}
+.selected-user-id {
+    font-size: 11px;
+    opacity: 0.6;
+}
+.selected-user-arrow {
+    font-size: 20px;
+    transition: transform 0.2s;
+}
+.custom-select.open .selected-user-arrow {
+    transform: rotate(180deg);
+}
+.user-dropdown {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background: #1e1e28;
+    border-radius: 12px;
+    border: 1px solid #3a3a45;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 100;
+    display: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.custom-select.open .user-dropdown {
+    display: block;
+}
+.user-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-bottom: 1px solid #2a2a35;
+}
+.user-option:last-child {
+    border-bottom: none;
+}
+.user-option:hover {
+    background: #2a2a35;
+}
+.user-option.selected {
+    background: #5a6cff20;
+    border-left: 3px solid #5a6cff;
+}
+.user-option-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.user-option-info {
+    flex: 1;
+}
+.user-option-name {
+    font-weight: bold;
+    font-size: 14px;
+    display: block;
+}
+.user-option-id {
+    font-size: 11px;
+    opacity: 0.6;
+}
+.user-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+.user-dropdown::-webkit-scrollbar-track {
+    background: transparent;
+}
+.user-dropdown::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 10px;
+}
+
 .user-select,
 .chat-password {
     background: #1a1a22;
@@ -201,6 +311,41 @@ body {
 .chat-input button:disabled {
     background: #444;
     cursor: not-allowed;
+}
+.chat-select {
+    background: #1a1a22;
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    border: 1px solid #2a2a35;
+}
+
+.chat-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.chat-btn {
+    padding: 12px 14px;
+    border: none;
+    border-radius: 10px;
+    background: #2a2a35;
+    color: #eaeaf0;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.chat-btn.active {
+    background: #c084fc;
+    color: white;
+    font-weight: bold;
+}
+
+.chat-btn:hover:not(.active) {
+    background: #363646;
 }
 
 .main-wrapper {
@@ -266,9 +411,28 @@ body {
 </div>
 <div class="sidebar">
     <div class="user-select">
-        Выберите пользователя:
-        <select id="userSelect"></select>
+        <div style="margin-bottom: 8px;">Выберите пользователя:</div>
+        <div class="custom-select" id="userSelect">
+            <div class="selected-user">
+                <img class="selected-user-avatar" id="selectedAvatar" src="" alt="">
+                <div class="selected-user-info">
+                    <span class="selected-user-name" id="selectedName">Загрузка...</span>
+                    <span class="selected-user-id" id="selectedId"></span>
+                </div>
+                <div class="selected-user-arrow">▼</div>
+            </div>
+            <div class="user-dropdown" id="userDropdown"></div>
+        </div>
     </div>
+
+    <div class="chat-select">
+        Выберите чат:
+        <div class="chat-buttons">
+            <button data-chat="messages" class="chat-btn active">general-chat</button>
+            <button data-chat="testchat" class="chat-btn">test-chat</button>
+        </div>
+    </div>
+
     <div class="chat-password">
         Для отправки сообщений введите код доступа.
         <input type="password" id="passwordInput" placeholder="Код доступа" autocomplete="off">
@@ -280,80 +444,27 @@ body {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-import { get, child } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, push, onChildAdded, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { get, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const users = {
-    "@flushhhhh": {
-        id: "@flushhhhh",
-        name: "Shirley Flow",
-        avatar: "https://i.imgur.com/QQyreZH.png",
-        color: "#FFAFDB"
-    },
-    "@cyanitestar03": {
-        id: "@cyanitestar03",
-        name: "Цианит Сваг🔫🔫",
-        avatar: "https://i.imgur.com/1OWyYjS.png",
-        color: "#00C3FF"
-    },
-    "@vox": {
-        id: "@vox",
-        name: "Вокс",
-        avatar: "https://i.imgur.com/lBk0HRI.png",
-        color: "#C6EEEF"
-    },
-    "@mlum": {
-        id: "@mlum",
-        name: "Марсель де Люмин",
-        avatar: "https://i.imgur.com/KWSGcQo.png",
-        color: "#CA1AF2"
-    },
-    "@princess_of_explosions": {
-        id: "@princess_of_explosions",
-        name: "Флёрри",
-        avatar: "https://i.imgur.com/vG04poX.png",
-        color: "#FF93C4"
-    },
-    "@hatemondays": {
-        id: "@hatemondays",
-        name: "Новэл Начальник",
-        avatar: "https://i.imgur.com/cts2oeC.png",
-        color: "#A8FFD9"
-    },
-    "@sunnystarscout": {
-        id: "@sunnystarscout",
-        name: "✨✨✨✨",
-        avatar: "https://i.imgur.com/Ht3mpnk.png",
-        color: "#FF9E66"
-    },
-    "@honeys": {
-        id: "@honeys",
-        name: "хани",
-        avatar: "https://i.imgur.com/lBk0HRI.png",
-        color: "#E2CB12"
-    },
-    "@nightie": {
-        id: "@nightie",
-        name: "Найти",
-        avatar: "https://i.imgur.com/57FXkwg.png",
-        color: "#C64143"
-    },
-    "@sea": {
-        id: "@sea",
-        name: "sea",
-        avatar: "https://i.imgur.com/qSuwkPc.png",
-        color: "#95A4C1"
-    },
-    "@pipp_petals_official": {
-        id: "@pipp_petals_official",
-        name: "ПИПП ПЕТАЛС🌈🌈🪽🪽🪽",
-        avatar: "https://i.imgur.com/FQEohpO.png",
-        color: "#BF74DD"
-    }
+    "@flushhhhh": {id: "@flushhhhh",name: "Shirley Flow",avatar: "https://i.imgur.com/QQyreZH.png",color: "#FFAFDB"},
+    "@cyanitestar03": {id: "@cyanitestar03",name: "Цианит Сваг🔫🔫",avatar: "https://i.imgur.com/1OWyYjS.png",color: "#00C3FF"},
+    "@vox": {id: "@vox",name: "Вокс",avatar: "https://i.imgur.com/lBk0HRI.png",color: "#C6EEEF"},
+    "@mlum": {id: "@mlum",name: "Марсель де Люмин",avatar: "https://i.imgur.com/KWSGcQo.png",color: "#CA1AF2"},
+    "@princess_of_explosions": {id: "@princess_of_explosions",name: "Флёрри",avatar: "https://i.imgur.com/vG04poX.png",color: "#FF93C4"},
+    "@hatemondays": {id: "@hatemondays",name: "Новэл Начальник",avatar: "https://i.imgur.com/cts2oeC.png",color: "#A8FFD9"},
+    "@sunnystarscout": {id: "@sunnystarscout",name: "✨✨✨✨",avatar: "https://i.imgur.com/Ht3mpnk.png",color: "#FF9E66"},
+    "@honeys": {id: "@honeys",name: "хани",avatar: "https://i.imgur.com/lBk0HRI.png",color: "#E2CB12"},
+    "@nightie": {id: "@nightie",name: "Найти",avatar: "https://i.imgur.com/57FXkwg.png",color: "#C64143"},
+    "@sea": {id: "@sea",name: "sea",avatar: "https://i.imgur.com/qSuwkPc.png",color: "#95A4C1"},
+    "@pipp_petals_official": {id: "@pipp_petals_official",name: "ПИПП ПЕТАЛС🌈🌈🪽🪽🪽",avatar: "https://i.imgur.com/FQEohpO.png",color: "#BF74DD"}
 };
 
-
 let currentUserId = "@flushhhhh";
+let currentChat = "messages"; // текущий активный чат
+let currentMessagesRef = null; // ссылка на текущий чат
+let unsubscribe = null; // функция отписки от старого чата
 
 const firebaseConfig = {
     apiKey: "AIzaSyDivdBujXfqmNEFnMrwcrd40edGJh9RyJQ",
@@ -366,7 +477,36 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const messagesRef = ref(db, "messages");
+
+// Функция для переключения чата
+function switchChat(chatId) {
+    currentChat = chatId;
+    
+    // Обновляем активную кнопку
+    document.querySelectorAll('.chat-btn').forEach(btn => {
+        if (btn.getAttribute('data-chat') === chatId) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+    
+    // Очищаем сообщения
+    const messagesContainer = document.getElementById("messages");
+    messagesContainer.innerHTML = "";
+    
+    // Отписываемся от старого чата
+    if (unsubscribe) {
+        unsubscribe();
+    }
+    
+    // Подписываемся на новый чат
+    currentMessagesRef = ref(db, chatId);
+    unsubscribe = onChildAdded(currentMessagesRef, (snapshot) => {
+        const data = snapshot.val();
+        renderMessage(data);
+    });
+}
 
 function sendMessage() {
     const input = document.getElementById("input");
@@ -375,7 +515,6 @@ function sendMessage() {
 
     const now = new Date();
 
-    // Создаём дату с годом 1997
     const fakeTimestamp = new Date(
         1998,              
         now.getMonth(),    
@@ -386,7 +525,7 @@ function sendMessage() {
         now.getMilliseconds()
     ).getTime();
 
-    push(messagesRef, {
+    push(ref(db, currentChat), {
         text: text,
         userId: currentUserId,
         timestamp: fakeTimestamp
@@ -422,75 +561,146 @@ function renderMessage(data) {
     messages.scrollTop = messages.scrollHeight;
 }
 
-
-onChildAdded(messagesRef, (snapshot) => {
-    const data = snapshot.val();
-    renderMessage(data);
+// Настройка обработчиков для кнопок чатов
+document.querySelectorAll('.chat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const chatId = btn.getAttribute('data-chat');
+        switchChat(chatId);
+    });
 });
 
-const input = document.getElementById("input");
-input.addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        sendMessage();
-    }
-});
-
-import { onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+// Настройка пароля
 const passwordRef = ref(db, "chatPass");
 let correctPass = "";
 onValue(passwordRef, (snapshot) => {
     correctPass = snapshot.val() || "";
 });
+
 const passInput = document.getElementById("passwordInput");
 const sendBtn = document.querySelector(".chat-input button");
 const msgInput = document.getElementById("input");
+
 function checkPassword() {
     const entered = passInput.value.trim();
     const isCorrect = entered === correctPass && correctPass !== "";
 
     if (isCorrect) {
-        passInput.style.background = "#0a3";
-        sendBtn.classList.add("enabled");
-        sendBtn.style.cursor = "pointer";
+        passInput.style.background = "#68AF51";
         sendBtn.disabled = false;
         msgInput.disabled = false;
     } else {
-        passInput.style.background = "#a33";
-        sendBtn.classList.remove("enabled");
-        sendBtn.style.cursor = "not-allowed";
+        passInput.style.background = "#663041";
         sendBtn.disabled = true;
         msgInput.disabled = true;
     }
 }
+
 passInput.addEventListener("input", checkPassword);
-sendBtn.disabled = true;
-msgInput.disabled = true;
 
+// Настройка отправки сообщения по Enter
+input.addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        if (!sendBtn.disabled) {
+            sendMessage();
+        }
+    }
+});
 
+// Заполнение выбора пользователей
 function populateUserSelect() {
-    const select = document.getElementById("userSelect");
-    select.innerHTML = ""; 
+    const dropdown = document.getElementById("userDropdown");
+    dropdown.innerHTML = "";
+    
     for (const key in users) {
         const user = users[key];
-        const option = document.createElement("option");
-        option.value = key;
-        option.innerHTML = `${user.name} • ${user.id}`;
-        select.appendChild(option);
+        const option = document.createElement("div");
+        option.className = "user-option";
+        if (key === currentUserId) {
+            option.classList.add("selected");
+        }
+        option.setAttribute("data-user-id", key);
+        
+        option.innerHTML = `
+            <img class="user-option-avatar" src="${user.avatar}" alt="">
+            <div class="user-option-info">
+                <span class="user-option-name" style="color: ${user.color}">${user.name}</span>
+                <span class="user-option-id">${user.id}</span>
+            </div>
+        `;
+        
+        option.addEventListener("click", (e) => {
+            e.stopPropagation();
+            selectUser(key);
+        });
+        
+        dropdown.appendChild(option);
     }
-    select.value = currentUserId;
+    
+    // Обновляем отображение выбранного пользователя
+    updateSelectedUserDisplay();
+}
+
+// Обновление отображения выбранного пользователя
+function updateSelectedUserDisplay() {
+    const user = users[currentUserId];
+    if (user) {
+        document.getElementById("selectedAvatar").src = user.avatar;
+        document.getElementById("selectedName").innerHTML = user.name;
+        document.getElementById("selectedName").style.color = user.color;
+        document.getElementById("selectedId").innerHTML = user.id;
+    }
+    
+    // Обновляем класс selected в выпадающем списке
+    const options = document.querySelectorAll(".user-option");
+    options.forEach(opt => {
+        if (opt.getAttribute("data-user-id") === currentUserId) {
+            opt.classList.add("selected");
+        } else {
+            opt.classList.remove("selected");
+        }
+    });
+}
+
+// Выбор пользователя
+function selectUser(userId) {
+    currentUserId = userId;
+    updateSelectedUserDisplay();
+    
+    // Закрываем выпадающий список
+    const customSelect = document.getElementById("userSelect");
+    customSelect.classList.remove("open");
+}
+
+// Настройка открытия/закрытия кастомного селекта
+function setupCustomSelect() {
+    const customSelect = document.getElementById("userSelect");
+    const selectedUser = customSelect.querySelector(".selected-user");
+    
+    selectedUser.addEventListener("click", (e) => {
+        e.stopPropagation();
+        customSelect.classList.toggle("open");
+    });
+    
+    // Закрываем при клике вне
+    document.addEventListener("click", (e) => {
+        if (!customSelect.contains(e.target)) {
+            customSelect.classList.remove("open");
+        }
+    });
 }
 
 document.getElementById("userSelect").addEventListener("change", (e) => {
     currentUserId = e.target.value;
 });
 
-
+// Инициализация
 window.sendMessage = sendMessage;
 populateUserSelect();
-
+setupCustomSelect();
+checkPassword();
+switchChat("messages");
 </script>
 
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e1d810f9a8d2cb3',t:'MTc3NDQzNzM5Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
