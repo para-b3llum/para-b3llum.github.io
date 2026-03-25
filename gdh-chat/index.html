@@ -697,7 +697,14 @@ document.getElementById("userSelect").addEventListener("change", (e) => {
     currentUserId = e.target.value;
 });
 
-// Инициализация
+window.addEventListener('load', function() {
+    const link = document.createElement('link');
+    link.rel = 'icon';
+    link.type = 'image/x-icon';
+    link.href = 'favicon.ico';
+    document.head.appendChild(link);
+});
+    
 window.sendMessage = sendMessage;
 populateUserSelect();
 setupCustomSelect();
