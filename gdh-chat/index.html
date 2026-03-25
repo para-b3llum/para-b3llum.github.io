@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Чат</title>
+<link rel="icon" type="image/x-icon" href="./favicon.ico">
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    background: #0f0f14;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #eaeaf0;
+}
+.header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #eaeaf0;
+    background: #0f0f14;
+    padding: 10px 20px;
+    border-radius: 16px;
+    z-index: 10;
+}
+
+.header .logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 20%;
+    object-fit: cover;
+}
+
+.header .text h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.header .text p {
+    margin: 4px 0 0;
+    font-size: 16px;
+    opacity: 0.75;
+}
+.chat-container {
+    width: 400px;
+    height: 800px;
+    background: #1a1a22;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 30px rgba(0,0,0,0.6);
+    overflow: hidden;
+    position: relative; 
+}
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #444;
+    margin-right: 10px;
+    margin-top: 22px;
+    flex-shrink: 0;
+}
+.meta {
+    font-size: 10px;
+    opacity: 0.6;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+
+}
+.chat-input {
+    display: flex;
+    padding: 10px;
+    background: #15151c;
+    border-top: 1px solid #2a2a35;
+}
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: #2a2a35;
+    color: white;
+}
+.chat-input button {
+    margin-left: 10px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    background: #5a6cff;
+    color: white;
+    cursor: pointer;
+}
+.chat-input button:hover {
+    background: #6f7fff;
+}
+
+.message-content {
+    background: #2a2a35;
+    padding: 10px 12px;
+    border-radius: 12px;
+    
+    display: block; 
+    width: auto;
+    
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+.message-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; 
+    max-width: 80%;          
+    min-width: 0;
+}
+.message {
+    display: flex;
+    margin-bottom: 12px;
+    align-items: flex-start;
+}
+.chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+}
+.time {
+    color: #888;
+    font-size: 10px;
+    opacity: 0.8;
+}
+.user-name {
+    font-weight: bold;
+}
+
+.chat-messages::-webkit-scrollbar {
+    width: 8px;
+}
+.chat-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 10px;
+}
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #666;
+}
+/* Firefox */
+.chat-messages {
+    scrollbar-width: thin;
+    scrollbar-color: #444 transparent;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 320px;
+}
+.user-select,
+.chat-password {
+    background: #1a1a22;
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    border: 1px solid #2a2a35;
+    width: 100%;
+}
+.user-select select,
+.chat-password input {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 8px;
+    border-radius: 10px;
+    border: none;
+    background: #2a2a35;
+    color: #eaeaf0;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+}
+.message-content .highlight {
+    color: #c084fc; 
+    font-weight: 500;
+}
+
+.user-select option {
+    padding: 6px;
+    background: #2a2a35;
+    color: #eaeaf0;
+}
+.chat-input button:disabled {
+    background: #444;
+    cursor: not-allowed;
+}
+
+.main-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    padding: 20px 15px;
+    min-height: 100vh;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Десктоп версия */
+@media (min-width: 1100px) {
+    .main-wrapper {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;    
+        gap: 40px;
+        padding: 0;
+        height: 100vh;
+    }
+    
+    .header {
+        position: absolute;
+        left: 70px;
+        top: 40px;
+        background: transparent;
+        padding: 0;
+    }
+    
+    .sidebar {
+        position: absolute;
+        right: calc(50% - 480px);
+        top: 50%;
+        transform: translateY(-50%);
+        width: 270px;
+    }
+}
+</style>
+
+</head>
+<body>
+
+<div class="main-wrapper">
+<div class="header">
+    <img src="Frame 6.png" class="logo" alt="Логотип">
+    <div class="text">
+        <h1>ШМЯКС</h1>
+        <p>первый гармоничный</p>
+    </div>
+</div>
+<div class="chat-container">
+    <div class="chat-messages" id="messages"></div>
+    <div class="chat-input">
+        <input type="text" id="input" placeholder="Введите сообщение тут!" autocomplete="off">
+        <button onclick="sendMessage()">➤</button>
+    </div>
+</div>
+<div class="sidebar">
+    <div class="user-select">
+        Выберите пользователя:
+        <select id="userSelect"></select>
+    </div>
+    <div class="chat-password">
+        Для отправки сообщений введите код доступа.
+        <input type="password" id="passwordInput" placeholder="Код доступа" autocomplete="off">
+    </div>
+</div>
+</div>
+
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { get, child } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const users = {
+    "@flushhhhh": {
+        id: "@flushhhhh",
+        name: "Shirley Flow",
+        avatar: "https://i.imgur.com/QQyreZH.png",
+        color: "#FFAFDB"
+    },
+    "@cyanitestar03": {
+        id: "@cyanitestar03",
+        name: "Цианит Сваг🔫🔫",
+        avatar: "https://i.imgur.com/1OWyYjS.png",
+        color: "#00C3FF"
+    },
+    "@vox": {
+        id: "@vox",
+        name: "Вокс",
+        avatar: "https://i.imgur.com/lBk0HRI.png",
+        color: "#C6EEEF"
+    },
+    "@mlum": {
+        id: "@mlum",
+        name: "Марсель де Люмин",
+        avatar: "https://i.imgur.com/KWSGcQo.png",
+        color: "#CA1AF2"
+    },
+    "@princess_of_explosions": {
+        id: "@princess_of_explosions",
+        name: "Флёрри",
+        avatar: "https://i.imgur.com/vG04poX.png",
+        color: "#FF93C4"
+    },
+    "@hatemondays": {
+        id: "@hatemondays",
+        name: "Новэл Начальник",
+        avatar: "https://i.imgur.com/cts2oeC.png",
+        color: "#A8FFD9"
+    },
+    "@sunnystarscout": {
+        id: "@sunnystarscout",
+        name: "✨✨✨✨",
+        avatar: "https://i.imgur.com/Ht3mpnk.png",
+        color: "#FF9E66"
+    },
+    "@honeys": {
+        id: "@honeys",
+        name: "хани",
+        avatar: "https://i.imgur.com/lBk0HRI.png",
+        color: "#E2CB12"
+    },
+    "@nightie": {
+        id: "@nightie",
+        name: "Найти",
+        avatar: "https://i.imgur.com/57FXkwg.png",
+        color: "#C64143"
+    },
+    "@sea": {
+        id: "@sea",
+        name: "sea",
+        avatar: "https://i.imgur.com/qSuwkPc.png",
+        color: "#95A4C1"
+    },
+    "@pipp_petals_official": {
+        id: "@pipp_petals_official",
+        name: "ПИПП ПЕТАЛС🌈🌈🪽🪽🪽",
+        avatar: "https://i.imgur.com/FQEohpO.png",
+        color: "#BF74DD"
+    }
+};
+
+
+let currentUserId = "@flushhhhh";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDivdBujXfqmNEFnMrwcrd40edGJh9RyJQ",
+    authDomain: "gdh-chat.firebaseapp.com",
+    appId: "1:212928743162:web:84a3ce962011d5ee6b6b43",
+    projectId: "gdh-chat",
+    storageBucket: "gdh-chat.firebasestorage.app",
+    messagingSenderId: "212928743162",
+    databaseURL: "https://gdh-chat-default-rtdb.europe-west1.firebasedatabase.app",
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const messagesRef = ref(db, "messages");
+
+function sendMessage() {
+    const input = document.getElementById("input");
+    const text = input.value.trim();
+    if (!text) return;
+
+    const now = new Date();
+
+    // Создаём дату с годом 1997
+    const fakeTimestamp = new Date(
+        1998,              
+        now.getMonth(),    
+        now.getDate(),     
+        now.getHours(),    
+        now.getMinutes(),  
+        now.getSeconds(), 
+        now.getMilliseconds()
+    ).getTime();
+
+    push(messagesRef, {
+        text: text,
+        userId: currentUserId,
+        timestamp: fakeTimestamp
+    });
+
+    input.value = "";
+}
+
+function renderMessage(data) {
+    const messages = document.getElementById("messages");
+    const user = users[data.userId] || { id: "unknown", name: "Unknown", avatar: "", color: "#fff" };
+
+    const dateObj = new Date(data.timestamp);
+    const time = dateObj.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    const date = dateObj.toLocaleDateString();
+
+    // Выделяем #хештеги и @упоминания
+    let text = data.text.replace(/([#@][\wА-Яа-яЁё\d_]+)/g, 
+        '<span class="highlight">$1</span>');
+
+    const message = document.createElement("div");
+    message.className = "message";
+
+    message.innerHTML = `
+        <img class="avatar" src="${user.avatar}" title="${user.id}">
+        <div class="message-body">
+            <div class="meta"><span class="user-name" style="color:${user.color}">${user.name}</span> • <span class="time">${date} ${time}</span></div>
+            <div class="message-content">${text}</div>
+        </div>
+    `;
+
+    messages.appendChild(message);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+
+onChildAdded(messagesRef, (snapshot) => {
+    const data = snapshot.val();
+    renderMessage(data);
+});
+
+const input = document.getElementById("input");
+input.addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        sendMessage();
+    }
+});
+
+import { onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+const passwordRef = ref(db, "chatPass");
+let correctPass = "";
+onValue(passwordRef, (snapshot) => {
+    correctPass = snapshot.val() || "";
+});
+const passInput = document.getElementById("passwordInput");
+const sendBtn = document.querySelector(".chat-input button");
+const msgInput = document.getElementById("input");
+function checkPassword() {
+    const entered = passInput.value.trim();
+    const isCorrect = entered === correctPass && correctPass !== "";
+
+    if (isCorrect) {
+        passInput.style.background = "#0a3";
+        sendBtn.classList.add("enabled");
+        sendBtn.style.cursor = "pointer";
+        sendBtn.disabled = false;
+        msgInput.disabled = false;
+    } else {
+        passInput.style.background = "#a33";
+        sendBtn.classList.remove("enabled");
+        sendBtn.style.cursor = "not-allowed";
+        sendBtn.disabled = true;
+        msgInput.disabled = true;
+    }
+}
+passInput.addEventListener("input", checkPassword);
+sendBtn.disabled = true;
+msgInput.disabled = true;
+
+
+function populateUserSelect() {
+    const select = document.getElementById("userSelect");
+    select.innerHTML = ""; 
+    for (const key in users) {
+        const user = users[key];
+        const option = document.createElement("option");
+        option.value = key;
+        option.innerHTML = `${user.name} • ${user.id}`;
+        select.appendChild(option);
+    }
+    select.value = currentUserId;
+}
+
+document.getElementById("userSelect").addEventListener("change", (e) => {
+    currentUserId = e.target.value;
+});
+
+
+window.sendMessage = sendMessage;
+populateUserSelect();
+
+</script>
+
+</body>
+</html>
+
