@@ -3,18 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <title>Чат</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/x-icon" href="./favicon.ico">
 <style>
 body {
     margin: 0;
-    height: 100vh;
+    min-height: 100vh;
     background: #0f0f14;
     font-family: Arial, sans-serif;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column; 
     color: #eaeaf0;
+    box-sizing: border-box;
 }
+
 .header {
     display: flex;
     align-items: center;
@@ -45,8 +47,9 @@ body {
     opacity: 0.75;
 }
 .chat-container {
-    width: 400px;
-    height: 800px;
+    width: 100%;
+    max-width: 400px;
+    height: 700px; 
     background: #1a1a22;
     border-radius: 16px;
     display: flex;
@@ -155,13 +158,12 @@ body {
     scrollbar-width: thin;
     scrollbar-color: #444 transparent;
 }
-
 .sidebar {
     display: flex;
     flex-direction: column;
     gap: 16px;
     width: 100%;
-    max-width: 320px;
+    max-width: 400px;
 }
 .user-select,
 .chat-password {
@@ -171,6 +173,7 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
     border: 1px solid #2a2a35;
     width: 100%;
+    box-sizing: border-box;
 }
 .user-select select,
 .chat-password input {
@@ -207,11 +210,11 @@ body {
     gap: 25px;
     padding: 20px 15px;
     min-height: 100vh;
-    box-sizing: border-box;
     width: 100%;
+    box-sizing: border-box;
 }
 
-/* Десктоп версия */
+/* Десктоп */
 @media (min-width: 1100px) {
     .main-wrapper {
         flex-direction: row;
@@ -232,10 +235,13 @@ body {
     
     .sidebar {
         position: absolute;
-        right: calc(50% - 480px);
+        right: calc(50% - 560px);
         top: 50%;
         transform: translateY(-50%);
-        width: 270px;
+        width: 350px;
+    }
+    .chat-container {
+        height: 800px;
     }
 }
 </style>
