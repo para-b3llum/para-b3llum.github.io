@@ -353,13 +353,13 @@ body {
 }
 
 .message-image {
-    max-width: 100%;
+    width: 100%;
     max-height: 300px;
+    object-fit: cover;
     border-radius: 12px;
-    margin: 5px 0;
     cursor: pointer;
     transition: transform 0.2s;
-    object-fit: contain;
+    display: block;
 }
 .message-image:hover {
     transform: scale(1.02);
@@ -495,9 +495,9 @@ import { getDatabase, ref, push, onChildAdded, query, orderByChild } from "https
 import { get, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const users = {
-    "@flooshhhhh": {id: "@flooshhhhh",name: "Shirley Flow",avatar: "https://i.imgur.com/QQyreZH.png",color: "#FFAFDB"},
+    "@flushhhhh": {id: "@flushhhhh",name: "Shirley Flow",avatar: "https://i.imgur.com/QQyreZH.png",color: "#FFAFDB"},
     "@cyanitestar03": {id: "@cyanitestar03",name: "Цианит Сваг🔫🔫",avatar: "https://i.imgur.com/1OWyYjS.png",color: "#00C3FF"},
-    "@id54271719": {id: "@id54271719",name: "Вокс",avatar: "https://i.imgur.com/lBk0HRI.png",color: "#C6EEEF"},
+    "@vox": {id: "@vox",name: "Вокс",avatar: "https://i.imgur.com/lBk0HRI.png",color: "#C6EEEF"},
     "@mlum": {id: "@mlum",name: "Марсель де Люмин",avatar: "https://i.imgur.com/KWSGcQo.png",color: "#CA1AF2"},
     "@princess_of_explosions": {id: "@princess_of_explosions",name: "Флёрри",avatar: "https://i.imgur.com/vG04poX.png",color: "#FF93C4"},
     "@hatemondays": {id: "@hatemondays",name: "Новэл Начальник",avatar: "https://i.imgur.com/cts2oeC.png",color: "#A8FFD9"},
@@ -614,9 +614,8 @@ function renderMessage(data) {
     } else {
         // Выделяем #хештеги и @упоминания в тексте
         text = text.replace(/([#@][\wА-Яа-яЁё\d_]+)/g, '<span class="highlight">$1</span>');
-        // Также находим ссылки на изображения внутри текста и заменяем их на превью
         text = text.replace(/(https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp|svg))/gi, (match) => {
-            return `<img class="message-image" src="${match}" alt="Изображение" onclick="openImageModal('${match}')" style="max-width: 100%; max-height: 200px; display: block; margin-top: 5px;" onerror="this.style.display='none'">`;
+            return `<img class="message-image" src="${match}" alt="Изображение" onclick="openImageModal('${match}')" style="max-width: 100%; max-height: 200px; display: block; margin-top: 0px;" onerror="this.style.display='none'">`;
         });
         imageHtml = `<div class="message-content">${text}</div>`;
     }
