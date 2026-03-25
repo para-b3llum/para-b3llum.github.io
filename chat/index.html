@@ -456,7 +456,7 @@ const users = {
 };
 
 let currentUserId = loadSelectedUser();
-let currentChat = "messages"; 
+let currentChat = "general"; 
 let currentMessagesRef = null; 
 let unsubscribe = null; 
 
@@ -486,7 +486,6 @@ const db = getDatabase(app);
 function switchChat(chatId) {
     currentChat = chatId;
     
-
     document.querySelectorAll('.chat-btn').forEach(btn => {
         if (btn.getAttribute('data-chat') === chatId) {
             btn.classList.add('active');
@@ -607,7 +606,7 @@ function checkPassword() {
 
 function isPasswordRequired() {
     //чаты без пароля
-    const openChats = ["interdimensional"];
+    const openChats = ["noobs"];
     return !openChats.includes(currentChat);
 }
 
