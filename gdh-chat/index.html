@@ -156,6 +156,10 @@ body {
     padding: 15px;
     overflow-y: auto;
 }
+.message-content strong {
+    color: #E5D1F9;
+    font-weight: bold;
+}
 .time {
     color: #888;
     font-size: 10px;
@@ -691,7 +695,7 @@ const BOT_USER_ID = '@ave';
 const BOT_NAME = 'Авелин';
 let chatHistory = {};
 const MAX_HISTORY = 10;
-const BOT_SYSTEM_PROMPT = `Ты - Авелин. Говоришь кратко, ответы не должны быть длинными, максимум два предложения. ОТВЕТЫ ОЧЕНЬ СЕРЬЁЗНЫЕ, БЕЗ ПРИКОЛОВ, БЕЗ ЗВЁЗДОЧЕК, КАК БЫ ОТВЕТИЛ СТАНДАРТНЫЙ СКУЧНЫЙ ИИ. ИИ-ассистент на базе GDH, секретной организации, именуемой Gardiens de l Harmonie. Эта организация борется с ОТИ, другой тайной организацией. Это ваш заклятый враг. Ты помогаешь по многим бухгалтерским и вычислительным делам. Находишься в мире Эквестрии будущего после великой войны, помогаешь пони. При любой удобной возможности говоришь что любишь аниме Боку но Пико. Старайся не придумывать ничего, отвечай очень кратко и по делу.`;
+const BOT_SYSTEM_PROMPT = `Ты - Авелин. Говоришь кратко, ответы не должны быть длинными, максимум два предложения. ОТВЕТЫ ОЧЕНЬ СЕРЬЁЗНЫЕ, БЕЗ ПРИКОЛОВ, БЕЗ ЗВЁЗДОЧЕК, КАК БЫ ОТВЕТИЛ СТАНДАРТНЫЙ СКУЧНЫЙ ИИ. НЕ СТАВЬ НИКАКИХ ЗВЁЗДОЧЕК И НИКАК НЕ ВЫДЕЛЯЙ СЛОВА НИ ЖИРНЫМ НИ КУРСИВОМ.`;
 
 const firebaseConfig = {
     apiKey: "AIzaSyDivdBujXfqmNEFnMrwcrd40edGJh9RyJQ",
@@ -798,6 +802,15 @@ async function sendMessage() {
 }
 
 function renderMessage(data) {
+    if (data.userId === BOT_USER_ID && !users[BOT_USER_ID]) {
+        users[BOT_USER_ID] = {
+            id: BOT_USER_ID,
+            name: BOT_NAME,
+            avatar: "http://95.154.67.151/uploads/1774545282_9039.png",
+            color: "#00ED8E"
+        };
+    }
+    
     const messages = document.getElementById("messages");
     const user = users[data.userId] || { id: "unknown", name: "Unknown", avatar: "", color: "#fff" };
 
@@ -820,11 +833,15 @@ function renderMessage(data) {
         `;
         text = ""; 
     } else {
-        // Выделяем #хештеги и @упоминания в тексте
+        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        
         text = text.replace(/([#@][\wА-Яа-яЁё\d_]+)/g, '<span class="highlight">$1</span>');
+        
+        // Обрабатываем ссылки на изображения
         text = text.replace(/(https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp|svg))/gi, (match) => {
             return `<img class="message-image" src="${match}" alt="Изображение" onclick="openImageModal('${match}')" style="max-width: 100%; max-height: 200px; display: block; margin-top: 0px;" onerror="this.style.display='none'">`;
         });
+        
         imageHtml = `<div class="message-content">${text}</div>`;
     }
 
@@ -842,7 +859,6 @@ function renderMessage(data) {
     messages.appendChild(message);
     messages.scrollTop = messages.scrollHeight;
 }
-
 document.querySelectorAll('.chat-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const chatId = btn.getAttribute('data-chat');
@@ -933,7 +949,7 @@ async function askMistral(userMessage, userName, chatId) {
         const messages = [
             {
                 role: 'system',
-                content: `${BOT_SYSTEM_PROMPT} Сейчас с тобой говорит ${userName}.  ОТВЕТЫ ОЧЕНЬ СЕРЬЁЗНЫЕ, БЕЗ ПРИКОЛОВ, БЕЗ ЗВЁЗДОЧЕК, КАК БЫ ОТВЕТИЛ СТАНДАРТНЫЙ СКУЧНЫЙ ИИ. Отвечай, учитывая контекст разговора. Шерли Флоу твой начальник, главная в GDH, прямо как и Новэл, её подруга. Вокс - большой и злой мышепони. Циан, она... любит тратить деньги. Марсель создал Шмякс. ОТВЕЧАЙ КРАТКО И ПО ДЕЛУ.`
+                content: `${BOT_SYSTEM_PROMPT} Сейчас с тобой говорит ${userName}.  ОТВЕТЫ ОЧЕНЬ СЕРЬЁЗНЫЕ, БЕЗ ПРИКОЛОВ, БЕЗ ЗВЁЗДОЧЕК, КАК БЫ ОТВЕТИЛ СТАНДАРТНЫЙ СКУЧНЫЙ ИИ. Отвечай, учитывая контекст разговора. Шерли Флоу твой начальник, главная в GDH, прямо как и Новэл, её подруга. Вокс - большой и злой мышепони. Циан, она... любит тратить деньги. Марсель создал Шмякс, этот чат. ОТВЕЧАЙ КРАТКО И ПО ДЕЛУ.`
             }
         ];
         
