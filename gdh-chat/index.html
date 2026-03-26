@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 body {
     margin: 0;
@@ -102,7 +103,7 @@ body {
     transition: all 0.2s;
 }
 .chat-input button:hover:not(:disabled) {
-    background: #D922F9;
+    background: #F7AC22;
 }
 .chat-input button:disabled {
     background: #444 !important;
@@ -113,7 +114,7 @@ body {
     background: #c084fc;
 }
 #uploadBtn:hover:not(:disabled) {
-    background: #D922F9;
+    background: #F7AC22;
 }
 #uploadBtn:disabled {
     background: #444 !important;
@@ -121,7 +122,7 @@ body {
     opacity: 0.6 !important;
 }
 .chat-input button:hover {
-    background: #D922F9;
+    background: #F7AC22;
 }
 
 .message-content {
@@ -412,6 +413,98 @@ body {
     display: flex;
 }
 
+.footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: auto;
+    background: transparent;
+    position: relative;
+    z-index: 5;
+}
+.footer a {
+    color: #888;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+    cursor: pointer;
+}
+.footer a:hover {
+    color: #c084fc;
+}
+.help-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.help-modal-content {
+    background: linear-gradient(135deg, #1a1a22 0%, #2a2a35 100%);
+    border-radius: 24px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    margin: 20px;
+    cursor: default;
+    animation: modalFadeIn 0.3s ease;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(192, 132, 252, 0.3);
+}
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+.help-modal-content h2 {
+    margin: 0 0 20px 0;
+    color: #c084fc;
+    font-size: 28px;
+    text-align: center;
+    background: linear-gradient(135deg, #c084fc, #F7AC22);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.help-modal-content p {
+    color: #eaeaf0;
+    line-height: 1.6;
+    margin: 15px 0;
+    font-size: 14px;
+}
+.help-modal-content ul {
+    color: #eaeaf0;
+    line-height: 1.8;
+    padding-left: 20px;
+    margin: 15px 0;
+}
+.help-modal-content li {
+    margin: 8px 0;
+}
+.help-modal-content .highlight {
+    color: #c084fc;
+    font-weight: bold;
+}
+.close-hint {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #3a3a45;
+    color: #888;
+    font-size: 12px;
+}
+
 .main-wrapper {
     display: flex;
     flex-direction: column;
@@ -425,13 +518,28 @@ body {
 
 /* Десктоп */
 @media (min-width: 1100px) {
+.main-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    padding: 20px 15px;
+    min-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* Десктоп */
+@media (min-width: 1100px) {
     .main-wrapper {
         flex-direction: row;
         justify-content: center;
-        align-items: center;    
+        align-items: center;
         gap: 40px;
         padding: 0;
-        height: 100vh;
+        min-height: 100vh;
     }
     
     .header {
@@ -449,15 +557,25 @@ body {
         transform: translateY(-50%);
         width: 350px;
     }
+    
     .chat-container {
         height: 800px;
+        width: 600px;
+    }
+    
+    .footer {
+        position: absolute;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        padding: 0;
     }
 }
 </style>
-
 </head>
-<body>
 
+<body>
 <div class="main-wrapper">
 <div class="header">
     <img src="Frame 6.png" class="logo" alt="Логотип">
@@ -468,10 +586,14 @@ body {
 </div>
 <div class="chat-container">
     <div class="chat-messages" id="messages"></div>
-    <div class="chat-input">
-        <input type="text" id="input" placeholder="Введите сообщение тут!" autocomplete="off">
-        <button id="uploadBtn" style="background: #c084fc; margin-left: 10px;">📎</button>
-        <button id="sendBtn" onclick="sendMessage()">➤</button>
+<div class="chat-input">
+    <input type="text" id="input" placeholder="Введите сообщение тут!" autocomplete="off">
+        <button id="uploadBtn" style="background: #c084fc; margin-left: 10px;">
+            <i class="fas fa-image"></i>
+        </button>
+        <button id="sendBtn" onclick="sendMessage()">
+        <i class="fas fa-paper-plane"></i>
+        </button>
     </div>
 <input type="file" id="fileInput" accept="image/*" style="display: none;">
 </div>
@@ -510,12 +632,28 @@ body {
     <img id="modalImage" src="" alt="Увеличенное изображение">
 </div>
 
+<div class="footer">
+    <a id="helpBtn">справка</a>
+</div>
+<div id="helpModal" class="help-modal">
+    <div class="help-modal-content" onclick="event.stopPropagation()">
+        <h2>СПРАВКА</h2>
+        <p style="text-align: center;"><strong>Внимание:</strong></p>
+        <p style="text-align: center;">
+Если вы находитесь на para-b3llum.github.io, то у вас скорее всего не загружаются картинки. Есть два выхода.<br><br>
+1. Вторая версия сайта находится на <a class="highlight" href="http://95.154.67.151/">этом ресурсе.</a> Сервер не имеет сертификатов, с ним могут быть проблемы с подключением. Но изображения там загружаются как пить дать.<br>
+2. В браузерных настройках сайта, слева от адреса, cтоит разрешить небезопасный контент. Должно помочь.<br><br>
+Да поможет вам Избранная.
+</p>
+        <div class="close-hint">жмите в любое место, чтобы закрыть</div>
+    </div>
+</div>
+
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, push, onChildAdded, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { get, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
 const users = {
     "@flooshhhhh": {id: "@flooshhhhh",name: "Shirley Flow",avatar: "https://i.imgur.com/QQyreZH.png",color: "#FFAFDB"},
     "@cyanitestar03": {id: "@cyanitestar03",name: "Цианит Сваг🔫🔫",avatar: "https://i.imgur.com/1OWyYjS.png",color: "#00C3FF"},
@@ -830,10 +968,29 @@ window.addEventListener('load', function() {
     document.head.appendChild(link);
 });
 
+const helpBtn = document.getElementById('helpBtn');
+const helpModal = document.getElementById('helpModal');
+if (helpBtn && helpModal) {
+    helpBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        helpModal.style.display = 'flex';
+    });
+    
+    helpModal.addEventListener('click', () => {
+        helpModal.style.display = 'none';
+    });
+    
+    // Закрытие по Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && helpModal.style.display === 'flex') {
+            helpModal.style.display = 'none';
+        }
+    });
+}
+
 const UPLOAD_URL = 'http://95.154.67.151/upload.php';
 const uploadBtn = document.getElementById('uploadBtn');
 const fileInput = document.getElementById('fileInput');
-
 if (uploadBtn && fileInput) {
     uploadBtn.addEventListener('click', () => {
         fileInput.click();
