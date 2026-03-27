@@ -48,6 +48,7 @@ body {
     font-size: 16px;
     opacity: 0.75;
 }
+
 .chat-container {
     width: 100%;
     max-width: 600px;
@@ -60,29 +61,41 @@ body {
     overflow: hidden;
     position: relative; 
 }
+
 .avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     background: #444;
     margin-right: 10px;
-    margin-top: 22px;
+    margin-top: 15px;
     flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.1s;
 }
+
+.avatar:active {
+    transform: scale(0.95);
+}
+
 .meta {
     font-size: 10px;
     opacity: 0.8;
-    margin-top: 5px;
+    margin-top: 0;
     margin-bottom: 5px;
-    margin-left: 5px;
-
+    margin-left: 0;
+    display: flex;
+    gap: 5px;
+    align-items: center;
 }
+
 .chat-input {
     display: flex;
     padding: 10px;
     background: #15151c;
     border-top: 1px solid #2a2a35;
 }
+
 .chat-input input {
     flex: 1;
     padding: 10px;
@@ -92,6 +105,7 @@ body {
     background: #2a2a35;
     color: white;
 }
+
 .chat-input button {
     margin-left: 10px;
     padding: 10px 15px;
@@ -102,69 +116,103 @@ body {
     cursor: pointer;
     transition: all 0.2s;
 }
+
 .chat-input button:hover:not(:disabled) {
     background: #F7AC22;
 }
+
 .chat-input button:disabled {
     background: #444 !important;
     cursor: not-allowed !important;
     opacity: 0.6 !important;
 }
+
 #uploadBtn {
     background: #c084fc;
 }
+
 #uploadBtn:hover:not(:disabled) {
     background: #F7AC22;
 }
+
 #uploadBtn:disabled {
     background: #444 !important;
     cursor: not-allowed !important;
     opacity: 0.6 !important;
-}
-.chat-input button:hover {
-    background: #F7AC22;
 }
 
 .message-content {
     background: #2a2a35;
     padding: 10px 12px;
     border-radius: 12px;
-    
     display: block; 
     width: auto;
-    
     overflow-wrap: anywhere;
     word-break: normal;
     max-height: 400px; 
     overflow-y: auto;
+    position: relative;
+    transition: text-shadow 0.2s ease, box-shadow 0.2s ease;
 }
+
 .message-body {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; 
-    max-width: 80%;          
+    align-items: flex-start;
+    max-width: 85%;
     min-width: 0;
-    max-height: 500px;
 }
+
 .message {
     display: flex;
-    margin-bottom: 3px;
+    margin-bottom: 12px;
     align-items: flex-start;
+    width: 100%;
 }
+
+.message-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: nowrap;
+}
+
+.message-content-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.message-content-container {
+    flex: 0 1 auto;
+}
+
+.message-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
 .chat-messages {
     flex: 1;
     padding: 15px;
     overflow-y: auto;
 }
+
 .message-content strong {
     color: #E5D1F9;
     font-weight: bold;
 }
+
 .time {
     color: #888;
     font-size: 10px;
     opacity: 0.8;
 }
+
 .user-name {
     font-weight: bold;
 }
@@ -172,21 +220,26 @@ body {
 .chat-messages::-webkit-scrollbar {
     width: 8px;
 }
+
 .chat-messages::-webkit-scrollbar-track {
     background: transparent;
 }
+
 .chat-messages::-webkit-scrollbar-thumb {
     background: #444;
     border-radius: 10px;
 }
+
 .chat-messages::-webkit-scrollbar-thumb:hover {
     background: #666;
 }
+
 /* Firefox */
 .chat-messages {
     scrollbar-width: thin;
     scrollbar-color: #444 transparent;
 }
+
 .sidebar {
     display: flex;
     flex-direction: column;
@@ -200,6 +253,7 @@ body {
     width: 100%;
     cursor: pointer;
 }
+
 .selected-user {
     background: #2a2a35;
     border-radius: 12px;
@@ -210,35 +264,43 @@ body {
     transition: all 0.2s;
     border: 1px solid #3a3a45;
 }
+
 .selected-user:hover {
     background: #363646;
     border-color: #5a6cff;
 }
+
 .selected-user-avatar {
     width: 36px;
     height: 36px;
     border-radius: 50%;
     object-fit: cover;
 }
+
 .selected-user-info {
     flex: 1;
 }
+
 .selected-user-name {
     font-weight: bold;
     font-size: 15px;
     display: block;
 }
+
 .selected-user-id {
     font-size: 11px;
     opacity: 0.6;
 }
+
 .selected-user-arrow {
     font-size: 20px;
     transition: transform 0.2s;
 }
+
 .custom-select.open .selected-user-arrow {
     transform: rotate(180deg);
 }
+
 .user-dropdown {
     position: absolute;
     top: calc(100% + 5px);
@@ -253,9 +315,11 @@ body {
     display: none;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
+
 .custom-select.open .user-dropdown {
     display: block;
 }
+
 .user-option {
     display: flex;
     align-items: center;
@@ -265,40 +329,50 @@ body {
     transition: background 0.2s;
     border-bottom: 1px solid #2a2a35;
 }
+
 .user-option:last-child {
     border-bottom: none;
 }
+
 .user-option:hover {
     background: #2a2a35;
 }
+
 .user-option.selected {
     background: #5a6cff20;
     border-left: 3px solid #5a6cff;
 }
+
 .user-option-avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
 }
+
 .user-option-info {
     flex: 1;
 }
+
 .user-option-name {
     font-weight: bold;
     font-size: 14px;
     display: block;
 }
+
 .user-option-id {
     font-size: 11px;
     opacity: 0.6;
 }
+
 .user-dropdown::-webkit-scrollbar {
     width: 6px;
 }
+
 .user-dropdown::-webkit-scrollbar-track {
     background: transparent;
 }
+
 .user-dropdown::-webkit-scrollbar-thumb {
     background: #444;
     border-radius: 10px;
@@ -314,6 +388,7 @@ body {
     width: 100%;
     box-sizing: border-box;
 }
+
 .user-select select,
 .chat-password input {
     width: 100%;
@@ -327,6 +402,7 @@ body {
     outline: none;
     box-sizing: border-box;
 }
+
 .message-content .highlight {
     color: #c084fc; 
     font-weight: 500;
@@ -337,10 +413,12 @@ body {
     background: #2a2a35;
     color: #eaeaf0;
 }
+
 .chat-input button:disabled {
     background: #444;
     cursor: not-allowed;
 }
+
 .chat-select {
     background: #1a1a22;
     border-radius: 16px;
@@ -385,16 +463,20 @@ body {
     cursor: pointer;
     transition: transform 0.2s;
     display: block;
+    margin: 0;
 }
+
 .message-image:hover {
     transform: scale(1.02);
 }
+
 .message-content img {
     max-width: 100%;
     max-height: 300px;
     border-radius: 12px;
     display: block;
 }
+
 .image-modal {
     display: none;
     position: fixed;
@@ -408,11 +490,13 @@ body {
     align-items: center;
     cursor: pointer;
 }
+
 .image-modal img {
     max-width: 90%;
     max-height: 90%;
     object-fit: contain;
 }
+
 .image-modal.active {
     display: flex;
 }
@@ -425,6 +509,7 @@ body {
     position: relative;
     z-index: 5;
 }
+
 .footer a {
     color: #888;
     text-decoration: none;
@@ -432,9 +517,11 @@ body {
     transition: color 0.2s;
     cursor: pointer;
 }
+
 .footer a:hover {
     color: #c084fc;
 }
+
 .help-modal {
     display: none;
     position: fixed;
@@ -449,6 +536,7 @@ body {
     align-items: center;
     cursor: pointer;
 }
+
 .help-modal-content {
     background: linear-gradient(135deg, #1a1a22 0%, #2a2a35 100%);
     border-radius: 24px;
@@ -461,6 +549,7 @@ body {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(192, 132, 252, 0.3);
 }
+
 @keyframes modalFadeIn {
     from {
         opacity: 0;
@@ -471,6 +560,7 @@ body {
         transform: scale(1);
     }
 }
+
 .help-modal-content h2 {
     margin: 0 0 20px 0;
     color: #c084fc;
@@ -481,25 +571,30 @@ body {
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
+
 .help-modal-content p {
     color: #eaeaf0;
     line-height: 1.6;
     margin: 15px 0;
     font-size: 14px;
 }
+
 .help-modal-content ul {
     color: #eaeaf0;
     line-height: 1.8;
     padding-left: 20px;
     margin: 15px 0;
 }
+
 .help-modal-content li {
     margin: 8px 0;
 }
+
 .help-modal-content .highlight {
     color: #c084fc;
     font-weight: bold;
 }
+
 .close-hint {
     text-align: center;
     margin-top: 20px;
@@ -509,30 +604,74 @@ body {
     font-size: 12px;
 }
 
-.main-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 25px;
-    padding: 20px 15px;
-    min-height: 100vh;
-    width: 100%;
-    box-sizing: border-box;
+/* Анимации для огня */
+@keyframes flameFlicker {
+    0% { text-shadow: 0 0 calc(var(--text-glow-size, 0px) * 0.5) rgba(247, 172, 34, var(--text-glow-opacity, 0)); }
+    25% { text-shadow: 0 0 var(--text-glow-size, 0px) rgba(247, 172, 34, var(--text-glow-opacity, 0)); }
+    50% { text-shadow: 0 0 calc(var(--text-glow-size, 0px) * 0.6) rgba(247, 172, 34, var(--text-glow-opacity, 0)); }
+    75% { text-shadow: 0 0 calc(var(--text-glow-size, 0px) * 0.8) rgba(247, 172, 34, var(--text-glow-opacity, 0)); }
+    100% { text-shadow: 0 0 calc(var(--text-glow-size, 0px) * 0.5) rgba(247, 172, 34, var(--text-glow-opacity, 0)); }
 }
 
-/* Десктоп */
-@media (min-width: 1100px) {
+@keyframes firePulse {
+    0% { 
+        box-shadow: 0 0 calc(var(--glow-size) * 0.5) rgba(247, 172, 34, calc(var(--glow-opacity) * 0.6));
+    }
+    50% { 
+        box-shadow: 0 0 var(--glow-size) rgba(247, 172, 34, var(--glow-opacity));
+    }
+    100% { 
+        box-shadow: 0 0 calc(var(--glow-size) * 0.5) rgba(247, 172, 34, calc(var(--glow-opacity) * 0.6));
+    }
+}
+
+.fire-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    padding: 2px 4px;
+    border-radius: 16px;
+    color: #B85C2A;
+}
+
+.fire-count i {
+    font-size: 13px;
+    transition: transform 0.1s;
+    color: #B85C2A;
+}
+
+.fire-count span {
+    color: #B85C2A;
+    font-weight: 500;
+}
+
+.fire-count:hover i {
+    transform: scale(1.2);
+}
+
+.fire-count.has-fire {
+    animation: flameFlicker var(--indicator-flicker, 1s) infinite;
+}
+
+.message-content.has-fire {
+    background: linear-gradient(135deg, var(--start-color), var(--end-color));
+    box-shadow: 0 0 var(--glow-size) rgba(247, 172, 34, var(--glow-opacity));
+    animation: flameFlicker var(--flicker-duration) infinite, firePulse var(--pulse-duration) infinite;
+}
+
 .main-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
     gap: 25px;
     padding: 20px 15px;
     min-height: 100vh;
     width: 100%;
     box-sizing: border-box;
-    position: relative;
 }
 
 /* Десктоп */
@@ -656,7 +795,7 @@ body {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded, query, orderByChild, limitToLast, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, push, onChildAdded, onChildChanged, query, orderByChild, limitToLast, get, child, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 const users = {
     "@flooshhhhh": {id: "@flooshhhhh",name: "Shirley Flow",avatar: "https://i.imgur.com/QQyreZH.png",color: "#FFAFDB"},
     "@cyanitestar03": {id: "@cyanitestar03",name: "Цианит Сваг🔫🔫",avatar: "https://i.imgur.com/1OWyYjS.png",color: "#00C3FF"},
@@ -713,7 +852,6 @@ const db = getDatabase(app);
 function switchChat(chatId) {
     currentChat = chatId;
     
-
     document.querySelectorAll('.chat-btn').forEach(btn => {
         if (btn.getAttribute('data-chat') === chatId) {
             btn.classList.add('active');
@@ -729,11 +867,137 @@ function switchChat(chatId) {
         unsubscribe();
     }
     
-    currentMessagesRef = ref(db, chatId);
-    unsubscribe = onChildAdded(currentMessagesRef, (snapshot) => {
-        const data = snapshot.val();
-        renderMessage(data);
+    const chatRef = ref(db, chatId);
+    let messageCount = 0;
+    let expectedCount = 0;
+    
+    const countRef = ref(db, chatId);
+    get(countRef).then((snapshot) => {
+        expectedCount = snapshot.size;
     });
+    
+    const addedUnsubscribe = onChildAdded(chatRef, (snapshot) => {
+        const data = snapshot.val();
+        data.messageId = snapshot.key;
+        renderMessage(data);
+        messageCount++;
+        
+        const messagesDiv = document.getElementById("messages");
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    });
+    
+    const changedUnsubscribe = onChildChanged(chatRef, (snapshot) => {
+        const data = snapshot.val();
+        const messageId = snapshot.key;
+    
+        const existingMessage = document.querySelector(`.message[data-message-id="${messageId}"]`);
+        if (existingMessage) {
+            const fireCount = data.fireCount || 0;
+            const hasFire = fireCount > 0;
+            
+            const messageRight = existingMessage.querySelector('.message-right');
+        
+            if (hasFire) {
+                let fireIndicatorSpan = existingMessage.querySelector('.fire-count');
+            
+                if (!fireIndicatorSpan && messageRight) {
+                    const intensity = Math.min(fireCount / 1000, 1);
+                    const indicatorFlicker = Math.max(0.5, 1.5 - intensity * 1.2);
+                
+                    fireIndicatorSpan = document.createElement('div');
+                    fireIndicatorSpan.className = 'fire-count has-fire';
+                    fireIndicatorSpan.style.setProperty('--indicator-flicker', `${indicatorFlicker}s`);
+                    fireIndicatorSpan.setAttribute('onclick', `event.stopPropagation(); addFireToMessage('${messageId}', '${chatId}')`);
+                    fireIndicatorSpan.innerHTML = `
+                        <i class="fas fa-fire"></i>
+                        <span>${fireCount}</span>
+                    `;
+                    messageRight.appendChild(fireIndicatorSpan);
+                } else if (fireIndicatorSpan) {
+                    const fireCountSpan = fireIndicatorSpan.querySelector('span');
+                    if (fireCountSpan) fireCountSpan.textContent = fireCount;
+                
+                    const fireIcon = fireIndicatorSpan.querySelector('i');
+                    if (fireIcon) {
+                        fireIcon.className = 'fas fa-fire';
+                        fireIndicatorSpan.classList.add('has-fire');
+                    }
+                
+                    const intensity = Math.min(fireCount / 1000, 1);
+                    const indicatorFlicker = Math.max(0.5, 1.5 - intensity * 1.2);
+                    fireIndicatorSpan.style.setProperty('--indicator-flicker', `${indicatorFlicker}s`);
+                }
+            } else {
+                const fireIndicatorSpan = existingMessage.querySelector('.fire-count');
+                if (fireIndicatorSpan) {
+                    fireIndicatorSpan.remove();
+                }
+            }
+        
+            const messageContent = existingMessage.querySelector('.message-content');
+            if (messageContent && hasFire) {
+                const intensity = Math.min(fireCount / 1000, 1);
+                const textIntensity = Math.min(fireCount / 500, 1);
+            
+                const startR = Math.floor(42 + (210 - 42) * intensity);
+                const startG = Math.floor(42 + (160 - 42) * intensity);
+                const startB = Math.floor(53 + (220 - 53) * intensity);
+                const startColor = `rgb(${startR}, ${startG}, ${startB})`;
+            
+                const targetR = 247;
+                const targetG = 172;
+                const targetB = 34;
+            
+                const endColorR = Math.floor(startR + (targetR - startR) * intensity);
+                const endColorG = Math.floor(startG + (targetG - startG) * intensity);
+                const endColorB = Math.floor(startB + (targetB - startB) * intensity);
+                const endColor = `rgb(${endColorR}, ${endColorG}, ${endColorB})`;
+            
+                const glowSize = Math.floor(intensity * 20);
+                const glowOpacity = intensity * 0.8;
+                const textGlowSize = Math.floor(textIntensity * 16);
+                const textGlowOpacity = textIntensity * 0.9;
+                const flickerDuration = Math.max(0.4, 1.8 - intensity * 1.4);
+                const pulseDuration = Math.max(0.6, 2.0 - intensity * 1.4);
+            
+                messageContent.style.setProperty('--start-color', startColor);
+                messageContent.style.setProperty('--end-color', endColor);
+                messageContent.style.setProperty('--glow-size', `${glowSize}px`);
+                messageContent.style.setProperty('--glow-opacity', glowOpacity);
+                messageContent.style.setProperty('--text-glow-size', `${textGlowSize}px`);
+                messageContent.style.setProperty('--text-glow-opacity', textGlowOpacity);
+                messageContent.style.setProperty('--flicker-duration', `${flickerDuration}s`);
+                messageContent.style.setProperty('--pulse-duration', `${pulseDuration}s`);
+            
+                if (!messageContent.classList.contains('has-fire')) {
+                    messageContent.classList.add('has-fire');
+                }
+            } else if (messageContent && !hasFire) {
+                messageContent.classList.remove('has-fire');
+                messageContent.style.removeProperty('--start-color');
+                messageContent.style.removeProperty('--end-color');
+                messageContent.style.removeProperty('--glow-size');
+                messageContent.style.removeProperty('--glow-opacity');
+                messageContent.style.removeProperty('--text-glow-size');
+                messageContent.style.removeProperty('--text-glow-opacity');
+                messageContent.style.removeProperty('--flicker-duration');
+                messageContent.style.removeProperty('--pulse-duration');
+            }
+        
+            if (messageContent) {
+                messageContent.setAttribute('data-fire', fireCount);
+            }
+        } else {
+            data.messageId = messageId;
+            renderMessage(data);
+        }
+    });
+    
+    unsubscribe = () => {
+        addedUnsubscribe();
+        changedUnsubscribe();
+    };
+    
     checkPassword();
 }
 
@@ -753,10 +1017,13 @@ async function sendMessage() {
         now.getMilliseconds()
     ).getTime();
 
-    await push(ref(db, currentChat), {
+    const newMessageRef = push(ref(db, currentChat));
+    
+    await newMessageRef.set({
         text: text,
         userId: currentUserId,
-        timestamp: fakeTimestamp
+        timestamp: fakeTimestamp,
+        fireCount: 0
     });
 
     input.value = "";
@@ -778,7 +1045,6 @@ async function sendMessage() {
         document.getElementById("messages").appendChild(typingIndicator);
         document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
         
-        // Передаём currentChat для контекста
         const botResponse = await askMistral(text, userName, currentChat);
         
         const indicator = document.getElementById("typing-indicator");
@@ -794,14 +1060,37 @@ async function sendMessage() {
             now.getMilliseconds() + 1
         ).getTime();
         
-        await push(ref(db, currentChat), {
+        // Создаём сообщение бота
+        const botMessageRef = push(ref(db, currentChat));
+        
+        await botMessageRef.set({
             text: botResponse,
             userId: BOT_USER_ID,
-            timestamp: botTimestamp
+            timestamp: botTimestamp,
+            fireCount: 0
         });
     }
 }
 
+async function addFireToMessage(messageId, chatId = currentChat) {
+    console.log('Добавление огня:', { messageId, chatId });
+    if (!messageId) return;
+    const messageRef = ref(db, `${chatId}/${messageId}`);
+    
+    try {
+        await runTransaction(messageRef, (currentData) => {
+            console.log('Текущие данные:', currentData);
+            if (currentData) {
+                const newFireCount = (currentData.fireCount || 0) + 1;
+                console.log('Новое значение огня:', newFireCount);
+                return { ...currentData, fireCount: newFireCount };
+            }
+            return currentData;
+        });
+    } catch (error) {
+        console.error('Ошибка при добавлении огня:', error);
+    }
+}
 function renderMessage(data) {
     if (data.userId === BOT_USER_ID && !users[BOT_USER_ID]) {
         users[BOT_USER_ID] = {
@@ -814,7 +1103,54 @@ function renderMessage(data) {
     
     const messages = document.getElementById("messages");
     const user = users[data.userId] || { id: "unknown", name: "Unknown", avatar: "", color: "#fff" };
-
+    
+    const fireCount = data.fireCount || 0;
+    const hasFire = fireCount > 0;
+    let messageStyle = '';
+    let glowClass = '';
+    let indicatorFlicker = 0.5;
+    
+    if (hasFire) {
+        const intensity = Math.min(fireCount / 1000, 1);
+        const textIntensity = Math.min(fireCount / 500, 1);
+    
+        const startR = Math.floor(42 + (210 - 42) * intensity);
+        const startG = Math.floor(42 + (160 - 42) * intensity);
+        const startB = Math.floor(53 + (220 - 53) * intensity);
+        const startColor = `rgb(${startR}, ${startG}, ${startB})`;
+    
+        const targetR = 247;
+        const targetG = 172;
+        const targetB = 34;
+    
+        const endColorR = Math.floor(startR + (targetR - startR) * intensity);
+        const endColorG = Math.floor(startG + (targetG - startG) * intensity);
+        const endColorB = Math.floor(startB + (targetB - startB) * intensity);
+        const endColor = `rgb(${endColorR}, ${endColorG}, ${endColorB})`;
+    
+        const glowSize = Math.floor(intensity * 20);
+    
+        const glowOpacity = intensity * 0.8;
+    
+        const textGlowSize = Math.floor(textIntensity * 16);
+        const textGlowOpacity = textIntensity * 0.9;
+        const flickerDuration = Math.max(0.4, 1.8 - intensity * 1.4);
+        const pulseDuration = Math.max(0.6, 2.0 - intensity * 1.4);
+    
+        indicatorFlicker = Math.max(0.5, 1.5 - intensity * 1.2);
+    
+        messageStyle = `
+            --start-color: ${startColor};
+            --end-color: ${endColor};
+            --glow-size: ${glowSize}px;
+            --glow-opacity: ${glowOpacity};
+            --text-glow-size: ${textGlowSize}px;
+            --text-glow-opacity: ${textGlowOpacity};
+            --flicker-duration: ${flickerDuration}s;
+            --pulse-duration: ${pulseDuration}s;
+        `;
+        glowClass = 'has-fire';
+    }
     const dateObj = new Date(data.timestamp);
     const time = dateObj.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     const date = dateObj.toLocaleDateString();
@@ -828,37 +1164,54 @@ function renderMessage(data) {
     if (isOnlyImage) {
         const imgUrl = text.trim();
         imageHtml = `
-            <div class="message-content" style="padding: 10px; background: transparent;">
+            <div class="message-content ${glowClass}" data-fire="${fireCount}" style="${messageStyle} padding: 0; background: transparent; overflow: hidden;">
                 <img class="message-image" src="${imgUrl}" alt="Изображение" onclick="openImageModal('${imgUrl}')" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'padding:10px;background:#2a2a35;border-radius:12px;\'>Ошибка загрузки изображения</div>'">
             </div>
         `;
         text = ""; 
     } else {
         text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        
         text = text.replace(/([#@][\wА-Яа-яЁё\d_]+)/g, '<span class="highlight">$1</span>');
-        
-        // Обрабатываем ссылки на изображения
         text = text.replace(/(https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp|svg))/gi, (match) => {
             return `<img class="message-image" src="${match}" alt="Изображение" onclick="openImageModal('${match}')" style="max-width: 100%; max-height: 200px; display: block; margin-top: 0px;" onerror="this.style.display='none'">`;
         });
         
-        imageHtml = `<div class="message-content">${text}</div>`;
+        imageHtml = `<div class="message-content ${glowClass}" data-fire="${fireCount}" style="${messageStyle}">${text}</div>`;
     }
 
     const message = document.createElement("div");
     message.className = "message";
+    message.setAttribute("data-message-id", data.messageId);
+
+    const fireIndicator = hasFire ? `
+        <div class="fire-count has-fire" style="--indicator-flicker: ${indicatorFlicker}s;" onclick="event.stopPropagation(); addFireToMessage('${data.messageId}', '${currentChat}')">
+            <i class="fas fa-fire"></i>
+            <span>${fireCount}</span>
+        </div>
+    ` : '';
 
     message.innerHTML = `
-        <img class="avatar" src="${user.avatar}" title="${user.id}">
+        <img class="avatar" src="${user.avatar}" title="${user.id}" onclick="addFireToMessage('${data.messageId}', '${currentChat}')">
         <div class="message-body">
-            <div class="meta"><span class="user-name" style="color:${user.color}">${user.name}</span> • <span class="time">${date} ${time}</span></div>
-            ${imageHtml}
+            <div class="meta">
+                <span class="user-name" style="color:${user.color}">${user.name}</span>
+                <span class="time">${date} ${time}</span>
+            </div>
+            <div class="message-content-wrapper">
+                <div class="message-content-container">
+                    ${imageHtml}
+                </div>
+                <div class="message-right">
+                    ${fireIndicator}
+                </div>
+            </div>
         </div>
     `;
 
     messages.appendChild(message);
-    messages.scrollTop = messages.scrollHeight;
+    setTimeout(() => {
+        messages.scrollTop = messages.scrollHeight;
+    }, 10);
 }
 document.querySelectorAll('.chat-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1185,6 +1538,8 @@ if (uploadBtn && fileInput) {
     });
 }
 
+window.openImageModal = openImageModal;
+window.addFireToMessage = addFireToMessage;
 window.sendMessage = sendMessage;
 populateUserSelect();
 setupCustomSelect();
