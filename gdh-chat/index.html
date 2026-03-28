@@ -465,6 +465,8 @@ body {
     background: #c7963a;
     color: white;
     font-weight: bold;
+    position: relative;
+    clip-path: polygon(var(--active-points));
 }
 
 .chat-btn:hover:not(.active) {
@@ -680,9 +682,9 @@ body {
         <div class="chat-select">
             Выберите чат:
             <div class="chat-buttons">
-                <button data-chat="messages" class="chat-btn active shaped">gdh-chat</button>
-                <button data-chat="testchat" class="chat-btn shaped">test-chat</button>
-                <button data-chat="interdimensional" class="chat-btn no-password shaped">interdimentional-chat</button>
+                <button data-chat="messages" class="chat-btn active">gdh-chat</button>
+                <button data-chat="testchat" class="chat-btn">test-chat</button>
+                <button data-chat="interdimensional" class="chat-btn no-password">interdimentional-chat</button>
             </div>
         </div>
         <div class="chat-password">
@@ -754,6 +756,12 @@ const db = getDatabase(app);
 function switchChat(chatId) {
     currentChat = chatId;
     document.querySelectorAll('.chat-btn').forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-chat') === chatId));
+    
+    if (activeChatAnimation) {
+        clearInterval(activeChatAnimation);
+        activeChatAnimation = null;
+    }
+    animateActiveChat();
     document.getElementById("messages").innerHTML = "";
     if (unsubscribe) unsubscribe();
     const chatRef = ref(db, chatId);
@@ -848,6 +856,32 @@ function stopShapeAnimation(messageId) {
         }
     }
     animatedMessages.delete(messageId);
+}
+let activeChatAnimation = null;
+
+function animateActiveChat() {
+    if (activeChatAnimation) {
+        clearInterval(activeChatAnimation);
+    }
+    
+    const activeBtn = document.querySelector('.chat-btn.active');
+    if (!activeBtn) return;
+    
+    activeChatAnimation = setInterval(() => {
+        const currentActive = document.querySelector('.chat-btn.active');
+        if (!currentActive) {
+            clearInterval(activeChatAnimation);
+            activeChatAnimation = null;
+            return;
+        }
+        
+        const intensity = 0.4;
+        const maxOffset = intensity * 5;
+        const newPoints = generateRandomPoints(maxOffset);
+        currentActive.style.transition = 'none';
+        currentActive.style.setProperty('--active-points', newPoints);
+        void currentActive.offsetHeight;
+    }, 500);
 }
 function applyFireStyle(el, fireCount, intensity) {
     if (!el) return;
@@ -1030,7 +1064,7 @@ function checkPassword() {
     const pass = document.getElementById("passwordInput").value.trim();
     const correct = window.correctPass || "";
     const ok = !isPasswordRequired() || (pass === correct && correct !== "");
-    document.getElementById("passwordInput").style.background = ok ? "#c7963a" : "#6B3228";
+    document.getElementById("passwordInput").style.background = ok ? "#c7963a" : "#383838";
     document.getElementById("sendBtn").disabled = !ok;
     document.getElementById("input").disabled = !ok;
     const up = document.getElementById('uploadBtn');
@@ -1075,6 +1109,7 @@ window.sendMessage = sendMessage;
 
 document.addEventListener('DOMContentLoaded', () => {
     applyShapedClass();
+    animateActiveChat();
     document.getElementById('imageModal')?.addEventListener('click', function() { this.classList.remove('active'); document.getElementById('modalImage').src = ""; });
     const helpBtn = document.getElementById('helpBtn'), helpModal = document.getElementById('helpModal');
     helpBtn?.addEventListener('click', (e) => { e.preventDefault(); helpModal.style.display = 'flex'; });
