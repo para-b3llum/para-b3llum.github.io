@@ -80,13 +80,29 @@ body {
     flex-direction: column;
     height: 700px;
     max-width: 600px;
-    overflow: hidden;
     position: relative;
     width: 100%;
     box-shadow: 10px 10px 0px 0px rgba(0, 0, 0, 0.3);
     background: #222222 url('https://texturelabs.org/wp-content/uploads/Texturelabs_Paper_361S.jpg') repeat;
     background-size: 200%; 
     background-blend-mode: overlay; 
+}
+
+.chat-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border-radius: inherit;
+}
+
+.chat-clip {
+    position: absolute;
+    top: -31px;
+    left: 86%;
+    z-index: 20;
+    width: 48px;
+    height: auto;
 }
 
 .chat-messages {
@@ -100,6 +116,12 @@ body {
     display: flex;
     margin-bottom: 12px;
     width: 100%;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.message:hover {
+    background: rgba(221, 160, 110, 0.05);
 }
 
 .avatar {
@@ -124,6 +146,7 @@ body {
     flex-direction: column;
     max-width: 85%;
     min-width: 0;
+    position: relative;
 }
 
 .meta {
@@ -149,11 +172,14 @@ body {
     align-items: center;
     display: flex;
     gap: 8px;
+    position: relative;
 }
 
 .message-content-container {
     flex: 0 1 auto;
     filter: drop-shadow(7px 7px 0px rgba(0, 0, 0, 0.3));
+    position: relative;
+    z-index: 2;
 }
 
 .message-content {
@@ -170,6 +196,7 @@ body {
     clip-path: polygon(var(--clip-points));
     color:#0f0f14;
     font-weight: 450;
+    z-index: 3;
 }
 .message-content strong {
     color: #332146;
@@ -179,6 +206,36 @@ body {
 .message-content .highlight {
     color: #553577;
     font-weight: 500;
+}
+
+.reply-quote {
+    background: rgb(217, 217, 217);
+    padding: 4px 13px 10px;
+    padding-bottom: 10px;
+    font-size: 13px;
+    font-style: italic;
+    max-width: calc(100% - 20px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+    z-index: 1;
+    clip-path: polygon(var(--reply-clip-points));
+    margin-bottom: -7px;
+    margin-top: 4px;
+    margin-left: 14px;
+}
+
+.reply-quote .reply-author {
+    font-weight: bold;
+    color: #2f2f2f;
+    margin-right: 6px;
+    font-weight: 400;
+}
+
+.reply-quote .reply-text {
+    color: #4a3a2a;
+    font-weight: 400;
 }
 
 .message-image {
@@ -258,6 +315,61 @@ body {
 
 .message-content.has-fire {
     background: linear-gradient(135deg, var(--start-color), var(--end-color));
+}
+
+.reply-container {
+    background: #d3c0a2;
+    display: none;
+    padding: 8px 12px;
+    align-items: center;
+    gap: 10px;
+    height: 50px;
+    font-weight: 400;
+    font-size: 150%;
+    overflow: hidden;
+}
+
+.reply-container.active {
+    display: flex;
+}
+
+.reply-content {
+    flex: 1;
+    font-size: 12px;
+    color: #1d1d1d;
+    overflow: hidden;
+    font-weight: 400;
+    font-size: 15px;
+}
+
+.reply-content .reply-label {
+    font-weight: bold;
+    color: #95660f;
+    margin-right: 6px;
+}
+
+.reply-content .reply-preview {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    max-width: calc(100% - 80px);
+    vertical-align: middle;
+    font-weight: 400;
+}
+
+.reply-cancel {
+    background: #44444400;
+    border: none;
+    color: 444;
+    cursor: pointer;
+    padding: 4px 10px;
+    font-size: 12px;
+    transition: background 0.2s;
+}
+
+.reply-cancel:hover {
+    background: #c7963a;
 }
 
 .chat-input {
@@ -656,13 +768,23 @@ body {
         </div>
     </div>
     <div class="chat-container">
-        <div class="chat-messages" id="messages"></div>
-        <div class="chat-input">
-            <input type="text" id="input" placeholder="Введите сообщение тут!" autocomplete="off">
-            <button id="uploadBtn"><i class="fas fa-image"></i></button>
-            <button id="sendBtn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        <img src="scrk.png" class="chat-clip" id="chat-clip" alt="Скрепка">
+        <div class="chat-inner">
+            <div class="chat-messages" id="messages"></div>
+            <div class="reply-container" id="replyContainer">
+                <div class="reply-content">
+                    <span class="reply-label"></span>
+                    <span class="reply-preview" id="replyPreview"></span>
+                </div>
+                <button class="reply-cancel" id="cancelReplyBtn">✕</button>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="input" placeholder="Введите сообщение тут!" autocomplete="off">
+                <button id="uploadBtn"><i class="fas fa-image"></i></button>
+                <button id="sendBtn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" style="display: none;">
         </div>
-        <input type="file" id="fileInput" accept="image/*" style="display: none;">
     </div>
     <div class="sidebar">
         <div class="user-select">
@@ -734,6 +856,7 @@ let currentChat = "messages";
 let unsubscribe = null;
 let animationInterval = null;
 let animatedMessages = new Set();
+let currentReplyTo = null; // { messageId, author, preview }
 
 const MISTRAL_API_KEY = 'nW5Zvb83kv4JmzlNkuVp9d4DwuIX1KhK';
 const BOT_USER_ID = '@ave';
@@ -755,6 +878,8 @@ const db = getDatabase(app);
 
 function switchChat(chatId) {
     currentChat = chatId;
+    currentReplyTo = null;
+    updateReplyUI();
     document.querySelectorAll('.chat-btn').forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-chat') === chatId));
     
     if (activeChatAnimation) {
@@ -921,6 +1046,53 @@ function generateRandomClipPath(maxOffset = 2) {
     
     return `${tlX}% ${tlY}%, ${trX}% ${trY}%, ${brX}% ${brY}%, ${blX}% ${blY}%`;
 }
+
+function getMessagePreview(data) {
+    let preview = data.text || '';
+    const imgPattern = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp|svg))$/i;
+    if (imgPattern.test(preview.trim())) {
+        preview = '📷 Изображение';
+    }
+    if (preview.length > 50) {
+        preview = preview.substring(0, 47) + '...';
+    }
+    return preview;
+}
+
+function setReplyTo(messageId, authorName, preview) {
+    currentReplyTo = { messageId, author: authorName, preview };
+    updateReplyUI();
+    document.getElementById("input").focus();
+}
+
+function updateReplyUI() {
+    const container = document.getElementById("replyContainer");
+    const previewSpan = document.getElementById("replyPreview");
+    
+    if (currentReplyTo) {
+        previewSpan.innerHTML = `<strong class="reply-label">${currentReplyTo.author}:</strong> ${currentReplyTo.preview}`;
+        container.classList.add("active");
+    } else {
+        container.classList.remove("active");
+        previewSpan.innerHTML = "";
+    }
+}
+
+function cancelReply() {
+    currentReplyTo = null;
+    updateReplyUI();
+}
+function scrollToMessage(messageId) {
+    const messageElement = document.querySelector(`.message[data-message-id="${messageId}"]`);
+    if (messageElement) {
+        messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        messageElement.style.transition = 'background 0.3s';
+        messageElement.style.background = 'rgba(199, 150, 58, 0.3)';
+        setTimeout(() => {
+            messageElement.style.background = '';
+        }, 1500);
+    }
+}
 function renderMessage(data, msgId) {
     if (data.userId === BOT_USER_ID && !users[BOT_USER_ID]) users[BOT_USER_ID] = { id: BOT_USER_ID, name: BOT_NAME, avatar: "http://95.154.67.151/uploads/1774545282_9039.png", color: "#00ED8E" };
     const user = users[data.userId] || { id: "unknown", name: "Unknown", avatar: "", color: "#fff" };
@@ -948,16 +1120,25 @@ function renderMessage(data, msgId) {
     let contentHtml = '';
     const imgPattern = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp|svg))$/i;
     
+    let replyHtml = '';
+    if (data.replyTo && data.replyTo.author && data.replyTo.preview) {
+        const replyClipPath = generateRandomClipPath();
+        replyHtml = `<div class="reply-quote" style="--reply-clip-points: ${replyClipPath};" data-reply-to-id="${data.replyTo.messageId}">
+            <span class="reply-author">↳ ${escapeHtml(data.replyTo.author)}:</span> 
+            <span class="reply-text">${escapeHtml(data.replyTo.preview)}</span>
+        </div>`;
+    }
+    
     if (imgPattern.test(data.text.trim())) {
         contentHtml = `
             <div class="message-content image-only ${glowClass}" style="${styleAttr}">
                 <img class="message-image" src="${data.text.trim()}" alt="Изображение" 
-                     onclick="openImageModal('${data.text.trim()}')" 
-                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'padding:10px;background:#2a2a35;\'>Ошибка загрузки</div>'">
+                    onclick="openImageModal('${data.text.trim()}')" 
+                    onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'padding:10px;background:#2a2a35;\'>Ошибка загрузки</div>'">
             </div>
         `;
     } else {
-        let text = data.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/([#@][\wА-Яа-яЁё\d_]+)/g, '<span class="highlight">$1</span>');
+        let text = escapeHtml(data.text).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/([#@][\wА-Яа-яЁё\d_]+)/g, '<span class="highlight">$1</span>');
         text = text.replace(/(https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp|svg))/gi, (m) => {
             return `<img class="message-image" src="${m}" alt="img" onclick="openImageModal('${m}')" style="max-width:100%; max-height:200px; display:block;">`;
         });
@@ -968,15 +1149,22 @@ function renderMessage(data, msgId) {
     msgDiv.className = "message";
     msgDiv.setAttribute("data-message-id", msgId);
     
+    msgDiv.onclick = (e) => {
+        if (e.target.closest('.fire-count') || e.target.closest('.message-image') || e.target.closest('.reply-cancel') || e.target.closest('.reply-quote')) return;
+        const preview = getMessagePreview(data);
+        setReplyTo(msgId, user.name, preview);
+    };
+    
     const fireIndicator = hasFire ? `<div class="fire-count has-fire" style="--indicator-flicker: ${Math.max(0.5, 1.5 - intensity * 1.2)}s;" onclick="event.stopPropagation(); addFireToMessage('${msgId}', '${currentChat}')"><i class="fas fa-fire"></i><span>${fireCount}</span></div>` : '';
     
     msgDiv.innerHTML = `
-        <img class="avatar" src="${user.avatar}" title="${user.id}" onclick="addFireToMessage('${msgId}', '${currentChat}')">
+        <img class="avatar" src="${user.avatar}" title="${user.id}" onclick="event.stopPropagation(); addFireToMessage('${msgId}', '${currentChat}')">
         <div class="message-body">
             <div class="meta">
                 <span class="user-name" style="color:${user.color}">${user.name}</span>
                 <span class="time">${dateStr} ${timeStr}</span>
             </div>
+            ${replyHtml}
             <div class="message-content-wrapper">
                 <div class="message-content-container">
                     ${contentHtml}
@@ -1003,15 +1191,49 @@ function renderMessage(data, msgId) {
     scrollToBottom();
 }
 
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+        return c;
+    });
+}
+
 async function sendMessage() {
     const input = document.getElementById("input");
     const text = input.value.trim();
     if (!text) return;
+    
     const now = new Date();
     const fakeTs = new Date(1998, now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds()).getTime();
     const msgRef = push(ref(db, currentChat));
-    await set(msgRef, { text, userId: currentUserId, timestamp: fakeTs, fireCount: 0 });
+    
+    const messageData = { 
+        text, 
+        userId: currentUserId, 
+        timestamp: fakeTs, 
+        fireCount: 0 
+    };
+    
+    // Добавляем информацию об ответе, если есть
+    if (currentReplyTo) {
+        messageData.replyTo = {
+            messageId: currentReplyTo.messageId,
+            author: currentReplyTo.author,
+            preview: currentReplyTo.preview
+        };
+    }
+    
+    await set(msgRef, messageData);
     input.value = "";
+    
+    // Очищаем ответ после отправки
+    cancelReply();
+    
     if (isBotMentioned(text)) await botReply(text, users[currentUserId]?.name || "Кто-то", now, currentChat);
 }
 
@@ -1107,6 +1329,16 @@ window.openImageModal = (url) => { const modal = document.getElementById('imageM
 window.addFireToMessage = addFireToMessage;
 window.sendMessage = sendMessage;
 
+document.getElementById('messages').addEventListener('click', (e) => {
+    const replyQuote = e.target.closest('.reply-quote');
+    if (replyQuote) {
+        e.stopPropagation();
+        const messageId = replyQuote.getAttribute('data-reply-to-id');
+        if (messageId) {
+            scrollToMessage(messageId);
+        }
+    }
+});
 document.addEventListener('DOMContentLoaded', () => {
     applyShapedClass();
     animateActiveChat();
@@ -1131,6 +1363,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch { alert('Не подключиться к серверу загрузки!'); }
         finally { upBtn.innerHTML = '<i class="fas fa-image"></i>'; upBtn.disabled = false; fileInp.value = ''; }
     });
+    
+    // Кнопка отмены ответа
+    document.getElementById("cancelReplyBtn").addEventListener("click", cancelReply);
+    
     const passInput = document.getElementById("passwordInput"), sendB = document.getElementById("sendBtn"), msgInp = document.getElementById("input");
     const passRef = ref(db, "chatPass");
     get(passRef).then(snap => { window.correctPass = snap.val() || ""; checkPassword(); });
