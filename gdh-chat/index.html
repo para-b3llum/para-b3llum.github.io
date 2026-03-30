@@ -197,6 +197,7 @@ body {
     color:#0f0f14;
     font-weight: 450;
     z-index: 3;
+    font-size: var(--message-font-size, 14px);
 }
 .message-content strong {
     color: #332146;
@@ -423,7 +424,8 @@ body {
 
 .user-select,
 .chat-select,
-.chat-password {
+.chat-password,
+.chat-settings {
     background: #242424;
     box-sizing: border-box;
     padding: 14px 16px;
@@ -720,6 +722,122 @@ body {
     clip-path: polygon(var(--shape-points));
 }
 
+#settingsBtn {
+    background: #3c3c3c;
+    border: none;
+    color: #eaeaf0;
+    cursor: pointer;
+    font-size: 15px;
+    padding: 12px 14px;
+    width: 100%;
+    transition: all 0.2s;
+}
+
+#settingsBtn:hover {
+    background: #2c2c2c;
+}
+
+.settings-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.settings-modal-content {
+    animation: modalFadeIn 0.3s ease;
+    cursor: default;
+    margin: 20px;
+    max-width: 400px;
+    padding: 30px;
+    width: 90%;
+    box-shadow: 10px 10px 0px 0px rgba(0, 0, 0, 0.3);
+    background: #d3c0a2 url('https://texturelabs.org/wp-content/uploads/Texturelabs_Paper_377S.jpg') repeat;
+    background-size: 960px 687px;
+    background-blend-mode: overlay;
+}
+
+.settings-modal-content h2 {
+    font-family: 'Durik', 'Impact', sans-serif;
+    background: linear-gradient(135deg, #8732dd, #ffa909);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: #2f1f40;
+    font-size: 55px;
+    margin: 0 0 10px;
+    text-align: center;
+    -webkit-text-fill-color: transparent;
+}
+.setting-item {
+    margin-bottom: 20px;
+    color: #2b2b2b;
+    font-size: 14px;
+    line-height: 1.6;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+
+.setting-item label {
+    flex: 1;
+    font-weight: 400;
+}
+
+#fontSizeSlider {
+    width: 150px;
+    background: #2b2b2b;
+    height: 4px;
+    border-radius: 2px;
+    -webkit-appearance: none;
+}
+
+#fontSizeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #c7963a;
+    cursor: pointer;
+}
+
+#fontSizeValue {
+    width: 45px;
+    text-align: center;
+    background: #2b2b2b20;
+    padding: 2px 6px;
+    font-weight: 500;
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
+}
+
+.setting-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #c7963a;
+}
+
+.settings-modal-content .close-hint {
+    border-top: 1px solid #3a3a45;
+    color: #363636;
+    font-size: 12px;
+    margin-top: 20px;
+    padding-top: 15px;
+    text-align: center;
+}
+
 @media (min-width: 1100px) {
     .main-wrapper {
         align-items: center;
@@ -813,6 +931,9 @@ body {
             Для отправки сообщений введите код доступа.
             <input type="password" id="passwordInput" placeholder="Код доступа" autocomplete="off">
         </div>
+        <div class="chat-settings">
+            <button id="settingsBtn">Настройки</button>
+        </div>
     </div>
 </div>
 <div id="imageModal" class="image-modal">
@@ -829,9 +950,24 @@ body {
         <div class="close-hint">жмите в любое место, чтобы закрыть</div>
     </div>
 </div>
+<div id="settingsModal" class="settings-modal">
+    <div class="settings-modal-content shaped" onclick="event.stopPropagation()">
+        <h2>НАСТРОЙКИ</h2>
+        <div class="setting-item">
+            <label for="fontSizeSlider">Размер шрифта</label>
+            <input type="range" id="fontSizeSlider" min="12" max="24" step="1" value="14">
+            <span id="fontSizeValue">14px</span>
+        </div>
+        <div class="setting-item">
+            <label for="disableAnimations">Отключить анимации сообщений</label>
+            <input type="checkbox" id="disableAnimations">
+        </div>
+        <div class="close-hint">жмите в любое место, чтобы закрыть</div>
+    </div>
+</div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, set, onChildAdded, onChildChanged, query, orderByChild, limitToLast, get, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, push, set, onChildAdded, onChildChanged, query, orderByChild, limitToLast, get, runTransaction, serverTimestamp, endAt } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const users = {
     "@flooshhhhh": {id: "@flooshhhhh",name: "Shirley Flow",avatar: "https://i.imgur.com/QQyreZH.png",color: "#FF96DB"},
@@ -841,7 +977,7 @@ const users = {
     "@cd": {id: "@cd",name: "КД",avatar: "https://i.imgur.com/Tk7l95s.png",color: "#FFFFFF"},
     "@traitor_fon_pipans": {id: "@traitor_fon_pipans",name: "Сокол",avatar: "https://i.imgur.com/cRV16Jw.png",color: "#F4A97A"},
     "@dusya": {id: "@dusya",name: "Пыль Времён",avatar: "http://95.154.67.151/uploads/1774550891_1700.png",color: "#61C663"},
-    "@digist": {id: "@digist",name: "Элетрик от 500 бит",avatar: "http://95.154.67.151/uploads/1774813420_4483.png",color: "#666AC9"},
+    "@digist": {id: "@digist",name: "Элетрик от 18.99 бит",avatar: "http://95.154.67.151/uploads/1774813420_4483.png",color: "#666AC9"},
     "@princess_of_explosions": {id: "@princess_of_explosions",name: "Флёрри",avatar: "https://i.imgur.com/vG04poX.png",color: "#FF93C4"},
     "@hatemondays": {id: "@hatemondays",name: "Новэл Начальник",avatar: "https://i.imgur.com/cts2oeC.png",color: "#A8FFD9"},
     "@sunnystarscout": {id: "@sunnystarscout",name: "✨✨✨✨",avatar: "https://i.imgur.com/Ht3mpnk.png",color: "#FF9E66"},
@@ -852,12 +988,19 @@ const users = {
     "@ave": {id: "@ave",name: "Авелин",avatar: "http://95.154.67.151/uploads/1774545282_9039.png",color: "#00ED8E"}
 };
 
+let userSettings = {
+    fontSize: 14,
+    animationsEnabled: true
+};
 let currentUserId = localStorage.getItem('selectedUser') && users[localStorage.getItem('selectedUser')] ? localStorage.getItem('selectedUser') : "@flooshhhhh";
 let currentChat = "messages";
 let unsubscribe = null;
 let animationInterval = null;
 let animatedMessages = new Set();
 let currentReplyTo = null; // { messageId, author, preview }
+let oldestTimestamp = null;       
+let loadingMore = false;   
+let hasMore = true;    
 
 const MISTRAL_API_KEY = 'nW5Zvb83kv4JmzlNkuVp9d4DwuIX1KhK';
 const BOT_USER_ID = '@ave';
@@ -888,15 +1031,86 @@ function switchChat(chatId) {
         activeChatAnimation = null;
     }
     animateActiveChat();
-    document.getElementById("messages").innerHTML = "";
+    
+    const messagesDiv = document.getElementById("messages");
+    if (messagesDiv._scrollListener) {
+        messagesDiv.removeEventListener('scroll', messagesDiv._scrollListener);
+    }
+    messagesDiv.innerHTML = "";
+    
     if (unsubscribe) unsubscribe();
+    
+    // переменные пагинации
+    oldestTimestamp = null;
+    loadingMore = false;
+    hasMore = true;
+    
     const chatRef = ref(db, chatId);
-    const addedUnsubscribe = onChildAdded(chatRef, (snapshot) => { renderMessage(snapshot.val(), snapshot.key); scrollToBottom(); });
+    const messagesQuery = query(chatRef, orderByChild('timestamp'), limitToLast(20));
+    
+    const addedUnsubscribe = onChildAdded(messagesQuery, (snapshot) => {
+        const data = snapshot.val();
+        renderMessage(data, snapshot.key);
+        if (oldestTimestamp === null) {
+            oldestTimestamp = data.timestamp;
+        }
+        scrollToBottom();
+    });
+    
     const changedUnsubscribe = onChildChanged(chatRef, (snapshot) => updateMessageFire(snapshot.key, snapshot.val()));
-    unsubscribe = () => { addedUnsubscribe(); changedUnsubscribe(); };
+    
+    unsubscribe = () => {
+        addedUnsubscribe();
+        changedUnsubscribe();
+    };
+    
+    // Обработчик скролла
+    const newMessagesDiv = document.getElementById("messages");
+    newMessagesDiv._scrollListener = () => {
+        const div = document.getElementById("messages");
+        if (div.scrollTop === 0 && !loadingMore && hasMore && oldestTimestamp !== null) {
+            loadMoreMessages();
+        }
+    };
+    newMessagesDiv.addEventListener('scroll', newMessagesDiv._scrollListener);
+    
     checkPassword();
 }
+async function loadMoreMessages() {
+    if (loadingMore || !hasMore) return;
+    loadingMore = true;
 
+    const chatRef = ref(db, currentChat);
+    const queryRef = query(chatRef, orderByChild('timestamp'), endAt(oldestTimestamp - 1), limitToLast(20));
+    const snapshot = await get(queryRef);
+
+    const messages = [];
+    snapshot.forEach((child) => {
+        messages.push({ key: child.key, data: child.val() });
+    });
+
+    if (messages.length === 0) {
+        hasMore = false;
+        loadingMore = false;
+        return;
+    }
+
+    const messagesDiv = document.getElementById("messages");
+    const oldScrollHeight = messagesDiv.scrollHeight;
+    const reversedMessages = [...messages].reverse();
+    
+    for (const { key, data } of reversedMessages) {
+        renderMessage(data, key, true, true);
+    }
+    
+    const newScrollHeight = messagesDiv.scrollHeight;
+    messagesDiv.scrollTop = newScrollHeight - oldScrollHeight;
+
+    oldestTimestamp = messages[0].data.timestamp;
+    
+    loadingMore = false;
+    console.log('Загружено сообщений:', messages.length);
+}
 function scrollToBottom() {
     const div = document.getElementById("messages");
     div.scrollTop = div.scrollHeight;
@@ -945,6 +1159,7 @@ function updateMessageFire(messageId, data) {
     }
 }
 function startShapeAnimation(messageId, intensity) {
+    if (!userSettings.animationsEnabled) return;
     if (animatedMessages.has(messageId)) {
         return;
     }
@@ -1094,7 +1309,7 @@ function scrollToMessage(messageId) {
         }, 1500);
     }
 }
-function renderMessage(data, msgId) {
+function renderMessage(data, msgId, prepend = false, skipScroll = false) {
     if (data.userId === BOT_USER_ID && !users[BOT_USER_ID]) users[BOT_USER_ID] = { id: BOT_USER_ID, name: BOT_NAME, avatar: "http://95.154.67.151/uploads/1774545282_9039.png", color: "#00ED8E" };
     const user = users[data.userId] || { id: "unknown", name: "Unknown", avatar: "", color: "#fff" };
     const fireCount = data.fireCount || 0;
@@ -1106,18 +1321,17 @@ function renderMessage(data, msgId) {
     
     if (hasFire) {
         glowClass = 'has-fire';
-        const startR = Math.floor(211 + (210 - 211) * intensity);
-        const startG = Math.floor(192 + (160 - 192) * intensity);
-        const startB = Math.floor(162 + (220 - 162) * intensity);
         const { startColor, endColor } = getFireGradient(intensity);
         styleAttr = `--start-color: ${startColor}; --end-color: ${endColor};`;
     } else {
         styleAttr = `--clip-points: ${clipPathPoints};`;
     }
     
-    const date = new Date(data.timestamp);
-    const timeStr = date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    const dateStr = date.toLocaleDateString();
+    const dateObj = new Date(data.timestamp);
+    const fakeYearDate = new Date(dateObj);
+    fakeYearDate.setFullYear(1998);
+    const timeStr = fakeYearDate.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    const dateStr = fakeYearDate.toLocaleDateString();
     let contentHtml = '';
     const imgPattern = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp|svg))$/i;
     
@@ -1177,7 +1391,12 @@ function renderMessage(data, msgId) {
         </div>
     `;
     
-    document.getElementById("messages").appendChild(msgDiv);
+    const container = document.getElementById("messages");
+    if (prepend) {
+        container.insertBefore(msgDiv, container.firstChild);
+    } else {
+        container.appendChild(msgDiv);
+    }
     
     if (hasFire) {
         const messageContent = msgDiv.querySelector('.message-content');
@@ -1189,7 +1408,9 @@ function renderMessage(data, msgId) {
         }
     }
     
-    scrollToBottom();
+    if (!skipScroll) {
+        scrollToBottom();
+    }
 }
 
 function escapeHtml(str) {
@@ -1209,18 +1430,15 @@ async function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
     
-    const now = new Date();
-    const fakeTs = new Date(1998, now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds()).getTime();
     const msgRef = push(ref(db, currentChat));
     
     const messageData = { 
         text, 
         userId: currentUserId, 
-        timestamp: fakeTs, 
+        timestamp: serverTimestamp(), 
         fireCount: 0 
     };
     
-    // Добавляем информацию об ответе, если есть
     if (currentReplyTo) {
         messageData.replyTo = {
             messageId: currentReplyTo.messageId,
@@ -1231,11 +1449,9 @@ async function sendMessage() {
     
     await set(msgRef, messageData);
     input.value = "";
-    
-    // Очищаем ответ после отправки
     cancelReply();
     
-    if (isBotMentioned(text)) await botReply(text, users[currentUserId]?.name || "Кто-то", now, currentChat);
+    if (isBotMentioned(text)) await botReply(text, users[currentUserId]?.name || "Кто-то", new Date(), currentChat);
 }
 
 async function botReply(userMsg, userName, now, chatId) {
@@ -1247,9 +1463,14 @@ async function botReply(userMsg, userName, now, chatId) {
     scrollToBottom();
     const response = await askMistral(userMsg, userName, chatId);
     document.getElementById("typing-indicator")?.remove();
-    const botTs = new Date(1998, now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds() + 1).getTime();
+    
     const botRef = push(ref(db, chatId));
-    await set(botRef, { text: response, userId: BOT_USER_ID, timestamp: botTs, fireCount: 0 });
+    await set(botRef, { 
+        text: response, 
+        userId: BOT_USER_ID, 
+        timestamp: serverTimestamp(),
+        fireCount: 0 
+    });
 }
 
 async function askMistral(userMessage, userName, chatId) {
@@ -1292,6 +1513,35 @@ function checkPassword() {
     document.getElementById("input").disabled = !ok;
     const up = document.getElementById('uploadBtn');
     if (up) up.disabled = !ok;
+}
+
+function loadSettings() {
+    const saved = localStorage.getItem('chatSettings');
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            userSettings = { ...userSettings, ...parsed };
+        } catch(e) {}
+    }
+    applySettings();
+}
+
+function saveSettings() {
+    localStorage.setItem('chatSettings', JSON.stringify(userSettings));
+    applySettings();
+}
+
+function applySettings() {
+    // размер шрифта
+    document.documentElement.style.setProperty('--message-font-size', `${userSettings.fontSize}px`);
+    // анимации
+    if (!userSettings.animationsEnabled) {
+        // остановить все текущие анимации
+        for (let msgId of animatedMessages) {
+            stopShapeAnimation(msgId);
+        }
+        animatedMessages.clear();
+    }
 }
 
 function populateUserSelect() {
@@ -1365,7 +1615,6 @@ document.addEventListener('DOMContentLoaded', () => {
         finally { upBtn.innerHTML = '<i class="fas fa-image"></i>'; upBtn.disabled = false; fileInp.value = ''; }
     });
     
-    // Кнопка отмены ответа
     document.getElementById("cancelReplyBtn").addEventListener("click", cancelReply);
     
     const passInput = document.getElementById("passwordInput"), sendB = document.getElementById("sendBtn"), msgInp = document.getElementById("input");
@@ -1377,6 +1626,42 @@ document.addEventListener('DOMContentLoaded', () => {
     setupCustomSelect();
     switchChat("messages");
     document.querySelectorAll('.chat-btn').forEach(btn => btn.addEventListener('click', () => switchChat(btn.getAttribute('data-chat'))));
+    loadSettings();
+
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsModal = document.getElementById('settingsModal');
+    const fontSizeSlider = document.getElementById('fontSizeSlider');
+    const fontSizeValue = document.getElementById('fontSizeValue');
+    const disableAnimationsCheck = document.getElementById('disableAnimations');
+
+    if (settingsBtn && settingsModal) {
+        settingsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            settingsModal.style.display = 'flex';
+            // установить текущие значения
+            fontSizeSlider.value = userSettings.fontSize;
+            fontSizeValue.textContent = userSettings.fontSize + 'px';
+            disableAnimationsCheck.checked = !userSettings.animationsEnabled;
+        });
+        settingsModal.addEventListener('click', () => {
+            settingsModal.style.display = 'none';
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && settingsModal.style.display === 'flex') {
+                settingsModal.style.display = 'none';
+            }
+        });
+        fontSizeSlider.addEventListener('input', (e) => {
+            const val = e.target.value;
+            fontSizeValue.textContent = val + 'px';
+            userSettings.fontSize = parseInt(val);
+            saveSettings();
+        });
+        disableAnimationsCheck.addEventListener('change', (e) => {
+            userSettings.animationsEnabled = !e.target.checked;
+            saveSettings();
+        });
+    }
 });
 </script>
 </body>
