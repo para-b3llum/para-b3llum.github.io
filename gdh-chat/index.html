@@ -891,6 +891,7 @@ body {
         <img src="scrk.png" class="chat-clip" id="chat-clip" alt="Скрепка">
         <div class="chat-inner">
             <div class="chat-messages" id="messages"></div>
+
             <div class="reply-container" id="replyContainer">
                 <div class="reply-content">
                     <span class="reply-label"></span>
@@ -971,7 +972,7 @@ body {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, push, set, onChildAdded, onChildChanged, query, orderByChild, limitToLast, get, runTransaction, serverTimestamp, endAt } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const users = {
+const fallbackUsers  = {
     "@flooshhhhh": {id: "@flooshhhhh",name: "Shirley Flow",avatar: "https://i.imgur.com/QQyreZH.png",color: "#FF96DB"},
     "@cyanitestar03": {id: "@cyanitestar03",name: "Цианит Сваг🔫🔫",avatar: "https://i.imgur.com/1OWyYjS.png",color: "#3EC6EF"},
     "@id54271719": {id: "@id54271719",name: "Вокс",avatar: "https://i.imgur.com/lBk0HRI.png",color: "#E1ECED"},
@@ -989,12 +990,13 @@ const users = {
     "@pipp_petals_official": {id: "@pipp_petals_official",name: "ПИПП ПЕТАЛС🌈🌈🪽🪽🪽",avatar: "https://i.imgur.com/FQEohpO.png",color: "#BF74DD"},
     "@ave": {id: "@ave",name: "Авелин",avatar: "http://95.154.67.151/uploads/1774545282_9039.png",color: "#00ED8E"}
 };
+let usersCache = null;
 
 let userSettings = {
     fontSize: 14,
     animationsEnabled: true
 };
-let currentUserId = localStorage.getItem('selectedUser') && users[localStorage.getItem('selectedUser')] ? localStorage.getItem('selectedUser') : "@flooshhhhh";
+let currentUserId = localStorage.getItem('selectedUser') || "@flooshhhhh";
 let currentChat = "messages";
 let unsubscribe = null;
 let animationInterval = null;
@@ -1022,6 +1024,36 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+async function loadUsersFromDB() {
+    if (usersCache) return usersCache;
+    
+    const usersRef = ref(db, 'users');
+    try {
+        const snapshot = await get(usersRef);
+        if (snapshot.exists()) {
+            usersCache = snapshot.val();
+            console.log("Пользователи загружены из БД");
+            return usersCache;
+        } else {
+            console.warn("БД пользователей пуста, использую fallback");
+            usersCache = fallbackUsers;
+            return fallbackUsers;
+        }
+    } catch (error) {
+        console.error("Ошибка загрузки пользователей:", error);
+        usersCache = fallbackUsers;
+        return fallbackUsers;
+    }
+}
+async function getUser(userId) {
+    const users = await loadUsersFromDB();
+    return users[userId] || { 
+        id: userId, 
+        name: userId, 
+        avatar: "", 
+        color: "#fff" 
+    };
+}
 function switchChat(chatId) {
     currentChat = chatId;
     currentReplyTo = null;
@@ -1038,7 +1070,8 @@ function switchChat(chatId) {
     if (messagesDiv._scrollListener) {
         messagesDiv.removeEventListener('scroll', messagesDiv._scrollListener);
     }
-    messagesDiv.innerHTML = "";
+    messagesDiv.innerHTML = '<div id="loadingIndicator" style="display:flex;justify-content:center;align-items:center;height:100%;"><img src="http://95.154.67.151/uploads/1774956434_3390.gif" style="width:80px;opacity:0.7;"></div>';
+    showLoading();
     
     if (unsubscribe) unsubscribe();
     
@@ -1051,6 +1084,7 @@ function switchChat(chatId) {
     const messagesQuery = query(chatRef, orderByChild('timestamp'), limitToLast(20));
     
     const addedUnsubscribe = onChildAdded(messagesQuery, (snapshot) => {
+        hideLoading();
         const data = snapshot.val();
         renderMessage(data, snapshot.key);
         if (oldestTimestamp === null) {
@@ -1066,7 +1100,6 @@ function switchChat(chatId) {
         changedUnsubscribe();
     };
     
-    // Обработчик скролла
     const newMessagesDiv = document.getElementById("messages");
     newMessagesDiv._scrollListener = () => {
         const div = document.getElementById("messages");
@@ -1083,7 +1116,13 @@ async function loadMoreMessages() {
     loadingMore = true;
 
     const chatRef = ref(db, currentChat);
-    const queryRef = query(chatRef, orderByChild('timestamp'), endAt(oldestTimestamp - 1), limitToLast(20));
+    const queryRef = query(
+        chatRef,
+        orderByChild('timestamp'),
+        endAt(oldestTimestamp - 1),
+        limitToLast(20)
+    );
+
     const snapshot = await get(queryRef);
 
     const messages = [];
@@ -1098,18 +1137,27 @@ async function loadMoreMessages() {
     }
 
     const messagesDiv = document.getElementById("messages");
-    const oldScrollHeight = messagesDiv.scrollHeight;
+
+    const firstVisible = messagesDiv.firstElementChild;
+    const prevOffset = firstVisible
+        ? firstVisible.getBoundingClientRect().top
+        : 0;
+
     const reversedMessages = [...messages].reverse();
-    
     for (const { key, data } of reversedMessages) {
         renderMessage(data, key, true, true);
     }
-    
-    const newScrollHeight = messagesDiv.scrollHeight;
-    messagesDiv.scrollTop = newScrollHeight - oldScrollHeight;
+
+    if (firstVisible) {
+        requestAnimationFrame(() => {
+            const newOffset = firstVisible.getBoundingClientRect().top;
+            const diff = newOffset - prevOffset;
+            messagesDiv.scrollTop += diff;
+        });
+    }
 
     oldestTimestamp = messages[0].data.timestamp;
-    
+
     loadingMore = false;
     console.log('Загружено сообщений:', messages.length);
 }
@@ -1135,9 +1183,12 @@ function applyShapedClass() {
         el.style.setProperty('--shape-points', points);
     });
 }
-function updateMessageFire(messageId, data) {
+async function updateMessageFire(messageId, data) {
     const el = document.querySelector(`.message[data-message-id="${messageId}"]`);
-    if (!el) { renderMessage(data, messageId); return; }
+    if (!el) { 
+        await renderMessage(data, messageId); 
+        return; 
+    }
     const fireCount = data.fireCount || 0;
     const hasFire = fireCount > 0;
     const rightDiv = el.querySelector('.message-right');
@@ -1311,14 +1362,12 @@ function scrollToMessage(messageId) {
         }, 1500);
     }
 }
-function renderMessage(data, msgId, prepend = false, skipScroll = false) {
-    if (data.userId === BOT_USER_ID && !users[BOT_USER_ID]) users[BOT_USER_ID] = { id: BOT_USER_ID, name: BOT_NAME, avatar: "http://95.154.67.151/uploads/1774545282_9039.png", color: "#00ED8E" };
-    const user = users[data.userId] || { id: "unknown", name: "Unknown", avatar: "", color: "#fff" };
+async function renderMessage(data, msgId, prepend = false, skipScroll = false) {
+    const user = await getUser(data.userId);
     const fireCount = data.fireCount || 0;
     const hasFire = fireCount > 0;
     let intensity = hasFire ? Math.min(fireCount / 1000, 1) : 0;
     let styleAttr = '', glowClass = '';
-    
     const clipPathPoints = generateRandomClipPath();
     
     if (hasFire) {
@@ -1453,14 +1502,18 @@ async function sendMessage() {
     input.value = "";
     cancelReply();
     
-    if (isBotMentioned(text)) await botReply(text, users[currentUserId]?.name || "Кто-то", new Date(), currentChat);
+    if (isBotMentioned(text)) {
+        const currentUser = await getUser(currentUserId);
+        await botReply(text, currentUser?.name || "Кто-то", new Date(), currentChat);
+    }
 }
 
 async function botReply(userMsg, userName, now, chatId) {
     const typing = document.createElement("div");
     typing.className = "message";
     typing.id = "typing-indicator";
-    typing.innerHTML = `<img class="avatar" src="${users[BOT_USER_ID]?.avatar || ''}"><div class="message-body"><div class="meta"><span class="user-name" style="color:#00ED8E">${BOT_NAME}</span> • <span class="time">печатает...</span></div><div class="message-content">Ща...</div></div>`;
+    const botUser = await getUser(BOT_USER_ID);
+    typing.innerHTML = `<img class="avatar" src="${botUser?.avatar || ''}"><div class="message-body"><div class="meta"><span class="user-name" style="color:#00ED8E">${BOT_NAME}</span> • <span class="time">печатает...</span></div><div class="message-content">Ща...</div></div>`;
     document.getElementById("messages").appendChild(typing);
     scrollToBottom();
     const response = await askMistral(userMsg, userName, chatId);
@@ -1534,11 +1587,8 @@ function saveSettings() {
 }
 
 function applySettings() {
-    // размер шрифта
     document.documentElement.style.setProperty('--message-font-size', `${userSettings.fontSize}px`);
-    // анимации
     if (!userSettings.animationsEnabled) {
-        // остановить все текущие анимации
         for (let msgId of animatedMessages) {
             stopShapeAnimation(msgId);
         }
@@ -1546,30 +1596,45 @@ function applySettings() {
     }
 }
 
-function populateUserSelect() {
+async function populateUserSelect() {
     const dropdown = document.getElementById("userDropdown");
+    dropdown.innerHTML = '<div style="padding:10px;text-align:center;">Загрузка...</div>';
+    const users = await loadUsersFromDB();
     dropdown.innerHTML = "";
-    for (const key in users) if (key !== '@ave') {
+    for (const key in users) {
+        if (key === '@ave') continue;
+        
         const u = users[key];
         const opt = document.createElement("div");
         opt.className = "user-option" + (key === currentUserId ? " selected" : "");
         opt.setAttribute("data-user-id", key);
         opt.innerHTML = `<img class="user-option-avatar" src="${u.avatar}"><div class="user-option-info"><span class="user-option-name" style="color:${u.color}">${u.name}</span><span class="user-option-id">${u.id}</span></div>`;
-        opt.onclick = () => { currentUserId = key; localStorage.setItem('selectedUser', key); updateSelectedUserDisplay(); document.getElementById("userSelect").classList.remove("open"); };
+        opt.onclick = () => { 
+            currentUserId = key; 
+            localStorage.setItem('selectedUser', key); 
+            updateSelectedUserDisplay(); 
+            document.getElementById("userSelect").classList.remove("open"); 
+        };
         dropdown.appendChild(opt);
     }
+    
     updateSelectedUserDisplay();
 }
 
-function updateSelectedUserDisplay() {
+async function updateSelectedUserDisplay() {
+    const users = await loadUsersFromDB();
     const u = users[currentUserId];
+    
     if (u) {
         document.getElementById("selectedAvatar").src = u.avatar;
         document.getElementById("selectedName").innerHTML = u.name;
         document.getElementById("selectedName").style.color = u.color;
         document.getElementById("selectedId").innerHTML = u.id;
     }
-    document.querySelectorAll(".user-option").forEach(opt => opt.classList.toggle("selected", opt.getAttribute("data-user-id") === currentUserId));
+    
+    document.querySelectorAll(".user-option").forEach(opt => {
+        opt.classList.toggle("selected", opt.getAttribute("data-user-id") === currentUserId);
+    });
 }
 
 function setupCustomSelect() {
@@ -1592,6 +1657,15 @@ document.getElementById('messages').addEventListener('click', (e) => {
         }
     }
 });
+function showLoading() {
+    const loader = document.getElementById("loadingIndicator");
+    if (loader) loader.style.display = "flex";
+}
+
+function hideLoading() {
+    const loader = document.getElementById("loadingIndicator");
+    if (loader) loader.style.display = "none";
+}
 document.addEventListener('DOMContentLoaded', () => {
     applyShapedClass();
     animateActiveChat();
@@ -1712,6 +1786,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    (async () => {
+    const users = await loadUsersFromDB();
+    if (!users[currentUserId]) {
+        currentUserId = "@flooshhhhh";
+        localStorage.setItem('selectedUser', currentUserId);
+    }
+    await updateSelectedUserDisplay();
+})();
 });
 </script>
 </body>
