@@ -1,455 +1,1800 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Доступ ограничен на основании ФЗ-№149</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<title>ШМЯКС</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geologica:wght,CRSV@100..900,0&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<style>
+@font-face {
+    font-family: 'Durik';
+    src: url('durik.woff2') format('woff2'),
+         url('durik.woff') format('woff'),
+         url('durik.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; 
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Geologica", sans-serif;
+    font-weight: 200;
+}
 
-        body {
-            font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-            background: #f5f5f7;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
+body {
+    background: #161616;
+    color: #eaeaf0;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+}
 
-        /* контейнер с тенью и скруглениями */
-        .block-card {
-            max-width: 860px;
-            width: 100%;
-            background: #ffffff;
-            border-radius: 32px;
-            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            transition: all 0.2s ease;
-        }
+.main-wrapper {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    min-height: 100vh;
+    padding: 20px 15px;
+    width: 100%;
+}
 
-        /* верхняя цветная полоса — строгий акцент */
-        .top-bar {
-            height: 8px;
-            background: linear-gradient(90deg, #b22234 0%, #d32f2f 35%, #8b0000 100%);
-        }
+.header {
+    align-items: center;
+    background: #0f0f14;
+    color: #eaeaf0;
+    display: flex;
+    gap: 12px;
+    padding: 10px 20px;
+    z-index: 10;
+}
 
-        /* герб и заголовок */
-        .header {
-            padding: 32px 32px 20px 32px;
-            border-bottom: 1px solid #e9ecef;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
+.header .logo {
+    border-radius: 20%;
+    height: 80px;
+    object-fit: cover;
+    width: 80px;
+}
 
-        .emblem {
-            background: #f0f2f5;
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 42px;
-            font-weight: 500;
-            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05), 0 2px 5px rgba(0,0,0,0.02);
-        }
+.header .text h1 {
+    font-size: 40px;
+    font-weight: bold;
+    margin: 0;
+    font-family: 'Durik', 'Impact', sans-serif;
+}
 
-        .title-section h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            letter-spacing: -0.3px;
-            color: #1a1e2b;
-            margin-bottom: 8px;
-        }
+.header .text p {
+    font-size: 16px;
+    margin: -10px 0 0;
+    opacity: 0.75;
+}
 
-        .title-section .badge {
-            background: #fef2e0;
-            color: #b85c00;
-            font-size: 0.75rem;
-            font-weight: 500;
-            padding: 4px 10px;
-            border-radius: 30px;
-            display: inline-block;
-            border: 0.5px solid #ffd89a;
-        }
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 700px;
+    max-width: 600px;
+    position: relative;
+    width: 100%;
+    box-shadow: 10px 10px 0px 0px rgba(0, 0, 0, 0.3);
+    background: #222222 url('https://texturelabs.org/wp-content/uploads/Texturelabs_Paper_361S.jpg') repeat;
+    background-size: 200%; 
+    background-blend-mode: overlay; 
+}
 
-        /* основной контент */
-        .content {
-            padding: 28px 32px 24px 32px;
-        }
+.chat-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border-radius: inherit;
+}
 
-        .legal-text {
-            background: #fafbfd;
-            border-left: 4px solid #d32f2f;
-            padding: 20px 24px;
-            border-radius: 20px;
-            margin-bottom: 28px;
-            font-size: 0.95rem;
-            line-height: 1.45;
-            color: #2c3e44;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-        }
+.chat-clip {
+    position: absolute;
+    top: -31px;
+    left: 86%;
+    z-index: 20;
+    width: 48px;
+    height: auto;
+}
 
-        .legal-text p {
-            margin-bottom: 12px;
-        }
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
 
-        .legal-text p:last-child {
-            margin-bottom: 0;
-        }
+.message {
+    align-items: flex-start;
+    display: flex;
+    margin-bottom: calc(var(--message-font-size, -10px) * 0.5);
+    width: 100%;
+    cursor: pointer;
+    transition: background 0.1s;
+}
 
-        .legal-ref {
-            font-weight: 500;
-            color: #1e2a3a;
-            font-family: 'SF Mono', 'Menlo', monospace;
-            font-size: 0.85rem;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px dashed #cdd9ed;
-        }
+.message:hover {
+    background: rgba(221, 160, 110, 0.05);
+}
 
-        .info-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 24px;
-            margin-bottom: 28px;
-        }
+.avatar {
+    background: #444;
+    border-radius: 50%;
+    cursor: pointer;
+    flex-shrink: 0;
+    height: 40px;
+    margin-right: 10px;
+    margin-top: 15px;
+    transition: transform 0.1s;
+    width: 40px;
+}
 
-        .info-card {
-            flex: 1;
-            background: #f8f9fc;
-            border-radius: 24px;
-            padding: 18px 20px;
-            border: 1px solid #eef2f8;
-        }
+.avatar:active {
+    transform: scale(0.95);
+}
 
-        .info-card h3 {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-            color: #5b6e8c;
-            margin-bottom: 12px;
-        }
+.message-body {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    max-width: 85%;
+    min-width: 0;
+    position: relative;
+}
 
-        .info-card .value {
-            font-size: 1rem;
-            font-weight: 500;
-            color: #0f1825;
-            word-break: break-all;
-            font-family: monospace;
-        }
+.meta {
+    align-items: center;
+    display: flex;
+    font-size: 10px;
+    gap: 5px;
+    margin-bottom: 5px;
+    opacity: 0.8;
+}
 
-        .divider-light {
-            height: 1px;
-            background: #eef2f8;
-            margin: 16px 0 24px 0;
-        }
+.user-name {
+    font-weight: bold;
+}
 
-        .explanation {
-            color: #3a4b60;
-            line-height: 1.5;
-            font-size: 0.92rem;
-            margin-bottom: 20px;
-        }
+.time {
+    color: #888;
+    font-size: 10px;
+    opacity: 0.8;
+}
 
-        .explanation strong {
-            color: #b22234;
-        }
+.message-content-wrapper {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    position: relative;
+}
 
-        .action-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-top: 10px;
-            margin-bottom: 16px;
-        }
+.message-content-container {
+    flex: 0 1 auto;
+    filter: drop-shadow(7px 7px 0px rgba(0, 0, 0, 0.3));
+    position: relative;
+    z-index: 2;
+}
 
-        .btn {
-            padding: 10px 22px;
-            border-radius: 60px;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: 0.2s;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-            font-family: inherit;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
+.message-content {
+    background: #d3c0a2;
+    padding: 8px 15px;
+    display: block;
+    width: auto;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    max-height: 400px;
+    overflow-y: auto;
+    position: relative;
+    transition: text-shadow 0.2s ease, box-shadow 0.2s ease;
+    clip-path: polygon(var(--clip-points));
+    color:#0f0f14;
+    font-weight: 450;
+    z-index: 3;
+    font-size: var(--message-font-size, 14px);
+}
+.message-content strong {
+    color: #332146;
+    font-weight: bold;
+}
 
-        .btn-primary {
-            background: #1e2f41;
-            color: white;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
+.message-content .highlight {
+    color: #553577;
+    font-weight: 500;
+}
 
-        .btn-primary:hover {
-            background: #0f1e2c;
-            transform: translateY(-1px);
-        }
+.reply-quote {
+    background: rgb(217, 217, 217);
+    padding: 4px 13px 10px;
+    padding-bottom: 10px;
+    font-size: 13px;
+    font-style: italic;
+    max-width: calc(100% - 20px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+    z-index: 1;
+    clip-path: polygon(var(--reply-clip-points));
+    margin-bottom: -7px;
+    margin-top: 4px;
+    margin-left: 14px;
+}
 
-        .btn-outline {
-            border: 1px solid #cbdde9;
-            background: white;
-            color: #2c4c6c;
-        }
+.reply-quote .reply-author {
+    font-weight: bold;
+    color: #2f2f2f;
+    margin-right: 6px;
+    font-weight: 400;
+}
 
-        .btn-outline:hover {
-            background: #f5f9ff;
-            border-color: #a0bbce;
-        }
+.reply-quote .reply-text {
+    color: #4a3a2a;
+    font-weight: 400;
+}
 
-        .footer-note {
-            background: #f9fafc;
-            margin-top: 12px;
-            padding: 20px 32px;
-            border-top: 1px solid #eef2f8;
-            font-size: 0.75rem;
-            color: #5e727d;
-            text-align: center;
-            letter-spacing: 0.2px;
-        }
+.message-image {
+    cursor: pointer;
+    display: block;
+    max-height: 300px;
+    object-fit: cover;
+    transition: transform 0.2s;
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
 
-        .footer-note a {
-            color: #4f6f8f;
-            text-decoration: none;
-            border-bottom: 1px dotted #cbdae6;
-        }
+.message-content.image-only {
+    padding: 0;
+    background: transparent;
+    overflow: hidden;
+}
 
-        @media (max-width: 640px) {
-            body {
-                padding: 12px;
-            }
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 24px 24px 16px 24px;
-            }
-            .content {
-                padding: 20px 24px;
-            }
-            .info-grid {
-                flex-direction: column;
-                gap: 16px;
-            }
-            .title-section h1 {
-                font-size: 1.5rem;
-            }
-        }
+.message-content.image-only img {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    margin: 0;
+    display: block;
+}
 
-        /* небольшая анимация */
-        .block-card {
-            animation: fadeSlideUp 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        }
+.message-image:hover {
+    transform: scale(1.02);
+}
 
-        @keyframes fadeSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(18px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
+.message-content img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 0;
+    display: block;
+}
+
+.message-right {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    gap: 6px;
+    justify-content: center;
+}
+
+.fire-count {
+    align-items: center;
+    background: transparent;
+    border-radius: 16px;
+    color: #B85C2A;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 13px;
+    gap: 3px;
+    padding: 2px 4px;
+    transition: all 0.2s;
+}
+
+.fire-count i {
+    color: #B85C2A;
+    font-size: 13px;
+    transition: transform 0.1s;
+}
+
+.fire-count span {
+    color: #B85C2A;
+    font-weight: 500;
+}
+
+.fire-count:hover i {
+    transform: scale(1.2);
+}
+
+.fire-count.has-fire {
+    animation: flameFlicker var(--indicator-flicker, 1s) infinite;
+}
+
+.message-content.has-fire {
+    background: linear-gradient(135deg, var(--start-color), var(--end-color));
+}
+
+.reply-container {
+    background: #d3c0a2;
+    display: none;
+    padding: 8px 12px;
+    align-items: center;
+    gap: 10px;
+    height: 50px;
+    font-weight: 400;
+    font-size: 150%;
+    overflow: hidden;
+}
+
+.reply-container.active {
+    display: flex;
+}
+
+.reply-content {
+    flex: 1;
+    font-size: 12px;
+    color: #1d1d1d;
+    overflow: hidden;
+    font-weight: 400;
+    font-size: 15px;
+}
+
+.reply-content .reply-label {
+    font-weight: bold;
+    color: #95660f;
+    margin-right: 6px;
+}
+
+.reply-content .reply-preview {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    max-width: calc(100% - 80px);
+    vertical-align: middle;
+    font-weight: 400;
+}
+
+.reply-cancel {
+    background: #44444400;
+    border: none;
+    color: 444;
+    cursor: pointer;
+    padding: 4px 10px;
+    font-size: 12px;
+    transition: background 0.2s;
+}
+
+.reply-cancel:hover {
+    background: #c7963a;
+}
+
+.chat-input {
+    background: #222222;
+    border-top: 1px solid #242424;
+    display: flex;
+    padding: 10px;
+    font-weight: 450;
+}
+
+.chat-input input {
+    background: #aeaeae;
+    border: none;
+    color: rgb(18, 18, 18);
+    flex: 1;
+    outline: none;
+    padding: 10px;
+    font-weight: 450;
+    font-size: 15px;
+    border-radius: 2px;
+}
+
+.chat-input button {
+    background: #c7963a;
+    border: none;
+    border-radius: 2px;
+    color: white;
+    cursor: pointer;
+    margin-left: 10px;
+    padding: 10px 15px;
+    transition: all 0.2s;
+}
+
+.chat-input button:hover:not(:disabled) {
+    background: #ae84d9;
+}
+
+.chat-input button:disabled {
+    background: #444 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.user-select,
+.chat-select,
+.chat-password,
+.chat-settings {
+    background: #242424;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    width: 100%;
+    box-shadow: 10px 10px 0px 0px rgba(0, 0, 0, 0.3);
+}
+
+.custom-select {
+    cursor: pointer;
+    position: relative;
+    width: 100%;
+}
+
+.selected-user {
+    align-items: center;
+    background: #3c3c3c;
+    display: flex;
+    gap: 12px;
+    padding: 10px 12px;
+    transition: all 0.2s;
+}
+
+.selected-user:hover {
+    background: #474747;
+}
+
+.selected-user-avatar {
+    border-radius: 50%;
+    height: 36px;
+    object-fit: cover;
+    width: 36px;
+}
+
+.selected-user-info {
+    flex: 1;
+}
+
+.selected-user-name {
+    display: block;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.selected-user-id {
+    font-size: 11px;
+    opacity: 0.6;
+}
+
+.selected-user-arrow {
+    font-size: 20px;
+    transition: transform 0.2s;
+}
+
+.custom-select.open .selected-user-arrow {
+    transform: rotate(180deg);
+}
+
+.user-dropdown {
+    background: #2f2f2f;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: none;
+    left: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 5px);
+    z-index: 100;
+}
+
+.custom-select.open .user-dropdown {
+    display: block;
+}
+
+.user-option {
+    align-items: center;
+    border-bottom: 1px solid #2d2d2d;
+    cursor: pointer;
+    display: flex;
+    gap: 12px;
+    padding: 10px 12px;
+    transition: background 0.2s;
+}
+
+.user-option:last-child {
+    border-bottom: none;
+}
+
+.user-option:hover {
+    background: #1d1d1d;
+}
+
+.user-option.selected {
+    background: #c7963a32;
+    border-left: 6px solid #c7963a;
+}
+
+.user-option-avatar {
+    border-radius: 50%;
+    height: 40px;
+    object-fit: cover;
+    width: 40px;
+}
+
+.user-option-info {
+    flex: 1;
+}
+
+.user-option-name {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.user-option-id {
+    font-size: 11px;
+    opacity: 0.6;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d3c0a2;
+}
+
+.chat-select .chat-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.chat-btn {
+    background: #3c3c3c;
+    border: none;
+    color: #eaeaf0;
+    cursor: pointer;
+    font-size: 15px;
+    padding: 12px 14px;
+    transition: all 0.2s;
+    transition: clip-path 0.2s ease;
+}
+
+.chat-btn.active {
+    background: #c7963a;
+    color: white;
+    font-weight: bold;
+    position: relative;
+    clip-path: polygon(var(--active-points));
+}
+
+.chat-btn:hover:not(.active) {
+    background: #2c2c2c;
+}
+
+.chat-password input {
+    background: #2a2a35;
+    border: none;
+    border-radius: 2px;
+    color: #eaeaf0;
+    font-size: 14px;
+    margin-top: 8px;
+    outline: none;
+    padding: 10px 12px;
+    width: 100%;
+}
+
+.image-modal {
+    align-items: center;
+    background: rgba(0, 0, 0, 0.9);
+    cursor: pointer;
+    display: none;
+    height: 100%;
+    justify-content: center;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.image-modal.active {
+    display: flex;
+}
+
+.image-modal img {
+    max-height: 90%;
+    max-width: 90%;
+    object-fit: contain;
+}
+
+.footer {
+    margin-top: auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.footer a {
+    color: #888;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer a:hover {
+    color: #c084fc;
+}
+
+.help-modal {
+    align-items: center;
+    background: #3a3a3aa1;
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+    display: none;
+    height: 100%;
+    justify-content: center;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 2000;
+}
+
+.help-modal-content {
+    animation: modalFadeIn 0.3s ease;
+    cursor: default;
+    margin: 20px;
+    max-width: 400px;
+    padding: 30px;
+    width: 90%;
+    box-shadow: 10px 10px 0px 0px rgba(0, 0, 0, 0.3);
+    background: #d3c0a2 url('https://texturelabs.org/wp-content/uploads/Texturelabs_Paper_377S.jpg') repeat;
+    background-size: 960px 687px; 
+    background-blend-mode: overlay; 
+}
+.help-modal-content h2 {
+    font-family: 'Durik', 'Impact', sans-serif;
+    font-size: 50px;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.help-modal-content h2 {
+    background: linear-gradient(135deg, #8732dd, #ffa909);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: #2f1f40;
+    font-size: 55px;
+    margin: 0 0 10px;
+    text-align: center;
+    -webkit-text-fill-color: transparent;
+}
+
+.help-modal-content p {
+    color: #2b2b2b;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 15px 0;
+    text-align: center;
+    font-weight: 400;
+}
+
+.help-modal-content .highlight {
+    color: #58337d;
+    font-weight: bold;
+}
+
+.close-hint {
+    border-top: 1px solid #3a3a45;
+    color: #363636;
+    font-size: 12px;
+    margin-top: 20px;
+    padding-top: 15px;
+    text-align: center;
+}
+
+.shaped {
+    clip-path: polygon(var(--shape-points));
+}
+
+#settingsBtn {
+    background: #3c3c3c;
+    border: none;
+    color: #eaeaf0;
+    cursor: pointer;
+    font-size: 15px;
+    padding: 12px 14px;
+    width: 100%;
+    transition: all 0.2s;
+}
+
+#settingsBtn:hover {
+    background: #2c2c2c;
+}
+
+.settings-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.settings-modal-content {
+    animation: modalFadeIn 0.3s ease;
+    cursor: default;
+    margin: 20px;
+    max-width: 400px;
+    padding: 30px;
+    width: 90%;
+    box-shadow: 10px 10px 0px 0px rgba(0, 0, 0, 0.3);
+    background: #d3c0a2 url('https://texturelabs.org/wp-content/uploads/Texturelabs_Paper_377S.jpg') repeat;
+    background-size: 960px 687px;
+    background-blend-mode: overlay;
+}
+
+.settings-modal-content h2 {
+    font-family: 'Durik', 'Impact', sans-serif;
+    background: linear-gradient(135deg, #8732dd, #ffa909);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: #2f1f40;
+    font-size: 55px;
+    margin: 0 0 10px;
+    text-align: center;
+    -webkit-text-fill-color: transparent;
+}
+.setting-item {
+    margin-bottom: 20px;
+    color: #2b2b2b;
+    font-size: 14px;
+    line-height: 1.6;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+
+.setting-item label {
+    flex: 1;
+    font-weight: 400;
+}
+
+#fontSizeSlider {
+    width: 150px;
+    background: #2b2b2b;
+    height: 4px;
+    border-radius: 2px;
+    -webkit-appearance: none;
+}
+
+#fontSizeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #c7963a;
+    cursor: pointer;
+}
+
+#fontSizeValue {
+    width: 45px;
+    text-align: center;
+    background: #2b2b2b20;
+    padding: 2px 6px;
+    font-weight: 500;
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
+}
+
+.setting-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #c7963a;
+}
+
+.settings-modal-content .close-hint {
+    border-top: 1px solid #3a3a45;
+    color: #363636;
+    font-size: 12px;
+    margin-top: 20px;
+    padding-top: 15px;
+    text-align: center;
+}
+
+@media (min-width: 1100px) {
+    .main-wrapper {
+        align-items: center;
+        flex-direction: row;
+        gap: 40px;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 0;
+    }
+    .header {
+        background: transparent;
+        left: 70px;
+        padding: 0;
+        position: absolute;
+        top: 40px;
+    }
+    .sidebar {
+        position: absolute;
+        right: calc(50% - 680px);
+        top: 50%;
+        transform: translateY(-50%);
+        width: 350px;
+    }
+    .chat-container {
+        height: 800px;
+        width: 600px;
+    }
+    .footer {
+        bottom: 20px;
+        left: 0;
+        padding: 0;
+        position: absolute;
+        right: 0;
+        text-align: center;
+    }
+}
+</style>
 </head>
 <body>
-    <div class="block-card">
-        <div class="top-bar"></div>
-        <div class="header">
-            <div class="emblem">
-                ⚖️
-            </div>
-            <div class="title-section">
-                <h1>Доступ ограничен</h1>
-                <div class="badge">на территории Российской Федерации</div>
-            </div>
-        </div>
-        <div class="content">
-            <div class="legal-text">
-                <p>⚖️ Интернет-ресурс, на который вы пытаетесь перейти, <strong>внесён в Единый реестр запрещённой информации</strong> (Реестр РКН) на основании решения суда или требования уполномоченного органа.</p>
-                <p>В соответствии с Федеральным законом № 149-ФЗ «Об информации, информационных технологиях и о защите информации» доступ к данному сайту <strong>ограничен на постоянной основе</strong>.</p>
-                <div class="legal-ref">
-                    Основание: ст. 15.1 ФЗ-149, решение суда / предписание Роскомнадзора.
-                </div>
-            </div>
-
-            <div class="info-grid">
-                <div class="info-card">
-                    <h3>📌 Номер решения</h3>
-                    <div class="value">№ 2-1245/2024<br> (Мосгорсуд)</div>
-                </div>
-                <div class="info-card">
-                    <h3>🗂️ Категория нарушения</h3>
-                    <div class="value">Распространение информации,<br> запрещённой законодательством РФ</div>
-                </div>
-                <div class="info-card">
-                    <h3>⚙️ Дата блокировки</h3>
-                    <div class="value" id="blockDate">—</div>
-                </div>
-            </div>
-
-            <div class="divider-light"></div>
-
-            <div class="explanation">
-                <strong>Почему это происходит?</strong> Владелец ресурса не удалил информацию, признанную запрещённой, либо сайт используется для распространения материалов, нарушающих законодательство Российской Федерации. 
-                Ограничение доступа применяется операторами связи на основании сведений из федеральной государственной информационной системы.
-            </div>
-
-            <div class="action-buttons">
-                <button class="btn btn-primary" id="infoBtn">📘 Подробнее о ФЗ-149</button>
-                <button class="btn btn-outline" id="copyBtn">📋 Скопировать информацию о блокировке</button>
-            </div>
-            <div style="font-size: 0.8rem; color:#6f8faa; margin-top: 12px;">
-                Если вы считаете, что блокировка применена ошибочно, вы можете обратиться в Роскомнадзор или к владельцу ресурса.
-            </div>
-        </div>
-        <div class="footer-note">
-            Уполномоченный орган: Федеральная служба по надзору в сфере связи, информационных технологий и массовых коммуникаций (Роскомнадзор) <br>
-            Справочный портал: <a href="#" id="fakeRknLink">rkn.gov.ru</a> • Единый реестр запрещённой информации: <a href="#" id="fakeEaisLink">eais.rkn.gov.ru</a>
+<div class="main-wrapper">
+    <div class="header">
+        <img src="Frame 6.png" class="logo" alt="Логотип">
+        <div class="text">
+            <h1>ШМЯКС</h1>
+            <p>первый гармоничный</p>
         </div>
     </div>
+    <div class="chat-container">
+        <img src="scrk.png" class="chat-clip" id="chat-clip" alt="Скрепка">
+        <div class="chat-inner">
+            <div class="chat-messages" id="messages"></div>
 
-    <script>
-        // устанавливаем дату блокировки (сегодняшняя, но выглядит официально)
-        const blockDateElem = document.getElementById('blockDate');
-        const today = new Date();
-        const formattedDate = today.toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric' });
-        blockDateElem.textContent = formattedDate;
-
-        // Модальное окно для информации о ФЗ-149 (простая имитация без создания лишних элементов)
-        function showLawInfo() {
-            // создаём overlay с информацией
-            const overlay = document.createElement('div');
-            overlay.style.position = 'fixed';
-            overlay.style.top = '0';
-            overlay.style.left = '0';
-            overlay.style.width = '100%';
-            overlay.style.height = '100%';
-            overlay.style.backgroundColor = 'rgba(0,0,0,0.7)';
-            overlay.style.backdropFilter = 'blur(4px)';
-            overlay.style.zIndex = '1000';
-            overlay.style.display = 'flex';
-            overlay.style.alignItems = 'center';
-            overlay.style.justifyContent = 'center';
-            overlay.style.padding = '20px';
-            overlay.style.fontFamily = 'system-ui, sans-serif';
-
-            const modal = document.createElement('div');
-            modal.style.maxWidth = '500px';
-            modal.style.width = '100%';
-            modal.style.backgroundColor = '#ffffff';
-            modal.style.borderRadius = '28px';
-            modal.style.padding = '28px 24px';
-            modal.style.boxShadow = '0 30px 40px -20px black';
-            modal.style.position = 'relative';
-            modal.innerHTML = `
-                <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 12px; color:#1e2f41;">Федеральный закон № 149-ФЗ</h3>
-                <p style="margin-bottom: 16px; line-height: 1.45; color: #2c3e44;">Статья 15.1. Создание единого реестра доменных имен, указателей страниц сайтов в сети "Интернет" и сетевых адресов, позволяющих идентифицировать сайты в сети "Интернет", содержащие информацию, распространение которой в Российской Федерации запрещено.</p>
-                <p style="margin-bottom: 20px; line-height: 1.45; color: #2c3e44;">Включение в реестр является основанием для ограничения доступа к информационному ресурсу операторами связи. Решение о включении принимается Роскомнадзором на основании решений судов или уполномоченных органов.</p>
-                <div style="background:#f4f7fb; padding: 12px; border-radius: 18px; font-size:0.85rem; margin-bottom: 20px;">
-                    📌 Текущий ресурс заблокирован по основанию, предусмотренному ч. 5 ст. 15.1 ФЗ-149.
+            <div class="reply-container" id="replyContainer">
+                <div class="reply-content">
+                    <span class="reply-label"></span>
+                    <span class="reply-preview" id="replyPreview"></span>
                 </div>
-                <button id="closeModalBtn" style="background:#1e2f41; border:none; color:white; padding: 10px 22px; border-radius: 40px; font-weight:500; width:100%; cursor:pointer;">Закрыть</button>
-            `;
-            overlay.appendChild(modal);
-            document.body.appendChild(overlay);
+                <button class="reply-cancel" id="cancelReplyBtn">✕</button>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="input" placeholder="Введите сообщение тут!" autocomplete="off">
+                <button id="uploadBtn"><i class="fas fa-image"></i></button>
+                <button id="sendBtn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+        </div>
+    </div>
+    <div class="sidebar">
+        <div class="user-select">
+            <div style="margin-bottom: 8px;">Выберите пользователя:</div>
+            <div class="custom-select" id="userSelect">
+                <div class="selected-user">
+                    <img class="selected-user-avatar" id="selectedAvatar" src="" alt="">
+                    <div class="selected-user-info">
+                        <span class="selected-user-name" id="selectedName">Загрузка...</span>
+                        <span class="selected-user-id" id="selectedId"></span>
+                    </div>
+                    <div class="selected-user-arrow">▼</div>
+                </div>
+                <div class="user-dropdown" id="userDropdown"></div>
+            </div>
+        </div>
+        <div class="chat-select">
+            Выберите чат:
+            <div class="chat-buttons">
+                <button data-chat="messages" class="chat-btn active">gdh-chat</button>
+                <button data-chat="testchat" class="chat-btn">test-chat</button>
+                <button data-chat="interdimensional" class="chat-btn no-password">interdimentional-chat</button>
+            </div>
+        </div>
+        <div class="chat-password">
+            Для отправки сообщений введите код доступа.
+            <input type="password" id="passwordInput" placeholder="Код доступа" autocomplete="off">
+        </div>
+        <div class="chat-settings">
+            <button id="settingsBtn">Настройки</button>
+        </div>
+    </div>
+</div>
+<div id="imageModal" class="image-modal">
+    <img id="modalImage" src="" alt="Увеличенное изображение">
+</div>
+<div class="footer">
+    <a id="helpBtn">справка</a>
+</div>
+<div id="helpModal" class="help-modal">
+    <div class="help-modal-content shaped" onclick="event.stopPropagation()">
+        <h2>СПРАВКА</h2>
+        <p><strong>Внимание:</strong></p>
+        <p>Если вы находитесь на para-b3llum.github.io, то у вас скорее всего не загружаются картинки. Есть два выхода.<br><br>1. Вторая версия сайта находится на <a class="highlight" href="http://95.154.67.151/">этом ресурсе.</a> Сервер не имеет сертификатов, с ним могут быть проблемы с подключением. Но изображения там загружаются как пить дать.<br>2. В браузерных настройках сайта, слева от адреса, cтоит разрешить небезопасный контент. Должно помочь.<br><br>Да поможет вам Избранная.</p>
+        <div class="close-hint">жмите в любое место, чтобы закрыть</div>
+    </div>
+</div>
+<div id="settingsModal" class="settings-modal">
+    <div class="settings-modal-content shaped" onclick="event.stopPropagation()">
+        <h2>НАСТРОЙКИ</h2>
+        <div class="setting-item">
+            <label for="fontSizeSlider">Размер шрифта</label>
+            <input type="range" id="fontSizeSlider" min="12" max="24" step="1" value="14">
+            <span id="fontSizeValue">14px</span>
+        </div>
+        <div class="setting-item">
+            <label for="disableAnimations">Отключить анимации сообщений</label>
+            <input type="checkbox" id="disableAnimations">
+        </div>
+        <div class="close-hint">жмите в любое место, чтобы закрыть</div>
+    </div>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, set, onChildAdded, onChildChanged, query, orderByChild, limitToLast, get, runTransaction, serverTimestamp, endAt } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-            const closeModal = () => {
-                overlay.remove();
-            };
-            document.getElementById('closeModalBtn').addEventListener('click', closeModal);
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) closeModal();
-            });
+const fallbackUsers  = {
+    "@flooshhhhh": {id: "@flooshhhhh",name: "Shirley Flow",avatar: "https://i.imgur.com/QQyreZH.png",color: "#FF96DB"},
+    "@cyanitestar03": {id: "@cyanitestar03",name: "Цианит Сваг🔫🔫",avatar: "https://i.imgur.com/1OWyYjS.png",color: "#3EC6EF"},
+    "@id54271719": {id: "@id54271719",name: "Вокс",avatar: "https://i.imgur.com/lBk0HRI.png",color: "#E1ECED"},
+    "@mlum": {id: "@mlum",name: "Марсель де Люмин",avatar: "https://i.imgur.com/KWSGcQo.png",color: "#C472D8"},
+    "@cd": {id: "@cd",name: "КД",avatar: "https://i.imgur.com/Tk7l95s.png",color: "#FFFFFF"},
+    "@traitor_fon_pipans": {id: "@traitor_fon_pipans",name: "Сокол",avatar: "https://i.imgur.com/cRV16Jw.png",color: "#F4A97A"},
+    "@dusya": {id: "@dusya",name: "Пыль Времён",avatar: "http://95.154.67.151/uploads/1774550891_1700.png",color: "#61C663"},
+    "@digist": {id: "@digist",name: "Элетрик от 18.99 бит",avatar: "http://95.154.67.151/uploads/1774813420_4483.png",color: "#666AC9"},
+    "@princess_of_explosions": {id: "@princess_of_explosions",name: "Флёрри",avatar: "https://i.imgur.com/vG04poX.png",color: "#FF93C4"},
+    "@hatemondays": {id: "@hatemondays",name: "Новэл Начальник",avatar: "https://i.imgur.com/cts2oeC.png",color: "#A8FFD9"},
+    "@sunnystarscout": {id: "@sunnystarscout",name: "✨✨✨✨",avatar: "https://i.imgur.com/Ht3mpnk.png",color: "#FF9E66"},
+    "@honeys": {id: "@honeys",name: "хани",avatar: "https://i.imgur.com/lBk0HRI.png",color: "#E2CB12"},
+    "@nightie": {id: "@nightie",name: "Найти",avatar: "https://i.imgur.com/57FXkwg.png",color: "#C64143"},
+    "@sea": {id: "@sea",name: "sea",avatar: "https://i.imgur.com/qSuwkPc.png",color: "#95A4C1"},
+    "@pipp_petals_official": {id: "@pipp_petals_official",name: "ПИПП ПЕТАЛС🌈🌈🪽🪽🪽",avatar: "https://i.imgur.com/FQEohpO.png",color: "#BF74DD"},
+    "@ave": {id: "@ave",name: "Авелин",avatar: "http://95.154.67.151/uploads/1774545282_9039.png",color: "#00ED8E"}
+};
+let usersCache = null;
+
+let userSettings = {
+    fontSize: 14,
+    animationsEnabled: true
+};
+let currentUserId = localStorage.getItem('selectedUser') || "@flooshhhhh";
+let currentChat = "messages";
+let unsubscribe = null;
+let animationInterval = null;
+let animatedMessages = new Set();
+let currentReplyTo = null; // { messageId, author, preview }
+let oldestTimestamp = null;       
+let loadingMore = false;   
+let hasMore = true;    
+
+const MISTRAL_API_KEY = 'nW5Zvb83kv4JmzlNkuVp9d4DwuIX1KhK';
+const BOT_USER_ID = '@ave';
+const BOT_NAME = 'Авелин';
+const MAX_HISTORY = 10;
+const BOT_SYSTEM_PROMPT = `Ты - Авелин. Говоришь кратко, ответы не должны быть длинными, максимум два предложения. ОТВЕТЫ ОЧЕНЬ СЕРЬЁЗНЫЕ, БЕЗ ПРИКОЛОВ, БЕЗ ЗВЁЗДОЧЕК, КАК БЫ ОТВЕТИЛ СТАНДАРТНЫЙ СКУЧНЫЙ ИИ. НЕ СТАВЬ НИКАКИХ ЗВЁЗДОЧЕК И НИКАК НЕ ВЫДЕЛЯЙ СЛОВА НИ ЖИРНЫМ НИ КУРСИВОМ.`;
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDivdBujXfqmNEFnMrwcrd40edGJh9RyJQ",
+    authDomain: "gdh-chat.firebaseapp.com",
+    appId: "1:212928743162:web:84a3ce962011d5ee6b6b43",
+    projectId: "gdh-chat",
+    storageBucket: "gdh-chat.firebasestorage.app",
+    messagingSenderId: "212928743162",
+    databaseURL: "https://gdh-chat-default-rtdb.europe-west1.firebasedatabase.app",
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+async function loadUsersFromDB() {
+    if (usersCache) return usersCache;
+    
+    const usersRef = ref(db, 'users');
+    try {
+        const snapshot = await get(usersRef);
+        if (snapshot.exists()) {
+            usersCache = snapshot.val();
+            console.log("Пользователи загружены из БД");
+            return usersCache;
+        } else {
+            console.warn("БД пользователей пуста, использую fallback");
+            usersCache = fallbackUsers;
+            return fallbackUsers;
         }
-
-        // копирование информации о блокировке (текст для уведомлений)
-        function copyBlockInfo() {
-            const domain = window.location.hostname || 'ресурс.рф';
-            const decisionNumber = '№ 2-1245/2024';
-            const court = 'Мосгорсуд';
-            const lawRef = 'ст. 15.1 Федерального закона от 27.07.2006 № 149-ФЗ';
-            const date = formattedDate;
-            const textToCopy = `Доступ к сайту ${domain} ограничен на территории РФ.\nОснование: решение суда ${decisionNumber} (${court}) от ${date}.\nЗакон: ${lawRef}.\nКатегория: распространение запрещённой информации.`;
-            
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                // создаём временное уведомление
-                const toast = document.createElement('div');
-                toast.innerText = '✅ Информация о блокировке скопирована в буфер';
-                toast.style.position = 'fixed';
-                toast.style.bottom = '24px';
-                toast.style.left = '50%';
-                toast.style.transform = 'translateX(-50%)';
-                toast.style.backgroundColor = '#1e2f41';
-                toast.style.color = 'white';
-                toast.style.padding = '12px 24px';
-                toast.style.borderRadius = '60px';
-                toast.style.fontSize = '0.9rem';
-                toast.style.zIndex = '1100';
-                toast.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
-                toast.style.fontWeight = '500';
-                document.body.appendChild(toast);
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    setTimeout(() => toast.remove(), 300);
-                }, 2500);
-            }).catch(() => {
-                alert('Не удалось скопировать текст, но вы можете выделить данные вручную.');
-            });
+    } catch (error) {
+        console.error("Ошибка загрузки пользователей:", error);
+        usersCache = fallbackUsers;
+        return fallbackUsers;
+    }
+}
+async function getUser(userId) {
+    const users = await loadUsersFromDB();
+    return users[userId] || { 
+        id: userId, 
+        name: userId, 
+        avatar: "", 
+        color: "#fff" 
+    };
+}
+function switchChat(chatId) {
+    currentChat = chatId;
+    currentReplyTo = null;
+    updateReplyUI();
+    document.querySelectorAll('.chat-btn').forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-chat') === chatId));
+    
+    if (activeChatAnimation) {
+        clearInterval(activeChatAnimation);
+        activeChatAnimation = null;
+    }
+    animateActiveChat();
+    
+    const messagesDiv = document.getElementById("messages");
+    if (messagesDiv._scrollListener) {
+        messagesDiv.removeEventListener('scroll', messagesDiv._scrollListener);
+    }
+    messagesDiv.innerHTML = '<div id="loadingIndicator" style="display:flex;justify-content:center;align-items:center;height:100%;"><img src="http://95.154.67.151/uploads/1774956434_3390.gif" style="width:80px;opacity:0.7;"></div>';
+    showLoading();
+    
+    if (unsubscribe) unsubscribe();
+    
+    // переменные пагинации
+    oldestTimestamp = null;
+    loadingMore = false;
+    hasMore = true;
+    
+    const chatRef = ref(db, chatId);
+    const messagesQuery = query(chatRef, orderByChild('timestamp'), limitToLast(20));
+    
+    const addedUnsubscribe = onChildAdded(messagesQuery, (snapshot) => {
+        hideLoading();
+        const data = snapshot.val();
+        renderMessage(data, snapshot.key);
+        if (oldestTimestamp === null) {
+            oldestTimestamp = data.timestamp;
         }
+        scrollToBottom();
+    });
+    
+    const changedUnsubscribe = onChildChanged(chatRef, (snapshot) => updateMessageFire(snapshot.key, snapshot.val()));
+    
+    unsubscribe = () => {
+        addedUnsubscribe();
+        changedUnsubscribe();
+    };
+    
+    const newMessagesDiv = document.getElementById("messages");
+    newMessagesDiv._scrollListener = () => {
+        const div = document.getElementById("messages");
+        if (div.scrollTop === 0 && !loadingMore && hasMore && oldestTimestamp !== null) {
+            loadMoreMessages();
+        }
+    };
+    newMessagesDiv.addEventListener('scroll', newMessagesDiv._scrollListener);
+    
+    checkPassword();
+}
+async function loadMoreMessages() {
+    if (loadingMore || !hasMore) return;
+    loadingMore = true;
 
-        // Обработчики кнопок
-        const infoBtn = document.getElementById('infoBtn');
-        const copyBtn = document.getElementById('copyBtn');
-        const fakeRknLink = document.getElementById('fakeRknLink');
-        const fakeEaisLink = document.getElementById('fakeEaisLink');
+    const chatRef = ref(db, currentChat);
+    const queryRef = query(
+        chatRef,
+        orderByChild('timestamp'),
+        endAt(oldestTimestamp - 1),
+        limitToLast(20)
+    );
 
-        if (infoBtn) infoBtn.addEventListener('click', showLawInfo);
-        if (copyBtn) copyBtn.addEventListener('click', copyBlockInfo);
+    const snapshot = await get(queryRef);
+
+    const messages = [];
+    snapshot.forEach((child) => {
+        messages.push({ key: child.key, data: child.val() });
+    });
+
+    if (messages.length === 0) {
+        hasMore = false;
+        loadingMore = false;
+        return;
+    }
+
+    const messagesDiv = document.getElementById("messages");
+
+    const firstVisible = messagesDiv.firstElementChild;
+    const prevOffset = firstVisible
+        ? firstVisible.getBoundingClientRect().top
+        : 0;
+
+    const reversedMessages = [...messages].reverse();
+    for (const { key, data } of reversedMessages) {
+        renderMessage(data, key, true, true);
+    }
+
+    if (firstVisible) {
+        requestAnimationFrame(() => {
+            const newOffset = firstVisible.getBoundingClientRect().top;
+            const diff = newOffset - prevOffset;
+            messagesDiv.scrollTop += diff;
+        });
+    }
+
+    oldestTimestamp = messages[0].data.timestamp;
+
+    loadingMore = false;
+    console.log('Загружено сообщений:', messages.length);
+}
+function scrollToBottom() {
+    const div = document.getElementById("messages");
+    div.scrollTop = div.scrollHeight;
+}
+function generateRandomPoints(maxOffset = 2) {
+    const tlX = Math.random() * maxOffset;
+    const tlY = Math.random() * maxOffset;
+    const trX = 100 - Math.random() * maxOffset;
+    const trY = Math.random() * maxOffset;
+    const brX = 100 - Math.random() * maxOffset;
+    const brY = 100 - Math.random() * maxOffset;
+    const blX = Math.random() * maxOffset;
+    const blY = 100 - Math.random() * maxOffset;
+    return `${tlX}% ${tlY}%, ${trX}% ${trY}%, ${brX}% ${brY}%, ${blX}% ${blY}%`;
+}
+function applyShapedClass() {
+    document.querySelectorAll('.shaped').forEach(el => {
+        const maxOffset = el.dataset.shapedOffset || 2;
+        const points = generateRandomPoints(parseFloat(maxOffset));
+        el.style.setProperty('--shape-points', points);
+    });
+}
+async function updateMessageFire(messageId, data) {
+    const el = document.querySelector(`.message[data-message-id="${messageId}"]`);
+    if (!el) { 
+        await renderMessage(data, messageId); 
+        return; 
+    }
+    const fireCount = data.fireCount || 0;
+    const hasFire = fireCount > 0;
+    const rightDiv = el.querySelector('.message-right');
+    if (hasFire) {
+        let fireSpan = el.querySelector('.fire-count');
+        if (!fireSpan && rightDiv) {
+            fireSpan = document.createElement('div');
+            fireSpan.className = 'fire-count has-fire';
+            fireSpan.onclick = (e) => { e.stopPropagation(); addFireToMessage(messageId, currentChat); };
+            fireSpan.innerHTML = `<i class="fas fa-fire"></i><span>${fireCount}</span>`;
+            rightDiv.appendChild(fireSpan);
+        } else if (fireSpan) fireSpan.querySelector('span').textContent = fireCount;
+        const intensity = Math.min(fireCount / 1000, 1);
+        if (fireSpan) fireSpan.style.setProperty('--indicator-flicker', `${Math.max(0.5, 1.5 - intensity * 1.2)}s`);
+        applyFireStyle(el.querySelector('.message-content'), fireCount, intensity);
+    } else {
+        const fs = el.querySelector('.fire-count');
+        if (fs) fs.remove();
+        const mc = el.querySelector('.message-content');
+        if (mc) mc.classList.remove('has-fire');
+    }
+}
+function startShapeAnimation(messageId, intensity) {
+    if (!userSettings.animationsEnabled) return;
+    if (animatedMessages.has(messageId)) {
+        return;
+    }
+    animatedMessages.add(messageId);
+    
+    const fps = 4; 
+    const interval = 1000 / fps;
+    
+    const messageElement = document.querySelector(`.message[data-message-id="${messageId}"] .message-content`);
+    if (!messageElement) return;
+    
+    const intervalId = setInterval(() => {
+        const currentEl = document.querySelector(`.message[data-message-id="${messageId}"] .message-content`);
+        if (!currentEl || !currentEl.classList.contains('has-fire')) {
+            clearInterval(intervalId);
+            animatedMessages.delete(messageId);
+            return;
+        }
         
-        // заглушки для ссылок (чтобы не было реального перехода, но был стандартный блок)
-        function handleFakeLink(e, urlName) {
+        const currentIntensity = Math.min(parseInt(currentEl.getAttribute('data-fire-intensity') || 0) / 1000, 1);
+        const maxOffset =  currentIntensity * 7;
+        const newClipPath = generateRandomClipPath(maxOffset);
+        currentEl.style.setProperty('--clip-points', newClipPath);
+    }, interval);
+    
+    messageElement.setAttribute('data-animation-id', intervalId);
+}
+function stopShapeAnimation(messageId) {
+    const messageElement = document.querySelector(`.message[data-message-id="${messageId}"] .message-content`);
+    if (messageElement) {
+        const intervalId = messageElement.getAttribute('data-animation-id');
+        if (intervalId) {
+            clearInterval(parseInt(intervalId));
+            messageElement.removeAttribute('data-animation-id');
+        }
+    }
+    animatedMessages.delete(messageId);
+}
+let activeChatAnimation = null;
+
+function animateActiveChat() {
+    if (activeChatAnimation) {
+        clearInterval(activeChatAnimation);
+    }
+    
+    const activeBtn = document.querySelector('.chat-btn.active');
+    if (!activeBtn) return;
+    
+    activeChatAnimation = setInterval(() => {
+        const currentActive = document.querySelector('.chat-btn.active');
+        if (!currentActive) {
+            clearInterval(activeChatAnimation);
+            activeChatAnimation = null;
+            return;
+        }
+        
+        const intensity = 0.4;
+        const maxOffset = intensity * 5;
+        const newPoints = generateRandomPoints(maxOffset);
+        currentActive.style.transition = 'none';
+        currentActive.style.setProperty('--active-points', newPoints);
+        void currentActive.offsetHeight;
+    }, 500);
+}
+function applyFireStyle(el, fireCount, intensity) {
+    if (!el) return;
+
+    const { startColor, endColor } = getFireGradient(intensity);
+
+    el.style.setProperty('--start-color', startColor);
+    el.style.setProperty('--end-color', endColor);
+    el.classList.add('has-fire');
+}
+function getFireGradient(intensity) {
+    const startR = Math.floor(211 + (210 - 211) * intensity);
+    const startG = Math.floor(192 + (160 - 192) * intensity);
+    const startB = Math.floor(162 + (220 - 162) * intensity);
+
+    const endR = Math.floor(startR + (247 - startR) * intensity);
+    const endG = Math.floor(startG + (172 - startG) * intensity);
+    const endB = Math.floor(startB + (34 - startB) * intensity);
+
+    return {
+        startColor: `rgb(${startR}, ${startG}, ${startB})`,
+        endColor: `rgb(${endR}, ${endG}, ${endB})`
+    };
+}
+function generateRandomClipPath(maxOffset = 2) {
+    const tlX = Math.random() * maxOffset;
+    const tlY = Math.random() * maxOffset;
+    
+    const trX = 100 - Math.random() * maxOffset;
+    const trY = Math.random() * maxOffset;
+    
+    const brX = 100 - Math.random() * maxOffset;
+    const brY = 100 - Math.random() * maxOffset;
+    
+    const blX = Math.random() * maxOffset;
+    const blY = 100 - Math.random() * maxOffset;
+    
+    return `${tlX}% ${tlY}%, ${trX}% ${trY}%, ${brX}% ${brY}%, ${blX}% ${blY}%`;
+}
+
+function getMessagePreview(data) {
+    let preview = data.text || '';
+    const imgPattern = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp|svg))$/i;
+    if (imgPattern.test(preview.trim())) {
+        preview = '📷 Изображение';
+    }
+    if (preview.length > 50) {
+        preview = preview.substring(0, 47) + '...';
+    }
+    return preview;
+}
+
+function setReplyTo(messageId, authorName, preview) {
+    currentReplyTo = { messageId, author: authorName, preview };
+    updateReplyUI();
+    document.getElementById("input").focus();
+}
+
+function updateReplyUI() {
+    const container = document.getElementById("replyContainer");
+    const previewSpan = document.getElementById("replyPreview");
+    
+    if (currentReplyTo) {
+        previewSpan.innerHTML = `<strong class="reply-label">${currentReplyTo.author}:</strong> ${currentReplyTo.preview}`;
+        container.classList.add("active");
+    } else {
+        container.classList.remove("active");
+        previewSpan.innerHTML = "";
+    }
+}
+
+function cancelReply() {
+    currentReplyTo = null;
+    updateReplyUI();
+}
+function scrollToMessage(messageId) {
+    const messageElement = document.querySelector(`.message[data-message-id="${messageId}"]`);
+    if (messageElement) {
+        messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        messageElement.style.transition = 'background 0.3s';
+        messageElement.style.background = 'rgba(199, 150, 58, 0.3)';
+        setTimeout(() => {
+            messageElement.style.background = '';
+        }, 1500);
+    }
+}
+async function renderMessage(data, msgId, prepend = false, skipScroll = false) {
+    const user = await getUser(data.userId);
+    const fireCount = data.fireCount || 0;
+    const hasFire = fireCount > 0;
+    let intensity = hasFire ? Math.min(fireCount / 1000, 1) : 0;
+    let styleAttr = '', glowClass = '';
+    const clipPathPoints = generateRandomClipPath();
+    
+    if (hasFire) {
+        glowClass = 'has-fire';
+        const { startColor, endColor } = getFireGradient(intensity);
+        styleAttr = `--start-color: ${startColor}; --end-color: ${endColor};`;
+    } else {
+        styleAttr = `--clip-points: ${clipPathPoints};`;
+    }
+    
+    const dateObj = new Date(data.timestamp);
+    const fakeYearDate = new Date(dateObj);
+    fakeYearDate.setFullYear(1998);
+    const timeStr = fakeYearDate.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    const dateStr = fakeYearDate.toLocaleDateString();
+    let contentHtml = '';
+    const imgPattern = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp|svg))$/i;
+    
+    let replyHtml = '';
+    if (data.replyTo && data.replyTo.author && data.replyTo.preview) {
+        const replyClipPath = generateRandomClipPath();
+        replyHtml = `<div class="reply-quote" style="--reply-clip-points: ${replyClipPath};" data-reply-to-id="${data.replyTo.messageId}">
+            <span class="reply-author">↳ ${escapeHtml(data.replyTo.author)}:</span> 
+            <span class="reply-text">${escapeHtml(data.replyTo.preview)}</span>
+        </div>`;
+    }
+    
+    if (imgPattern.test(data.text.trim())) {
+        contentHtml = `
+            <div class="message-content image-only ${glowClass}" style="${styleAttr}">
+                <img class="message-image" src="${data.text.trim()}" alt="Изображение" 
+                    onclick="openImageModal('${data.text.trim()}')" 
+                    onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'padding:10px;background:#2a2a35;\'>Ошибка загрузки</div>'">
+            </div>
+        `;
+    } else {
+        let text = escapeHtml(data.text).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/([#@][\wА-Яа-яЁё\d_]+)/g, '<span class="highlight">$1</span>');
+        text = text.replace(/(https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp|svg))/gi, (m) => {
+            return `<img class="message-image" src="${m}" alt="img" onclick="openImageModal('${m}')" style="max-width:100%; max-height:200px; display:block;">`;
+        });
+        contentHtml = `<div class="message-content ${glowClass}" style="${styleAttr}">${text}</div>`;
+    }
+    
+    const msgDiv = document.createElement("div");
+    msgDiv.className = "message";
+    msgDiv.setAttribute("data-message-id", msgId);
+    
+    msgDiv.onclick = (e) => {
+        if (e.target.closest('.fire-count') || e.target.closest('.message-image') || e.target.closest('.reply-cancel') || e.target.closest('.reply-quote')) return;
+        const preview = getMessagePreview(data);
+        setReplyTo(msgId, user.name, preview);
+    };
+    
+    const fireIndicator = hasFire ? `<div class="fire-count has-fire" style="--indicator-flicker: ${Math.max(0.5, 1.5 - intensity * 1.2)}s;" onclick="event.stopPropagation(); addFireToMessage('${msgId}', '${currentChat}')"><i class="fas fa-fire"></i><span>${fireCount}</span></div>` : '';
+    
+    msgDiv.innerHTML = `
+        <img class="avatar" src="${user.avatar}" title="${user.id}" onclick="event.stopPropagation(); addFireToMessage('${msgId}', '${currentChat}')">
+        <div class="message-body">
+            <div class="meta">
+                <span class="user-name" style="color:${user.color}">${user.name}</span>
+                <span class="time">${dateStr} ${timeStr}</span>
+            </div>
+            ${replyHtml}
+            <div class="message-content-wrapper">
+                <div class="message-content-container">
+                    ${contentHtml}
+                </div>
+                <div class="message-right">
+                    ${fireIndicator}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const container = document.getElementById("messages");
+    if (prepend) {
+        container.insertBefore(msgDiv, container.firstChild);
+    } else {
+        container.appendChild(msgDiv);
+    }
+    
+    if (hasFire) {
+        const messageContent = msgDiv.querySelector('.message-content');
+        if (messageContent) {
+            messageContent.setAttribute('data-fire-intensity', fireCount);
+            setTimeout(() => {
+                startShapeAnimation(msgId, intensity);
+            }, 10);
+        }
+    }
+    
+    if (!skipScroll) {
+        scrollToBottom();
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+        return c;
+    });
+}
+
+async function sendMessage() {
+    const input = document.getElementById("input");
+    const text = input.value.trim();
+    if (!text) return;
+    
+    const msgRef = push(ref(db, currentChat));
+    
+    const messageData = { 
+        text, 
+        userId: currentUserId, 
+        timestamp: serverTimestamp(), 
+        fireCount: 0 
+    };
+    
+    if (currentReplyTo) {
+        messageData.replyTo = {
+            messageId: currentReplyTo.messageId,
+            author: currentReplyTo.author,
+            preview: currentReplyTo.preview
+        };
+    }
+    
+    await set(msgRef, messageData);
+    input.value = "";
+    cancelReply();
+    
+    if (isBotMentioned(text)) {
+        const currentUser = await getUser(currentUserId);
+        await botReply(text, currentUser?.name || "Кто-то", new Date(), currentChat);
+    }
+}
+
+async function botReply(userMsg, userName, now, chatId) {
+    const typing = document.createElement("div");
+    typing.className = "message";
+    typing.id = "typing-indicator";
+    const botUser = await getUser(BOT_USER_ID);
+    typing.innerHTML = `<img class="avatar" src="${botUser?.avatar || ''}"><div class="message-body"><div class="meta"><span class="user-name" style="color:#00ED8E">${BOT_NAME}</span> • <span class="time">печатает...</span></div><div class="message-content">Ща...</div></div>`;
+    document.getElementById("messages").appendChild(typing);
+    scrollToBottom();
+    const response = await askMistral(userMsg, userName, chatId);
+    document.getElementById("typing-indicator")?.remove();
+    
+    const botRef = push(ref(db, chatId));
+    await set(botRef, { 
+        text: response, 
+        userId: BOT_USER_ID, 
+        timestamp: serverTimestamp(),
+        fireCount: 0 
+    });
+}
+
+async function askMistral(userMessage, userName, chatId) {
+    try {
+        const msgRef = ref(db, chatId);
+        const snap = await get(query(msgRef, orderByChild('timestamp'), limitToLast(MAX_HISTORY)));
+        const history = [];
+        if (snap.exists()) snap.forEach(cs => {
+            const m = cs.val();
+            history.push({ role: m.userId === BOT_USER_ID ? 'assistant' : 'user', content: m.text });
+        });
+        const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${MISTRAL_API_KEY}` },
+            body: JSON.stringify({ model: 'mistral-tiny', messages: [{ role: 'system', content: `${BOT_SYSTEM_PROMPT} Сейчас с тобой говорит ${userName}.` }, ...history.slice(0, -1), { role: 'user', content: userMessage }], max_tokens: 200, temperature: 0.8 })
+        });
+        const data = await res.json();
+        return data.choices?.[0]?.message?.content || 'Кто-то залил сервер пивом. Простите.';
+    } catch { return 'Что-то пошло не так.'; }
+}
+
+function isBotMentioned(text) {
+    const mentions = ['@ave', '@аве', '@авелин', '@avelyn', 'Авелин', 'авелин'];
+    return mentions.some(m => text.toLowerCase().includes(m.toLowerCase()));
+}
+
+async function addFireToMessage(messageId, chatId) {
+    if (!messageId) return;
+    const msgRef = ref(db, `${chatId}/${messageId}`);
+    await runTransaction(msgRef, (cur) => cur ? { ...cur, fireCount: (cur.fireCount || 0) + 1 } : cur);
+}
+
+function isPasswordRequired() { return !["interdimensional"].includes(currentChat); }
+
+function checkPassword() {
+    const pass = document.getElementById("passwordInput").value.trim();
+    const correct = window.correctPass || "";
+    const ok = !isPasswordRequired() || (pass === correct && correct !== "");
+    document.getElementById("passwordInput").style.background = ok ? "#c7963a" : "#383838";
+    document.getElementById("sendBtn").disabled = !ok;
+    document.getElementById("input").disabled = !ok;
+    const up = document.getElementById('uploadBtn');
+    if (up) up.disabled = !ok;
+}
+
+function loadSettings() {
+    const saved = localStorage.getItem('chatSettings');
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            userSettings = { ...userSettings, ...parsed };
+        } catch(e) {}
+    }
+    applySettings();
+}
+
+function saveSettings() {
+    localStorage.setItem('chatSettings', JSON.stringify(userSettings));
+    applySettings();
+}
+
+function applySettings() {
+    document.documentElement.style.setProperty('--message-font-size', `${userSettings.fontSize}px`);
+    if (!userSettings.animationsEnabled) {
+        for (let msgId of animatedMessages) {
+            stopShapeAnimation(msgId);
+        }
+        animatedMessages.clear();
+    }
+}
+
+async function populateUserSelect() {
+    const dropdown = document.getElementById("userDropdown");
+    dropdown.innerHTML = '<div style="padding:10px;text-align:center;">Загрузка...</div>';
+    const users = await loadUsersFromDB();
+    dropdown.innerHTML = "";
+    for (const key in users) {
+        if (key === '@ave') continue;
+        
+        const u = users[key];
+        const opt = document.createElement("div");
+        opt.className = "user-option" + (key === currentUserId ? " selected" : "");
+        opt.setAttribute("data-user-id", key);
+        opt.innerHTML = `<img class="user-option-avatar" src="${u.avatar}"><div class="user-option-info"><span class="user-option-name" style="color:${u.color}">${u.name}</span><span class="user-option-id">${u.id}</span></div>`;
+        opt.onclick = () => { 
+            currentUserId = key; 
+            localStorage.setItem('selectedUser', key); 
+            updateSelectedUserDisplay(); 
+            document.getElementById("userSelect").classList.remove("open"); 
+        };
+        dropdown.appendChild(opt);
+    }
+    
+    updateSelectedUserDisplay();
+}
+
+async function updateSelectedUserDisplay() {
+    const users = await loadUsersFromDB();
+    const u = users[currentUserId];
+    
+    if (u) {
+        document.getElementById("selectedAvatar").src = u.avatar;
+        document.getElementById("selectedName").innerHTML = u.name;
+        document.getElementById("selectedName").style.color = u.color;
+        document.getElementById("selectedId").innerHTML = u.id;
+    }
+    
+    document.querySelectorAll(".user-option").forEach(opt => {
+        opt.classList.toggle("selected", opt.getAttribute("data-user-id") === currentUserId);
+    });
+}
+
+function setupCustomSelect() {
+    const sel = document.getElementById("userSelect");
+    sel.querySelector(".selected-user").onclick = (e) => { e.stopPropagation(); sel.classList.toggle("open"); };
+    document.addEventListener("click", () => sel.classList.remove("open"));
+}
+
+window.openImageModal = (url) => { const modal = document.getElementById('imageModal'); document.getElementById('modalImage').src = url; modal.classList.add('active'); };
+window.addFireToMessage = addFireToMessage;
+window.sendMessage = sendMessage;
+
+document.getElementById('messages').addEventListener('click', (e) => {
+    const replyQuote = e.target.closest('.reply-quote');
+    if (replyQuote) {
+        e.stopPropagation();
+        const messageId = replyQuote.getAttribute('data-reply-to-id');
+        if (messageId) {
+            scrollToMessage(messageId);
+        }
+    }
+});
+function showLoading() {
+    const loader = document.getElementById("loadingIndicator");
+    if (loader) loader.style.display = "flex";
+}
+
+function hideLoading() {
+    const loader = document.getElementById("loadingIndicator");
+    if (loader) loader.style.display = "none";
+}
+document.addEventListener('DOMContentLoaded', () => {
+    applyShapedClass();
+    animateActiveChat();
+    document.getElementById('imageModal')?.addEventListener('click', function() { this.classList.remove('active'); document.getElementById('modalImage').src = ""; });
+    const helpBtn = document.getElementById('helpBtn'), helpModal = document.getElementById('helpModal');
+    helpBtn?.addEventListener('click', (e) => { e.preventDefault(); helpModal.style.display = 'flex'; });
+    helpModal?.addEventListener('click', () => helpModal.style.display = 'none');
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && helpModal?.style.display === 'flex') helpModal.style.display = 'none'; });
+    const upBtn = document.getElementById('uploadBtn'), fileInp = document.getElementById('fileInput');
+    upBtn?.addEventListener('click', () => fileInp.click());
+    fileInp?.addEventListener('change', async (e) => {
+        const f = e.target.files[0];
+        if (!f || !f.type.startsWith('image/')) return alert('Выберите пикчу');
+        if (f.size > 10*1024*1024) return alert('Файл слишком большой (макс 10MB)');
+        upBtn.innerHTML = '⏳'; upBtn.disabled = true;
+        const fd = new FormData(); fd.append('image', f);
+        try {
+            const resp = await fetch('http://95.154.67.151/upload.php', { method: 'POST', body: fd });
+            const data = await resp.json();
+            if (resp.ok && data.url) document.getElementById('input').value = data.url;
+            else alert('Ошибка: ' + (data.error || 'неизвестно'));
+        } catch { alert('Не подключиться к серверу загрузки!'); }
+        finally { upBtn.innerHTML = '<i class="fas fa-image"></i>'; upBtn.disabled = false; fileInp.value = ''; }
+    });
+    
+    document.getElementById("cancelReplyBtn").addEventListener("click", cancelReply);
+    
+    const passInput = document.getElementById("passwordInput"), sendB = document.getElementById("sendBtn"), msgInp = document.getElementById("input");
+    const passRef = ref(db, "chatPass");
+    get(passRef).then(snap => { window.correctPass = snap.val() || ""; checkPassword(); });
+    passInput.addEventListener("input", checkPassword);
+    msgInp.addEventListener("keydown", (e) => { if (e.key === "Enter" && !sendB.disabled) sendMessage(); });
+    populateUserSelect();
+    setupCustomSelect();
+    switchChat("messages");
+    document.querySelectorAll('.chat-btn').forEach(btn => btn.addEventListener('click', () => switchChat(btn.getAttribute('data-chat'))));
+    loadSettings();
+
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsModal = document.getElementById('settingsModal');
+    const fontSizeSlider = document.getElementById('fontSizeSlider');
+    const fontSizeValue = document.getElementById('fontSizeValue');
+    const disableAnimationsCheck = document.getElementById('disableAnimations');
+
+    if (settingsBtn && settingsModal) {
+        settingsBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const toastMsg = document.createElement('div');
-            toastMsg.innerText = `ℹ️ Ссылка на ${urlName} — демонстрационный пример. Ресурс заблокирован по решению суда.`;
-            toastMsg.style.position = 'fixed';
-            toastMsg.style.bottom = '24px';
-            toastMsg.style.left = '50%';
-            toastMsg.style.transform = 'translateX(-50%)';
-            toastMsg.style.backgroundColor = '#2c3e44';
-            toastMsg.style.color = '#f0f3f8';
-            toastMsg.style.padding = '12px 20px';
-            toastMsg.style.borderRadius = '40px';
-            toastMsg.style.fontSize = '0.85rem';
-            toastMsg.style.zIndex = '1100';
-            toastMsg.style.fontWeight = '500';
-            toastMsg.style.backdropFilter = 'blur(4px)';
-            document.body.appendChild(toastMsg);
-            setTimeout(() => toastMsg.remove(), 2600);
-        }
+            settingsModal.style.display = 'flex';
+            // установить текущие значения
+            fontSizeSlider.value = userSettings.fontSize;
+            fontSizeValue.textContent = userSettings.fontSize + 'px';
+            disableAnimationsCheck.checked = !userSettings.animationsEnabled;
+        });
+        settingsModal.addEventListener('click', () => {
+            settingsModal.style.display = 'none';
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && settingsModal.style.display === 'flex') {
+                settingsModal.style.display = 'none';
+            }
+        });
+        fontSizeSlider.addEventListener('input', (e) => {
+            const val = e.target.value;
+            fontSizeValue.textContent = val + 'px';
+            userSettings.fontSize = parseInt(val);
+            saveSettings();
+        });
+        disableAnimationsCheck.addEventListener('change', (e) => {
+            userSettings.animationsEnabled = !e.target.checked;
+            saveSettings();
+        });
+    }
+    const inputField = document.getElementById('input');
+    if (inputField) {
+        inputField.addEventListener('paste', async (e) => {
+            const sendBtn = document.getElementById('sendBtn');
+            
+            const items = e.clipboardData?.items;
+            if (!items) return;
 
-        if (fakeRknLink) fakeRknLink.addEventListener('click', (e) => handleFakeLink(e, 'Роскомнадзор'));
-        if (fakeEaisLink) fakeEaisLink.addEventListener('click', (e) => handleFakeLink(e, 'Единый реестр'));
+            for (const item of items) {
+                if (item.type.startsWith('image/')) {
+                    e.preventDefault();
+                    const file = item.getAsFile();
+                    if (!file) continue;
 
-        // Добавляем легенду: имитация номера решения может быть адаптивной под дату
-        // Также можно динамически отобразить данные ресурса (если нужно)
-        const urlDisplay = document.querySelector('.info-card:first-child .value');
-        if (urlDisplay && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-            // можно оставить как есть, но суть сохраняется
-        }
-    </script>
+                    const originalPlaceholder = inputField.placeholder;
+                    inputField.placeholder = 'Загрузка изображения...';
+                    inputField.disabled = true;
+
+                    const formData = new FormData();
+                    formData.append('image', file);
+
+                    try {
+                        const response = await fetch('http://95.154.67.151/upload.php', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await response.json();
+                        if (response.ok && data.url) {
+                            const start = inputField.selectionStart;
+                            const end = inputField.selectionEnd;
+                            const currentValue = inputField.value;
+                            inputField.value = currentValue.substring(0, start) + data.url + currentValue.substring(end);
+                        } else {
+                            alert('Ошибка загрузки: ' + (data.error || 'неизвестно'));
+                        }
+                    } catch (err) {
+                        console.error('Ошибка загрузки изображения:', err);
+                        alert('Не удалось загрузить изображение');
+                    } finally {
+                        inputField.placeholder = originalPlaceholder;
+                        inputField.disabled = false;
+                        inputField.focus();
+                    }
+                    break;
+                }
+            }
+        });
+    }
+    (async () => {
+    const users = await loadUsersFromDB();
+    if (!users[currentUserId]) {
+        currentUserId = "@flooshhhhh";
+        localStorage.setItem('selectedUser', currentUserId);
+    }
+    await updateSelectedUserDisplay();
+})();
+});
+</script>
 </body>
 </html>
