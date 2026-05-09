@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Техническая инструкция K-209</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #2c2a29;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            padding: 30px 20px;
+            margin: 0;
+            color: #f0f0e0;
+        }
+        .document-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #fdf8e7;
+            background-image: linear-gradient(to bottom, #fef9e6, #f9f0da);
+            color: #1e1b1a;
+            border-radius: 12px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.4);
+            overflow: hidden;
+            border-left: 8px solid #bd2a2a;
+        }
+        /* «Ломаный» стиль / китайский ГОСТ */
+        .header {
+            background: #8b2c2c;
+            padding: 12px 25px;
+            border-bottom: 3px solid #e6ac00;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 900;
+            color: #ffecb3;
+            text-shadow: 1px 1px 0 #4a1a1a;
+            font-family: 'Impact', 'Courier New', monospace;
+        }
+        .header p {
+            margin: 5px 0 0;
+            font-style: italic;
+            color: #ffdd99;
+            font-size: 14px;
+        }
+        .content {
+            padding: 25px 30px 35px;
+        }
+        .warning-box {
+            background: #2c2a29;
+            color: #f5bc70;
+            border-left: 6px solid #ff7b2c;
+            padding: 12px 18px;
+            margin-bottom: 28px;
+            font-weight: bold;
+            font-size: 15px;
+            font-family: monospace;
+            box-shadow: 2px 2px 0 #ab8e54;
+        }
+        .step {
+            background: #fff6ea;
+            border: 1px solid #e0cfb2;
+            margin-bottom: 26px;
+            padding: 6px 20px 15px;
+            border-radius: 16px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.05);
+        }
+        .step h2 {
+            background: #e7dbbd;
+            display: inline-block;
+            padding: 5px 18px;
+            margin-top: -12px;
+            margin-bottom: 15px;
+            font-size: 20px;
+            border-radius: 30px;
+            border: 1px solid #cabe97;
+            font-weight: bold;
+            letter-spacing: -0.5px;
+            color: #381f1a;
+        }
+        .step h3 {
+            color: #a33f2c;
+            border-left: 5px solid #ffb347;
+            padding-left: 12px;
+            margin: 18px 0 12px;
+            font-size: 18px;
+        }
+        .if-block {
+            background: #f3ecdc;
+            padding: 12px 18px;
+            margin: 15px 0;
+            border-left: 6px solid #d68b2c;
+            font-family: monospace;
+            font-size: 15px;
+        }
+        .badge {
+            background: #1f2c3c;
+            color: #bbd9ff;
+            padding: 2px 8px;
+            font-size: 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 18px 0;
+            background: #fdf3e2;
+            font-size: 14px;
+        }
+        td, th {
+            border: 1px solid #cfbc93;
+            padding: 8px 10px;
+        }
+        th {
+            background: #cabf9b;
+            color: #21201c;
+        }
+        .monster-note {
+            background: #e8e0cf;
+            padding: 14px;
+            margin-top: 25px;
+            text-align: center;
+            border-top: 2px dashed #ac8e5c;
+            font-size: 12px;
+            font-family: monospace;
+        }
+        button {
+            background: none;
+            border: none;
+        }
+        hr {
+            border-color: #ddceb2;
+        }
+        .footer {
+            font-size: 10px;
+            text-align: center;
+            border-top: 1px solid #e2d2b0;
+            padding: 14px;
+            color: #5c4a2e;
+        }
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .document-container {
+                max-width: 100%;
+                box-shadow: none;
+            }
+            .warning-box {
+                break-inside: avoid;
+            }
+            .step {
+                break-inside: avoid-page;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="document-container">
+    <div class="header">
+        <h1>⚙️ ТЕХНИЧЕСКАЯ ИНСТРУКЦИЯ K-209</h1>
+        <p>НАСТРОЙКА АНТЕННА «МУДРЫЙ ЖУРАВЛЬ» / ПЕРЕВОД С КИРИНСКОГО</p>
+    </div>
+    <div class="content">
+
+        <div class="warning-box">
+            ⚠️ ВНИМАНИЕ: ЕСЛИ АНТЕННА НЕ РАБОТАЕТ — СВЯЗЬ НЕ РАБОТАЕТ. <br>
+            РАБОТАЙТЕ БЫСТРО, НО НЕ ПАНИКОВАТЬ.<br>
+            ☢️ ПАНИКА ВЫЗЫВАЕТ ОШИБКА. УБЕДИТЕСЬ ТУМБЛЕР «ПИТАНИЕ» ВЫКЛЮЧЕН.
+        </div>
+
+        <div class="step">
+            <h2>ШАГ 1. ОПРЕДЕЛИТЕ ТИП ПОЛОМКИ</h2>
+            <p>🔴 Посмотрите на лампочку индикатор «DЗОН» (красная, мигает).</p> 
+            <div class="if-block">
+                ✔ <strong>ЕСЛИ</strong> лампочка горит постоянно → поломка тип «ЖЁЛТЫЙ ЗМЕЙ» (идите раздел А).<br>
+                ✔ <strong>ЕСЛИ</strong> не горит, но мигает зелёная → «СИНИЙ ТИГР» (раздел Б).<br>
+                ✔ <strong>ЕСЛИ</strong> мигает быстро-быстро → «КРАСНЫЙ ДРАКОН» (раздел В).<br>
+                ✔ <strong>ЕСЛИ</strong> не горит → раздел А.
+            </div>
+            <p><span class="badge">🚨 АВАРИЯ</span> ЕСЛИ НИЧЕГО НЕ ПОНЯТНО → включите-выключите питание 5 раз. Потом снова.</p>
+        </div>
+
+        <!-- РАЗДЕЛ А -->
+        <div class="step">
+            <h2>🐍 РАЗДЕЛ А. ПОЛОМКА «ЖЁЛТЫЙ ЗМЕЙ»</h2>
+            <p><strong>A1.</strong> Найдите разъём «Р031».<br>
+            <strong>A2.</strong> ✔ <strong>ЕСЛИ</strong> в разъём провод красный цвет → выдерните и вставьте в разъём «С209»*<br>
+            ✔ <strong>ЕСЛИ</strong> провод не красный → переходите A3.</p>
+            <p><strong>A3.</strong> Тестер (чёрная коробочка с кнопка «ON/OFF»). Приложите к контакту «+» и «-».<br>
+            — <strong>ЕСЛИ</strong> тестер пишит <strong>1 раз</strong> → контакт плохой, обмотайте изолентой (белый, не синий).<br>
+            — <strong>ЕСЛИ</strong> пишит <strong>3 раза</strong> → контакт хороший, но 的极性 перепутана → поменяйте провода местами.<br>
+        </div>
+
+        <div class="step">
+            <h2>🐅 РАЗДЕЛ Б. ПОЛОМКА «СИНИЙ ТИГР»</h2>
+            <p><strong>Б1.</strong> Переключатель «FREQ» (цифры 0-9). Сломан, показывает число, которое не меняется.<br>
+            <strong>Б2.</strong> Посчитайте буквы в вашем имени (кириница, без пробелов).<br>
+            ✔ <strong>ЕСЛИ</strong> число чётное → вычтите 4.<br>
+            ✔ <strong>ЕСЛИ</strong> нечётное → прибавьте 3.<br>
+            ✔ <strong>ЕСЛИ</strong> вы робот → установите 7.</p>
+            <p><strong>Б3.</strong> Тумблер «BAND» в положение по вашему возрасту:</p>
+            <table>
+                <tr><th>Возраст</th><th>Положение</th></tr>
+                <tr><td>0-17 лет</td><td>L</td></tr>
+                <tr><td>18-34</td><td>Ku</td></tr>
+                <tr><td>35-50</td><td>Ka</td></tr>
+                <tr><td>51+</td><td>C</td></tr>
+                <tr><td>Не помните</td><td>спросите старшего. Нет старшего → C</td></tr>
+            </table>
+            <p><strong>Б4.</strong> Нажмите кнопку «SET» 3 секунды. ✔ <strong>ЕСЛИ</strong> «OK» (зелёная) → идите ШАГ 3. <br>
+            ❌ <strong>ЕСЛИ</strong> «ERR» (красная) → идите РАЗДЕЛ В (КРАСНЫЙ ДРАКОН).<br>
+            💀 <strong>ЕСЛИ</strong> «OK» загорелась и погасла → антенна работает.</p>
+        </div>
+
+        <!-- РАЗДЕЛ В -->
+        <div class="step">
+            <h2>🐉 РАЗДЕЛ В. ПОЛОМКА «КРАСНЫЙ ДРАКОН»</h2>
+            <div class="if-block">⚠️ <strong>НЕ ТРОГАЙТЕ ЖЕЛЕЗО</strong> – оно горячее. Кожа прилипнет – не отрывать резко.</div>
+            <p><strong>В1.</strong> Вентилятор (за решёткой, слева). Посчитайте лопасти:<br>
+            — <strong>3 лопасти</strong> → отвёртка в отверстие, прокрутить против часовой на 70 градусов.<br>
+            — <strong>4 лопасти</strong> → вентилятор сломан. Возьмите из туалета (одолжите).<br>
+            — <strong>5 лопастей</strong> → вы ошиблись, это пропеллер. Идите В2.</p>
+            <p><strong>В3.</strong> Предохранитель (стеклянная трубка «FUSE»).<br>
+            — <strong>ЕСЛИ</strong> чёрный внутри → сгорел. Замените.<br>
+            — <strong>ЕСЛИ</strong> прозрачный, но треснутый → заклейте скотчем.</p>
+            <p><strong>В4.</strong> Включите питание. ✔ <strong>ЕСЛИ</strong> антенна дымится, но работает → НОРМАЛЬНО, СТАРАЯ МОДЕЛЬ.</p>
+        </div>
+
+        <!-- ШАГ 3 КАЛИБРОВКА -->
+        <div class="step">
+            <h2>🎛️ ШАГ 3. КАЛИБРОВКА (ДЛЯ ВСЕХ, ПРОВОДИТСЯ ИЗ КАБИНЫ ПИЛОТА)</h2>
+            <p><strong>3.1.</strong> Ручка «ГРУБО» — крутите, пока стрелка «SIG» не окажется в зелёной зоне, а лампочка LINK станет синей.<br>
+            <p><strong>3.2.</strong> Ручка «ТОЧНО» миллиметр за миллиметр.<br>
+            — Слышите шипение → близко.<br>
+            — Слышите голос → продолжайте.<br>
+            — Слышите киринская попса → ПОЗДРАВЛЯЮ! ЭТО НАЦИОНАЛЬНАЯ ГОРДОСТЬ.</p>
+            <p><strong>3.3.</strong> Когда стрелка ровно и динамик «ДЗЫНЬ» (1 раз) → нажмите красную кнопку «СОХРАНИТЬ».<br>
+            <strong>ЕСЛИ</strong> ничего не произошло → нажмите синюю «НАЗАД», потом снова красную.<br>
+            <strong>ЕСЛИ</strong> антенна выключилась → вы закоротили. Идите ШАГ 1 (не торопитесь).</p>
+        </div>
+
+        <!-- ШАГ 4 -->
+        <div class="step">
+            <h2>✅ ШАГ 4. ФИНАЛЬНАЯ ПРОВЕРКА</h2>
+            <div class="if-block">
+                🔵 Лампочка «LINK»? <strong>ДА</strong> → связь есть. <strong>НЕТ</strong> → идите ШАГ 1.<br>
+                🔴🟢 Мигает красный-зелёный-красный → система обновляется. Ждите 3 минуты. НЕ ВЫКЛЮЧАТЬ.
+            </div>
+            <div style="background:#dce2b0; padding: 12px; margin-top: 20px; text-align:center; border-radius: 20px;">
+                🎉 ПОЗДРАВЛЯЮ! АНТЕННА РАБОТАЕТ. 🎉<br>
+                <span style="font-size:13px;">Если не работает – вы не кирин. Позовите кирина.</span>
+            </div>
+        </div>
+
+        <div class="monster-note">
+            💡 Если антенна светится синим, но не работает → это декоративная подсветка (выключите «LED»).<br>
+            📖 Вы прочитали до конца и не поняли? Перечитайте с начала. Если опять не поняли → свяжитесь с нашей службой 支援服务.
+        </div>
+        <div class="footer">
+            КОМПАНИЯ KIRINDUSTRIES» — МОДЕЛЬ K-209 «МУДРЫЙ ЖУРАВЛЬ»<br>
+            ВЕРСИЯ ИНСТРУКЦИИ 3.41<br>
+            *«С209» - зелёный, круглый, под лампочкой
+        </div>
+    </div>
+</div>
+</body>
+</html>
