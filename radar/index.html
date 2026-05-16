@@ -811,7 +811,7 @@ function throttledSyncToFirebase() {
   }
   
   // ========== КРУТИЛКИ ==========
-  function setupKnob(canvas, getAngle, setAngle, stepDegrees = 1) {
+  function setupDraggableKnob(canvas, getAngle, setAngle, stepDegrees = 1) {
     const ctxKnob = canvas.getContext('2d');
     const centerX = 35, centerY = 35;
     const stepRad = stepDegrees * Math.PI / 180; // Конвертируем градусы в радианы
@@ -850,6 +850,88 @@ function throttledSyncToFirebase() {
       draw();
       throttledSyncToFirebase();
     });
+    
+    draw();
+    return { refresh: draw };
+  }
+    // ========== КРУТИЛКА С ПЕРЕТАСКИВАНИЕМ МЫШКОЙ ==========
+  function setupDraggableKnob(canvas, getAngle, setAngle, stepDegrees = 1) {
+    const ctxKnob = canvas.getContext('2d');
+    const centerX = 35, centerY = 35;
+    let dragging = false;
+    let lastAngle = 0;
+    
+    function getAngleFromEvent(e) {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      let angle = Math.atan2(mouseY - centerY, mouseX - centerX);
+      angle = angle + Math.PI/2; // корректировка для указателя
+      return angle;
+    }
+    
+    function draw() {
+      const angleRad = getAngle();
+      ctxKnob.clearRect(0, 0, 70, 70);
+      ctxKnob.beginPath();
+      ctxKnob.arc(centerX, centerY, 28, 0, 2*Math.PI);
+      ctxKnob.fillStyle = '#1c2028';
+      ctxKnob.fill();
+      ctxKnob.strokeStyle = '#6a7a8a';
+      ctxKnob.lineWidth = 3;
+      ctxKnob.stroke();
+      
+      const pointerAngle = angleRad - Math.PI/2;
+      const dx = Math.cos(pointerAngle) * 24;
+      const dy = Math.sin(pointerAngle) * 24;
+      ctxKnob.beginPath();
+      ctxKnob.moveTo(centerX, centerY);
+      ctxKnob.lineTo(centerX + dx, centerY + dy);
+      ctxKnob.strokeStyle = '#ffbb33';
+      ctxKnob.lineWidth = 4;
+      ctxKnob.stroke();
+      ctxKnob.fillStyle = '#ffaa00';
+      ctxKnob.beginPath();
+      ctxKnob.arc(centerX + dx, centerY + dy, 5, 0, 2*Math.PI);
+      ctxKnob.fill();
+    }
+    
+    function onMouseDown(e) {
+      dragging = true;
+      lastAngle = getAngleFromEvent(e);
+      canvas.style.cursor = 'grabbing';
+      e.preventDefault();
+    }
+    
+    function onMouseMove(e) {
+      if (!dragging) return;
+      e.preventDefault();
+      const currentAngle = getAngleFromEvent(e);
+      let delta = currentAngle - lastAngle;
+      
+      // Нормализуем дельту
+      while (delta > Math.PI) delta -= 2*Math.PI;
+      while (delta < -Math.PI) delta += 2*Math.PI;
+      
+      if (Math.abs(delta) > 0.01) {
+        const stepRad = stepDegrees * Math.PI / 180;
+        let newAngle = getAngle() + delta;
+        setAngle(newAngle);
+        lastAngle = currentAngle;
+        draw();
+        throttledSyncToFirebase();
+      }
+    }
+    
+    function onMouseUp() {
+      dragging = false;
+      canvas.style.cursor = 'grab';
+    }
+    
+    canvas.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    canvas.style.cursor = 'grab';
     
     draw();
     return { refresh: draw };
@@ -937,7 +1019,7 @@ function throttledSyncToFirebase() {
   });
   
   // ========== ИНИЦИАЛИЗАЦИЯ КРУТИЛОК ==========
-  const playerGunKnob = setupKnob(
+  const playerGunKnob = setupDraggableKnob(
     document.getElementById('playerKnobGun'),
     () => player.gunAngle,
     (v) => { 
@@ -948,7 +1030,7 @@ function throttledSyncToFirebase() {
     }
   );
   
-  const playerDirKnob = setupKnob(
+  const playerDirKnob = setupDraggableKnob(
     document.getElementById('playerKnobDir'),
     () => player.angle,
     (v) => { 
@@ -963,19 +1045,19 @@ function throttledSyncToFirebase() {
     }
   );
   
-  const enemyGunAKnob = setupKnob(
+  const enemyGunAKnob = setupDraggableKnob(
     document.getElementById('enemyKnobGunA'),
     () => enemy.gunAAngle,
     (v) => { enemy.gunAAngle = v; }
   );
   
-  const enemyGunBKnob = setupKnob(
+  const enemyGunBKnob = setupDraggableKnob(
     document.getElementById('enemyKnobGunB'),
     () => enemy.gunBAngle,
     (v) => { enemy.gunBAngle = v; }
   );
   
-  const enemyDirKnob = setupKnob(
+  const enemyDirKnob = setupDraggableKnob(
     document.getElementById('enemyKnobDir'),
     () => enemy.angle,
     (v) => {
