@@ -752,24 +752,6 @@ function throttledSyncToFirebase() {
       ctx.lineTo(screenX, screenY + 10);
       ctx.stroke();
       
-      const distToPlayer = Math.hypot(player.x - mine.x, player.y - mine.y);
-      if (distToPlayer < mine.radius && !isSyncing) {
-        player.health = Math.max(0, player.health - mine.damage);
-        mines.splice(i, 1);
-        const rect = canvas.getBoundingClientRect();
-        showHitAnimation(rect.left + (player.x - cameraX + cx), rect.top + (player.y - cameraY + cy), true);
-        throttledSyncToFirebase();
-        continue;
-      }
-      
-      const distToEnemy = Math.hypot(enemy.x - mine.x, enemy.y - mine.y);
-      if (distToEnemy < mine.radius && !isSyncing) {
-        enemy.health = Math.max(0, enemy.health - mine.damage);
-        mines.splice(i, 1);
-        const rect = canvas.getBoundingClientRect();
-        showHitAnimation(rect.left + (enemy.x - cameraX + cx), rect.top + (enemy.y - cameraY + cy), false);
-        throttledSyncToFirebase();
-      }
     }
     ctx.setLineDash([]);
     ctx.restore();
