@@ -6,10 +6,8 @@
     <title>Кликер — корпоративный</title>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js">
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
     <style>
         :root {
@@ -21,14 +19,9 @@
             --text-muted: #9ca3af;
             --font: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
             --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            --radius: 10px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: var(--font);
@@ -41,7 +34,6 @@
             letter-spacing: -0.01em;
         }
 
-        /* ===== HEADER ===== */
         .header {
             display: flex;
             align-items: center;
@@ -60,10 +52,8 @@
         }
 
         .static-logo {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            background: var(--accent);
+            width: 204px;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -83,7 +73,6 @@
             letter-spacing: -0.02em;
         }
 
-        /* Навигация с индикатором */
         .header-nav {
             display: flex;
             gap: 32px;
@@ -115,11 +104,8 @@
             font-weight: 600;
         }
 
-        .nav-tab:hover {
-            color: var(--text);
-        }
+        .nav-tab:hover { color: var(--text); }
 
-        /* Индикатор подчёркивания */
         .nav-indicator {
             position: absolute;
             bottom: 0;
@@ -127,28 +113,14 @@
             height: 2px;
             background: var(--accent);
             border-radius: 1px;
-            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1;
         }
 
-        /* ===== MAIN ===== */
-        .main {
-            flex: 1;
-            display: flex;
-            align-items: stretch;
-        }
+        .main { flex: 1; display: flex; align-items: stretch; overflow: hidden; }
+        .page { display: none; width: 100%; }
+        .page.active { display: flex; }
 
-        .page {
-            display: none;
-            width: 100%;
-        }
-
-        .page.active {
-            display: flex;
-        }
-
-        /* ===== HOME PAGE ===== */
         .home-page {
             display: flex;
             flex-direction: column;
@@ -200,22 +172,10 @@
         }
 
         @keyframes clickPop {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 8px 30px rgba(190, 66, 62, 0.12);
-            }
-            30% {
-                transform: scale(0.88);
-                box-shadow: 0 4px 15px rgba(190, 66, 62, 0.08);
-            }
-            55% {
-                transform: scale(1.06);
-                box-shadow: 0 0 0 14px rgba(190, 66, 62, 0.06);
-            }
-            100% {
-                transform: scale(1);
-                box-shadow: 0 8px 30px rgba(190, 66, 62, 0.12);
-            }
+            0% { transform: scale(1); box-shadow: 0 8px 30px rgba(190, 66, 62, 0.12); }
+            30% { transform: scale(0.88); box-shadow: 0 4px 15px rgba(190, 66, 62, 0.08); }
+            55% { transform: scale(1.06); box-shadow: 0 0 0 14px rgba(190, 66, 62, 0.06); }
+            100% { transform: scale(1); box-shadow: 0 8px 30px rgba(190, 66, 62, 0.12); }
         }
 
         .float-plus {
@@ -223,24 +183,15 @@
             pointer-events: none;
             font-weight: 700;
             font-size: 18px;
-            color: var(--accent);
+            color: white;
             animation: floatUp 0.8s ease-out forwards;
             z-index: 10;
         }
 
         @keyframes floatUp {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            60% {
-                opacity: 0.7;
-                transform: translateY(-50px) scale(1.25);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-80px) scale(0.8);
-            }
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            60% { opacity: 0.7; transform: translateY(-50px) scale(1.25); }
+            100% { opacity: 0; transform: translateY(-80px) scale(0.8); }
         }
 
         .points-display {
@@ -252,20 +203,12 @@
             transition: transform 0.1s ease;
         }
 
-        .points-display.bump {
-            animation: bumpNum 0.3s ease;
-        }
+        .points-display.bump { animation: bumpNum 0.3s ease; }
 
         @keyframes bumpNum {
-            0% {
-                transform: scale(1);
-            }
-            40% {
-                transform: scale(1.12);
-            }
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(1); }
+            40% { transform: scale(1.12); }
+            100% { transform: scale(1); }
         }
 
         .points-label {
@@ -285,13 +228,17 @@
             justify-content: center;
         }
 
+        .nickname-wrapper {
+            position: relative;
+        }
+
         .nickname-input {
             padding: 10px 16px;
             border: none;
             border-bottom: 1.5px solid #e5e7eb;
             font-size: 14px;
             font-family: var(--font);
-            width: 200px;
+            width: 220px;
             outline: none;
             background: transparent;
             color: var(--text);
@@ -299,13 +246,33 @@
             letter-spacing: -0.01em;
         }
 
-        .nickname-input:focus {
-            border-bottom-color: var(--accent);
+        .nickname-input:focus { border-bottom-color: var(--accent); }
+        .nickname-input::placeholder { color: var(--text-muted); font-size: 13px; }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+        .status-dot.found { background: #16a34a; }
+        .status-dot.new { background: #9ca3af; }
+        .status-dot.checking { background: #f59e0b; animation: pulse 1s infinite; }
+        .status-dot.blocked { background: #BE423E; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
 
-        .nickname-input::placeholder {
+        .nickname-status {
+            font-size: 11px;
             color: var(--text-muted);
-            font-size: 13px;
+            margin-top: 4px;
+            text-align: center;
+            min-height: 16px;
         }
 
         .btn {
@@ -323,32 +290,12 @@
             text-decoration: none;
         }
 
-        .btn:hover {
-            color: var(--accent-hover);
-            opacity: 0.9;
-        }
+        .btn:hover { color: var(--accent-hover); opacity: 0.9; }
+        .btn:active { opacity: 0.7; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+        .btn-sm { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+        .btn-sm:hover { color: var(--accent); }
 
-        .btn:active {
-            opacity: 0.7;
-        }
-
-        .btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        .btn-sm {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-
-        .btn-sm:hover {
-            color: var(--accent);
-        }
-
-        /* ===== ТАБЛИЦА ЛИДЕРОВ (отдельная страница) ===== */
         .leaderboard-page {
             display: flex;
             flex-direction: column;
@@ -401,104 +348,24 @@
             border-bottom: none;
         }
 
-        .leaderboard-table .rank-col {
-            width: 40px;
-            text-align: center;
-            font-weight: 700;
-            color: var(--text-muted);
-        }
+        .leaderboard-table .rank-col { width: 40px; text-align: center; font-weight: 700; color: var(--text-muted); }
+        .leaderboard-table .rank-1 { color: #f59e0b; font-size: 18px; }
+        .leaderboard-table .rank-2 { color: #94a3b8; font-size: 16px; }
+        .leaderboard-table .rank-3 { color: #b9754e; font-size: 15px; }
+        .leaderboard-table .nickname-col { font-weight: 600; color: var(--text); }
+        .leaderboard-table .points-col { text-align: right; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; font-family: 'SF Mono', 'Consolas', 'Monaco', monospace; }
+        .leaderboard-table .empty-row td { color: var(--text-muted); font-style: italic; font-weight: 400; text-align: center; }
 
-        .leaderboard-table .rank-1 {
-            color: #f59e0b;
-            font-size: 18px;
-        }
+        .refresh-row { display: flex; align-items: center; justify-content: center; gap: 14px; }
+        .last-updated { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
 
-        .leaderboard-table .rank-2 {
-            color: #94a3b8;
-            font-size: 16px;
-        }
+        .contacts-page { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+        .contacts-card { text-align: center; max-width: 500px; padding: 40px; margin-bottom: 10%; }
+        .contacts-card h2 { font-size: 24px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.02em; }
+        .contacts-subtitle { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 32px; }
+        .contact-item { margin-bottom: 18px; font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
+        .contact-item strong { color: var(--text); font-weight: 600; }
 
-        .leaderboard-table .rank-3 {
-            color: #b9754e;
-            font-size: 15px;
-        }
-
-        .leaderboard-table .nickname-col {
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .leaderboard-table .points-col {
-            text-align: right;
-            font-weight: 700;
-            color: var(--accent);
-            font-variant-numeric: tabular-nums;
-            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
-        }
-
-        .leaderboard-table .empty-row td {
-            color: var(--text-muted);
-            font-style: italic;
-            font-weight: 400;
-            text-align: center;
-        }
-
-        .refresh-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 14px;
-        }
-
-        .last-updated {
-            font-size: 10px;
-            color: var(--text-muted);
-            white-space: nowrap;
-        }
-
-        /* ===== КОНТАКТЫ ===== */
-        .contacts-page {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            min-height: calc(100vh - 80px);
-        }
-
-        .contacts-card {
-            text-align: center;
-            max-width: 500px;
-            padding: 40px;
-        }
-
-        .contacts-card h2 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 6px;
-            letter-spacing: -0.02em;
-        }
-
-        .contacts-subtitle {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 32px;
-        }
-
-        .contact-item {
-            margin-bottom: 18px;
-            font-size: 15px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        .contact-item strong {
-            color: var(--text);
-            font-weight: 600;
-        }
-
-        /* ===== ТОСТ ===== */
         .toast {
             position: fixed;
             bottom: 32px;
@@ -516,66 +383,30 @@
             transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
         }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast.success { background: #065f46; }
+        .toast.error { background: #991b1b; }
 
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-
-        .toast.success {
-            background: #065f46;
-        }
-
-        .toast.error {
-            background: #991b1b;
-        }
-
-        /* Адаптив */
         @media (max-width: 640px) {
-            .header {
-                padding: 20px 20px 0 20px;
-            }
-            .header-nav {
-                gap: 20px;
-            }
-            .brand-name {
-                display: none;
-            }
-            .home-page,
-            .leaderboard-page {
-                padding: 30px 16px 40px;
-            }
-            .clicker-logo-placeholder {
-                width: 120px;
-                height: 120px;
-            }
-            .clicker-logo-placeholder svg {
-                width: 48px;
-                height: 48px;
-            }
-            .points-display {
-                font-size: 52px;
-            }
-            .nickname-input {
-                width: 150px;
-            }
-            .leaderboard-table {
-                max-width: 100%;
-            }
+            .header { padding: 20px 20px 0 20px; }
+            .header-nav { gap: 20px; }
+            .brand-name { display: none; }
+            .home-page, .leaderboard-page { padding: 30px 16px 40px; }
+            .clicker-logo-placeholder { width: 120px; height: 120px; }
+            .clicker-logo-placeholder svg { width: 48px; height: 48px; }
+            .points-display { font-size: 52px; }
+            .nickname-input { width: 160px; }
+            .leaderboard-table { max-width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- HEADER -->
     <header class="header">
         <div class="header-left">
-            <div class="static-logo" title="Логотип">
-                <svg viewBox="0 0 24 24">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-            </div>
-            <span class="brand-name">ClickCorp</span>
+            <img class="static-logo" src="dplogo.png" draggable="false">
+
+            </img>
         </div>
         <nav class="header-nav" id="headerNav">
             <button class="nav-tab active" data-page="home">Главная</button>
@@ -585,47 +416,42 @@
         </nav>
     </header>
 
-    <!-- MAIN -->
     <main class="main">
-        <!-- HOME -->
         <div class="page active" id="page-home">
             <div class="home-page">
                 <div class="clicker-section">
                     <div class="clicker-logo-wrapper" id="clickerWrapper">
-                        <div class="clicker-logo-placeholder" id="clickerPlaceholder" title="Кликайте!">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M12 1L15.09 7.26L22 8.27L17 13.14L18.18 20.02L12 16.77L5.82 20.02L7 13.14L2 8.27L8.91 7.26L12 1Z" />
-                            </svg>
-                        </div>
+                        <img class="clicker-logo-placeholder" id="clickerPlaceholder" title="Кликайте!" src="coin.png" draggable="false">
+
+                    </img>
                     </div>
                     <div class="points-display" id="pointsDisplay">0</div>
-                    <div class="points-label">очков</div>
+                    <div class="points-label">дружкоинов</div>
                     <div class="nickname-row">
-                        <input type="text" class="nickname-input" id="nicknameInput" placeholder="Ваш никнейм" maxlength="30" autocomplete="off">
-                        <button class="btn" id="saveBtn">Сохранить</button>
-                        <button class="btn btn-sm" id="loadBtn">Загрузить</button>
+                        <div class="nickname-wrapper">
+                            <input type="text" class="nickname-input" id="nicknameInput" placeholder="Ваше имя" maxlength="30" autocomplete="off">
+                            <span class="status-dot" id="statusDot" style="display:none;"></span>
+                            <div class="nickname-status" id="nicknameStatus"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- LEADERBOARD -->
         <div class="page" id="page-leaderboard">
             <div class="leaderboard-page">
-                <div class="leaderboard-title">Таблица лидеров</div>
-                <div class="leaderboard-subtitle">Топ-10 игроков</div>
+                <div class="leaderboard-title">ИНВЕСТОРЫ</div>
+                <div class="leaderboard-subtitle">Топ-10 инвесторов</div>
                 <table class="leaderboard-table">
                     <thead>
                         <tr>
                             <th class="rank-col">#</th>
-                            <th>Ник</th>
-                            <th class="points-col">Очки</th>
+                            <th>Имя</th>
+                            <th class="points-col">Дружкоины</th>
                         </tr>
                     </thead>
                     <tbody id="leaderboardBody">
-                        <tr class="empty-row">
-                            <td colspan="3">Загрузка...</td>
-                        </tr>
+                        <tr class="empty-row"><td colspan="3">Загрузка...</td></tr>
                     </tbody>
                 </table>
                 <div class="refresh-row">
@@ -635,25 +461,48 @@
             </div>
         </div>
 
-        <!-- CONTACTS -->
         <div class="page" id="page-contacts">
             <div class="contacts-page">
                 <div class="contacts-card">
                     <h2>Контакты</h2>
-                    <div class="contacts-subtitle">Свяжитесь с нами</div>
-                    <div class="contact-item"><strong>Email</strong><br><span style="color: var(--text-muted);">hello@clickcorp.example.com</span></div>
-                    <div class="contact-item"><strong>Телефон</strong><br><span style="color: var(--text-muted);">+7 (999) 123-45-67</span></div>
-                    <div class="contact-item"><strong>Адрес</strong><br><span style="color: var(--text-muted);">Москва, ул. Примерная, д. 1</span></div>
-                    <div style="margin-top: 24px; font-size: 12px; color: var(--text-muted);">(заполните своими данными)</div>
+                    <div class="contacts-subtitle">Подробности о ДружПроме™</div>
+                        <div class="contact-item">
+                        <strong>Страница автора аска</strong><br>
+                        <span style="display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#BE423E" style="flex-shrink: 0;">
+                                <path d="M15.073 2H8.938C3.332 2 2 3.333 2 8.927v6.136C2 20.667 3.323 22 8.927 22h6.136C20.667 22 22 20.677 22 15.073V8.938C22 3.332 20.677 2 15.073 2zm3.073 14.27h-1.459c-.552 0-.72-.438-1.708-1.438-.864-.833-1.229-.937-1.448-.937-.302 0-.385.083-.385.5v1.312c0 .355-.115.563-1.042.563-1.541 0-3.229-.917-4.458-2.604-1.854-2.552-2.354-4.468-2.354-4.865 0-.208.084-.396.5-.396h1.458c.375 0 .51.167.656.573.708 2.031 1.896 3.802 2.396 3.802.187 0 .27-.083.27-.552V10.27c-.052-1-.573-1.084-.573-1.438 0-.125.104-.25.27-.25h2.292c.313 0 .427.156.427.49v2.604c0 .313.136.427.23.427.187 0 .333-.115.667-.448.979-1.094 1.687-2.812 1.687-2.812.083-.208.26-.417.656-.417h1.459c.447 0 .542.23.447.542-.187.876-2.021 3.458-2.021 3.458-.167.27-.23.396 0 .708.166.26.719.708 1.084 1.146.666.75 1.177 1.385 1.302 1.802.125.416-.094.614-.49.614z"/>
+                            </svg>
+                            <a href="https://vk.ru/ps4nc" target="_blank" style="color: #BE423E; text-decoration: none;">ps4nc</a>
+                        </span>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <strong>Аск-блог</strong><br>
+                        <span style="display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#BE423E" style="flex-shrink: 0;">
+                                <path d="M15.073 2H8.938C3.332 2 2 3.333 2 8.927v6.136C2 20.667 3.323 22 8.927 22h6.136C20.667 22 22 20.677 22 15.073V8.938C22 3.332 20.677 2 15.073 2zm3.073 14.27h-1.459c-.552 0-.72-.438-1.708-1.438-.864-.833-1.229-.937-1.448-.937-.302 0-.385.083-.385.5v1.312c0 .355-.115.563-1.042.563-1.541 0-3.229-.917-4.458-2.604-1.854-2.552-2.354-4.468-2.354-4.865 0-.208.084-.396.5-.396h1.458c.375 0 .51.167.656.573.708 2.031 1.896 3.802 2.396 3.802.187 0 .27-.083.27-.552V10.27c-.052-1-.573-1.084-.573-1.438 0-.125.104-.25.27-.25h2.292c.313 0 .427.156.427.49v2.604c0 .313.136.427.23.427.187 0 .333-.115.667-.448.979-1.094 1.687-2.812 1.687-2.812.083-.208.26-.417.656-.417h1.459c.447 0 .542.23.447.542-.187.876-2.021 3.458-2.021 3.458-.167.27-.23.396 0 .708.166.26.719.708 1.084 1.146.666.75 1.177 1.385 1.302 1.802.125.416-.094.614-.49.614z"/>
+                            </svg>
+                            <a href="https://vk.ru/mlpartask" target="_blank" style="color: #BE423E; text-decoration: none;">mlpartask</a>
+                        </span>
+                        <br>
+                        <span style="display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#BE423E" style="flex-shrink: 0;">
+                                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.87 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.938z"/>
+                            </svg>
+                            <a href="https://t.me/mlpartask" target="_blank" style="color: #BE423E; text-decoration: none;">mlpartask</a>
+                        </span>
+                    </div>
+                    <div class="contacts-subtitle">Для справки: сайт является пародийным и никак не связан с финансами и инвестициями. <br> Никаких реальных денег вы тут не получите, ок?</div>
                 </div>
             </div>
         </div>
     </main>
 
     <div class="toast" id="toast"></div>
+
     <script>
         (function() {
-            // ⚠️ ЗАМЕНИТЕ НА ВАШ КОНФИГ FIREBASE
+            // ⚠️ ВАШ КОНФИГ FIREBASE
             const firebaseConfig = {
             apiKey: "AIzaSyCCbTlENHjkS1eMpcFu3laNVrwjzQThZ8w",
             authDomain: "frienprom.firebaseapp.com",
@@ -666,17 +515,16 @@
             };
 
             let db = null;
-            let firestoreReady = false;
+            let firebaseReady = false;
             try {
                 firebase.initializeApp(firebaseConfig);
-                db = firebase.firestore();
-                firestoreReady = true;
-                console.log('✅ Firebase готов');
+                db = firebase.database();
+                firebaseReady = true;
+                console.log('✅ Firebase готов (Realtime Database)');
             } catch (e) {
-                console.warn('⚠️ Firebase не настроен.');
+                console.warn('⚠️ Firebase не настроен.', e);
             }
 
-            // DOM-элементы
             const headerNav = document.getElementById('headerNav');
             const navTabs = document.querySelectorAll('.nav-tab');
             const navIndicator = document.getElementById('navIndicator');
@@ -685,8 +533,8 @@
             const clickerWrapper = document.getElementById('clickerWrapper');
             const pointsDisplay = document.getElementById('pointsDisplay');
             const nicknameInput = document.getElementById('nicknameInput');
-            const saveBtn = document.getElementById('saveBtn');
-            const loadBtn = document.getElementById('loadBtn');
+            const statusDot = document.getElementById('statusDot');
+            const nicknameStatus = document.getElementById('nicknameStatus');
             const refreshBtn = document.getElementById('refreshLeaderboardBtn');
             const leaderboardBody = document.getElementById('leaderboardBody');
             const lastUpdatedEl = document.getElementById('lastUpdated');
@@ -694,17 +542,18 @@
 
             let totalPoints = 0;
             let currentNickname = '';
+            let nicknameExists = false; // Есть ли такой ник в базе
+            let isChecking = false;
+            let checkTimeout = null;
             let toastTimer;
 
-            // ============ ИНДИКАТОР ПОДЧЁРКИВАНИЯ ============
+            // ============ НАВИГАЦИЯ ============
             function updateIndicator(activeTab) {
                 if (!activeTab || !navIndicator) return;
                 const navRect = headerNav.getBoundingClientRect();
                 const tabRect = activeTab.getBoundingClientRect();
-                const left = tabRect.left - navRect.left;
-                const width = tabRect.width;
-                navIndicator.style.left = left + 'px';
-                navIndicator.style.width = width + 'px';
+                navIndicator.style.left = (tabRect.left - navRect.left) + 'px';
+                navIndicator.style.width = tabRect.width + 'px';
             }
 
             function setActiveTab(tab) {
@@ -715,22 +564,15 @@
                 pages.forEach(p => p.classList.remove('active'));
                 const pageEl = document.getElementById('page-' + target);
                 if (pageEl) pageEl.classList.add('active');
-                // Если перешли на страницу рейтинга — обновить таблицу
-                if (target === 'leaderboard' && firestoreReady) {
-                    fetchLeaderboard();
-                }
+                if (target === 'leaderboard' && firebaseReady) fetchLeaderboard();
             }
 
             navTabs.forEach(tab => {
                 tab.addEventListener('click', () => setActiveTab(tab));
             });
 
-            // Инициализация индикатора при загрузке
             const initialActive = document.querySelector('.nav-tab.active');
-            if (initialActive) {
-                // Небольшая задержка, чтобы DOM отрисовался
-                setTimeout(() => updateIndicator(initialActive), 50);
-            }
+            if (initialActive) setTimeout(() => updateIndicator(initialActive), 50);
             window.addEventListener('resize', () => {
                 const active = document.querySelector('.nav-tab.active');
                 if (active) updateIndicator(active);
@@ -744,7 +586,7 @@
                 toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
             }
 
-            // ============ АНИМАЦИЯ КЛИКА ============
+            // ============ КЛИКЕР ============
             function animateClick() {
                 clickerPlaceholder.classList.remove('clicked');
                 void clickerPlaceholder.offsetWidth;
@@ -769,73 +611,195 @@
                 setTimeout(() => el.remove(), 800);
             }
 
-            clickerPlaceholder.addEventListener('click', (e) => {
+            // ============ ЛОГИКА КЛИКА С АВТОСОЗДАНИЕМ ============
+            function handleClick(e) {
+                // Если никнейм не введён — просто кликаем локально
+                if (!currentNickname) {
+                    totalPoints++;
+                    pointsDisplay.textContent = totalPoints.toLocaleString('ru-RU');
+                    animateClick();
+                    bumpPoints();
+                    spawnPlus(e.clientX, e.clientY);
+                    showToast('Введите имя для сохранения', '');
+                    return;
+                }
+
+                // Обычный клик — всегда работает
                 totalPoints++;
                 pointsDisplay.textContent = totalPoints.toLocaleString('ru-RU');
                 animateClick();
                 bumpPoints();
                 spawnPlus(e.clientX, e.clientY);
-            });
 
-            clickerWrapper.addEventListener('click', (e) => {
-                if (e.target.classList.contains('clicker-logo')) {
-                    totalPoints++;
-                    pointsDisplay.textContent = totalPoints.toLocaleString('ru-RU');
-                    bumpPoints();
-                    spawnPlus(e.clientX, e.clientY);
+                // Сохраняем в базу
+                if (nicknameExists) {
+                    saveToDB(currentNickname, totalPoints);
+                } else {
+                    createUserInDB(currentNickname, totalPoints);
                 }
-            });
+            }
 
-            // ============ FIREBASE: ХЕЛПЕРЫ ============
+
+            // ============ Realtime Database ============
             function sanitize(nick) {
                 return nick.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-zа-яё0-9_-]/gi, '').substring(0, 60);
             }
 
-            async function saveToFB(nick, points) {
-                if (!firestoreReady) { showToast('Firebase не настроен', 'error'); return false; }
+            function saveToDB(nick, points) {
+                if (!firebaseReady) return;
                 const id = sanitize(nick);
-                if (!id) { showToast('Введите никнейм', 'error'); return false; }
-                try {
-                    await db.collection('leaderboard').doc(id).set({
-                        nickname: nick.trim(),
-                        points: points,
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    }, { merge: true });
-                    showToast('Сохранено!', 'success');
-                    return true;
-                } catch (err) { showToast('Ошибка: ' + err.message, 'error'); return false; }
+                if (!id) return;
+                db.ref('leaderboard/' + id).update({
+                    points: points,
+                    updatedAt: Date.now()
+                }).catch(err => {
+                    console.error('Ошибка обновления:', err);
+                });
             }
 
-            async function loadFromFB(nick) {
-                if (!firestoreReady) { showToast('Firebase не настроен', 'error'); return null; }
+            function createUserInDB(nick, points) {
+                if (!firebaseReady) return;
                 const id = sanitize(nick);
-                if (!id) return null;
-                try {
-                    const snap = await db.collection('leaderboard').doc(id).get();
-                    if (snap.exists) return snap.data();
-                    showToast('Пользователь не найден');
-                    return null;
-                } catch (err) { showToast('Ошибка: ' + err.message, 'error'); return null; }
+                if (!id) return;
+                db.ref('leaderboard/' + id).set({
+                    nickname: nick.trim(),
+                    points: points,
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
+                }).then(() => {
+                    nicknameExists = true;
+                    updateNicknameStatus('found');
+                    showToast('Профиль создан!', 'success');
+                }).catch(err => {
+                    console.error('Ошибка создания:', err);
+                    showToast('Ошибка создания профиля', 'error');
+                });
             }
 
-            async function fetchLeaderboard() {
-                if (!firestoreReady) {
-                    leaderboardBody.innerHTML =
-                        '<tr class="empty-row"><td colspan="3">Firebase не настроен</td></tr>';
+            // Проверка ника при вводе
+            function checkNickname(nick) {
+                const trimmed = nick.trim();
+                if (!trimmed) {
+                    nicknameExists = false;
+                    currentNickname = '';
+                    totalPoints = 0;
+                    pointsDisplay.textContent = '0';
+                    updateNicknameStatus('empty');
                     return;
                 }
-                try {
-                    const snap = await db.collection('leaderboard').orderBy('points', 'desc').limit(10)
-                .get();
-                    const players = [];
-                    snap.forEach(d => players.push(d.data()));
-                    renderLeaderboard(players);
-                    lastUpdatedEl.textContent = 'Обновлено: ' + new Date().toLocaleTimeString('ru-RU', { hour: '2-digit',
-                        minute: '2-digit' });
-                } catch (e) {
-                    leaderboardBody.innerHTML =
-                    '<tr class="empty-row"><td colspan="3">Ошибка загрузки</td></tr>';
+
+                currentNickname = trimmed;
+                const id = sanitize(trimmed);
+                if (!id) {
+                    updateNicknameStatus('empty');
+                    return;
                 }
+
+                updateNicknameStatus('checking');
+
+                if (!firebaseReady) {
+                    updateNicknameStatus('new');
+                    return;
+                }
+
+                db.ref('leaderboard/' + id).once('value').then(snapshot => {
+                    if (sanitize(nicknameInput.value.trim()) !== id) return;
+
+                    const data = snapshot.val();
+                    if (data && typeof data.points === 'number') {
+                        // Проверка на playable: false
+                        if (data.playable === false) {
+                            nicknameExists = false;
+                            totalPoints = 0;
+                            pointsDisplay.textContent = '0';
+                            updateNicknameStatus('blocked');
+                            return;
+                        }
+
+                        nicknameExists = true;
+                        totalPoints = data.points;
+                        pointsDisplay.textContent = totalPoints.toLocaleString('ru-RU');
+                        updateNicknameStatus('found');
+                    } else {
+                        nicknameExists = false;
+                        totalPoints = 0;
+                        pointsDisplay.textContent = '0';
+                        updateNicknameStatus('new');
+                    }
+                }).catch(err => {
+                    console.error('Ошибка проверки ника:', err);
+                    updateNicknameStatus('new');
+                });
+            }
+
+            function updateNicknameStatus(status) {
+                statusDot.style.display = 'inline-block';
+                statusDot.className = 'status-dot';
+                switch (status) {
+                    case 'found':
+                        statusDot.classList.add('found');
+                        nicknameStatus.textContent = ' ';
+                        nicknameStatus.style.color = '#16a34a';
+                        break;
+                    case 'new':
+                        statusDot.classList.add('new');
+                        nicknameStatus.textContent = 'Новый инвестор. Кликните логотип для регистрации.';
+                        nicknameStatus.style.color = '#9ca3af';
+                        break;
+                    case 'checking':
+                        statusDot.classList.add('checking');
+                        nicknameStatus.textContent = 'Проверка...';
+                        nicknameStatus.style.color = '#f59e0b';
+                        break;
+                    case 'blocked':
+                        statusDot.classList.add('blocked');
+                        nicknameStatus.textContent = 'Ты чё, самый умный?';
+                        nicknameStatus.style.color = '#BE423E';
+                        break;
+                    case 'empty':
+                        statusDot.style.display = 'none';
+                        nicknameStatus.textContent = '';
+                        totalPoints = 0;
+                        pointsDisplay.textContent = '0';
+                        break;
+                }
+            }
+
+            // Обработчик ввода с debounce
+            nicknameInput.addEventListener('input', () => {
+                const nick = nicknameInput.value;
+                // Сохраняем никнейм локально при вводе
+                currentNickname = nick.trim();
+                saveLocal();
+
+                // Отложенная проверка в базе (debounce 500ms)
+                clearTimeout(checkTimeout);
+                if (!nick.trim()) {
+                    checkNickname('');
+                    return;
+                }
+                updateNicknameStatus('checking');
+                checkTimeout = setTimeout(() => checkNickname(nick), 500);
+            });
+
+            // ============ ТАБЛИЦА ЛИДЕРОВ ============
+            function fetchLeaderboard() {
+                if (!firebaseReady) {
+                    leaderboardBody.innerHTML = '<tr class="empty-row"><td colspan="3">Firebase не настроен</td></tr>';
+                    return;
+                }
+                db.ref('leaderboard').orderByChild('points').limitToLast(10).once('value').then(snapshot => {
+                    const data = snapshot.val();
+                    const players = [];
+                    if (data) {
+                        Object.values(data).forEach(p => players.push(p));
+                    }
+                    players.sort((a, b) => b.points - a.points);
+                    renderLeaderboard(players.slice(0, 10));
+                    lastUpdatedEl.textContent = 'Обновлено: ' + new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                }).catch(err => {
+                    leaderboardBody.innerHTML = '<tr class="empty-row"><td colspan="3">Ошибка загрузки</td></tr>';
+                });
             }
 
             function renderLeaderboard(players) {
@@ -844,7 +808,7 @@
                     return;
                 }
                 const ranks = ['', 'rank-1', 'rank-2', 'rank-3'];
-                const symbols = ['', '🥇', '🥈', '🥉'];
+                const symbols = ['', '1', '2', '3'];
                 let html = '';
                 for (let i = 0; i < 10; i++) {
                     if (i < players.length) {
@@ -855,83 +819,46 @@
                             <td class="points-col">${(p.points||0).toLocaleString('ru-RU')}</td>
                         </tr>`;
                     } else {
-                        html +=
-                            `<tr><td class="rank-col" style="color:#d1d5db;">${i+1}</td><td style="color:#d1d5db;">—</td><td class="points-col" style="color:#d1d5db;">—</td></tr>`;
+                        html += `<tr><td class="rank-col" style="color:#d1d5db;">${i+1}</td><td style="color:#d1d5db;">—</td><td class="points-col" style="color:#d1d5db;">—</td></tr>`;
                     }
                 }
                 leaderboardBody.innerHTML = html;
             }
 
-            function escapeHTML(s) { const d = document.createElement('div');
-                d.textContent = s; return d.innerHTML; }
+            function escapeHTML(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
-            // ============ КНОПКИ СОХРАНИТЬ / ЗАГРУЗИТЬ ============
-            saveBtn.addEventListener('click', async () => {
-                const nick = nicknameInput.value.trim();
-                if (!nick) { showToast('Введите никнейм', 'error'); return; }
-                currentNickname = nick;
-                saveBtn.disabled = true;
-                const ok = await saveToFB(nick, totalPoints);
-                saveBtn.disabled = false;
-                if (ok) {
-                    // Обновить таблицу, если страница рейтинга активна
-                    const activePage = document.querySelector('.page.active');
-                    if (activePage && activePage.id === 'page-leaderboard') {
-                        await fetchLeaderboard();
-                    }
-                }
-            });
-
-            loadBtn.addEventListener('click', async () => {
-                const nick = nicknameInput.value.trim();
-                if (!nick) { showToast('Введите никнейм', 'error'); return; }
-                currentNickname = nick;
-                loadBtn.disabled = true;
-                const data = await loadFromFB(nick);
-                loadBtn.disabled = false;
-                if (data && typeof data.points === 'number') {
-                    totalPoints = Math.max(totalPoints, data.points);
-                    pointsDisplay.textContent = totalPoints.toLocaleString('ru-RU');
-                }
-            });
-
-            refreshBtn.addEventListener('click', async () => {
-                refreshBtn.disabled = true;
-                await fetchLeaderboard();
-                refreshBtn.disabled = false;
-            });
+            refreshBtn.addEventListener('click', fetchLeaderboard);
 
             // ============ LOCALSTORAGE ============
             function loadLocal() {
                 try {
-                    const s = localStorage.getItem('clickcorp_v3');
+                    const s = localStorage.getItem('clickcorp_v5');
                     if (s) {
                         const p = JSON.parse(s);
-                        if (typeof p.totalPoints === 'number') totalPoints = p.totalPoints;
-                        if (p.nickname) { currentNickname = p.nickname;
-                            nicknameInput.value = currentNickname; }
+                        if (p.nickname) {
+                            currentNickname = p.nickname;
+                            nicknameInput.value = currentNickname;
+                            // Проверить никнейм при загрузке
+                            if (currentNickname) checkNickname(currentNickname);
+                        }
                     }
                 } catch (e) {}
-                pointsDisplay.textContent = totalPoints.toLocaleString('ru-RU');
             }
 
             function saveLocal() {
-                localStorage.setItem('clickcorp_v3', JSON.stringify({ totalPoints,
-                    nickname: currentNickname }));
+                localStorage.setItem('clickcorp_v5', JSON.stringify({ nickname: currentNickname }));
             }
-            setInterval(saveLocal, 4000);
+
+            // Сохраняем при уходе
             window.addEventListener('beforeunload', saveLocal);
 
             // ============ ИНИЦИАЛИЗАЦИЯ ============
             loadLocal();
-            // Первоначальная загрузка таблицы (если активна страница рейтинга)
-            const startPage = document.querySelector('.page.active');
-            if (startPage && startPage.id === 'page-leaderboard' && firestoreReady) {
-                fetchLeaderboard();
-            }
-            // Также загружаем при переходе на вкладку рейтинга (уже в setActiveTab)
+            fetchLeaderboard();
+            
+            // Привязка обработчиков клика
+            clickerPlaceholder.addEventListener('click', handleClick);
         })();
     </script>
-    
 </body>
 </html>
