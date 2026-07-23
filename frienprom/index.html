@@ -531,23 +531,24 @@
                     
                     <div class="shop-item">
                         <div class="shop-item-info">
-                            <div class="shop-item-name">Повышение ставки</div>
+                            <div class="shop-item-name" id="multName">Стартовый капитал</div>
                             <div class="shop-item-desc">Уровень <span id="multLevel">0</span> • <span id="multValue">×1</span> за клик</div>
                         </div>
                         <button class="btn shop-buy-btn" id="buyMult">
                             <span id="multCost">10</span>
                         </button>
                     </div>
-                    
+
                     <div class="shop-item">
                         <div class="shop-item-info">
-                            <div class="shop-item-name">Пассивный доход</div>
+                            <div class="shop-item-name" id="autoName">Накопительный счёт</div>
                             <div class="shop-item-desc">Уровень <span id="autoLevel">0</span> • <span id="autoValue">+0</span>/сек</div>
                         </div>
                         <button class="btn shop-buy-btn" id="buyAuto">
                             <span id="autoCost">25</span>
                         </button>
                     </div>
+                    
                     <div class="shop-item">
                         <div class="shop-item-info">
                             <div class="shop-item-name">Оптимизация портфеля</div>
@@ -954,7 +955,7 @@
             return 1000 * Math.pow(2, discountLevel);
         }
 
-        function getMultValue() {
+        function getMultValue() { //Повышение ставки
             if (multLevel >= 60) {
                 return Math.round(Math.pow(multLevel + 1, 5));
             } else if (multLevel >= 52) {
@@ -972,7 +973,7 @@
             }
         }
 
-        function getAutoValue() {
+        function getAutoValue() { //Пассивный доход
             if (autoLevel >= 80) {
                 return Math.round(Math.pow(autoLevel + 1, 7)); 
             } else if (autoLevel >= 66) {
@@ -1064,20 +1065,57 @@
         }
 
         function updateShopDisplay() {
+            const shopBalance = document.getElementById('shopBalance');
+            if (shopBalance) {
+                shopBalance.textContent = totalPoints.toLocaleString('ru-RU');
+            }
+
+            document.getElementById('multName').textContent = getMultName();
             document.getElementById('multLevel').textContent = multLevel;
-            document.getElementById('multValue').textContent = '×' + getMultValue();
+            document.getElementById('multValue').textContent = '×' + getMultValue().toLocaleString('ru-RU');
             document.getElementById('multCost').textContent = getMultCost().toLocaleString('ru-RU');
 
+            document.getElementById('autoName').textContent = getAutoName();
             document.getElementById('autoLevel').textContent = autoLevel;
-            document.getElementById('autoValue').textContent = '+' + getAutoValue();
+            document.getElementById('autoValue').textContent = '+' + getAutoValue().toLocaleString('ru-RU');
             document.getElementById('autoCost').textContent = getAutoCost().toLocaleString('ru-RU');
 
             document.getElementById('discountLevel').textContent = discountLevel;
             document.getElementById('discountValue').textContent = getDiscountPercent() + '%';
             document.getElementById('discountCost').textContent = getDiscountCost().toLocaleString('ru-RU');
         }
-
-        // Обработчики кнопок магазина
+        function getMultName() {
+            if (multLevel >= 60) return 'Финальный босс экономики Эквестрии';
+            if (multLevel >= 52) return 'Хедж-фонд';
+            if (multLevel >= 45) return 'Инвест-банк ДружПром';
+            if (multLevel >= 36) return 'Венчурный фонд Кантерлота';
+            if (multLevel >= 26) return 'Управление активами';
+            if (multLevel >= 13) return 'Брокерский счёт в ДружБанке';
+            if (multLevel >= 6)  return 'Доверительное управление';
+            if (multLevel >= 2)  return 'Инвестиции в ферму Эпплов';
+            if (multLevel >= 1)  return 'Работа на дядю';
+            return 'Стартовый капитал';
+        }
+        function getAutoName() {
+            if (autoLevel >= 80) return 'Эквестрийский эндаумент-фонд';
+            if (autoLevel >= 66) return 'Рентный траст';
+            if (autoLevel >= 55) return 'Дивидендный поток';
+            if (autoLevel >= 44) return 'Облигационный займ Филси Рича';
+            if (autoLevel >= 33) return 'Недвижимость в управлении';
+            if (autoLevel >= 16) return 'Арендный бизнес в Кантерлоте';
+            if (autoLevel >= 8)  return 'Депозитный портфель Кози';
+            if (autoLevel >= 3)  return 'Купонный доход с каменной фермы Паев';
+            if (autoLevel >= 1)  return 'Банковский вклад в ДружПром';
+            return 'Накопительный счёт';
+        }
+        function getDiscountName() {
+            if (discountLevel >= 10) return 'Офшорная оптимизация';
+            if (discountLevel >= 5)  return 'Налоговый вычет';
+            if (discountLevel >= 2)  return 'Льготное кредитование';
+            if (discountLevel >= 1)  return 'Корпоративный тариф';
+            return 'Рыночная цена';
+        }
+        
         buyMult.addEventListener('click', () => buyUpgrade('mult'));
         buyAuto.addEventListener('click', () => buyUpgrade('auto'));
         buyDiscount.addEventListener('click', () => buyUpgrade('discount'));
