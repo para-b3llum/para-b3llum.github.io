@@ -940,13 +940,13 @@
         }
 
         function getMultCost() {
-            const base = 50 * Math.pow(1.5, multLevel);
+            const base = 50 * Math.pow(1.47, multLevel);
             const discounted = base * getDiscountMultiplier();
             return Math.round(discounted);
         }
 
         function getAutoCost() {
-            const base = 100 * Math.pow(1.4, autoLevel);
+            const base = 160 * Math.pow(1.44, autoLevel);
             const discounted = base * getDiscountMultiplier();
             return Math.round(discounted);
         }
@@ -1092,8 +1092,8 @@
             if (multLevel >= 26) return 'Управление активами';
             if (multLevel >= 13) return 'Брокерский счёт в ДружБанке';
             if (multLevel >= 6)  return 'Доверительное управление';
-            if (multLevel >= 2)  return 'Инвестиции в ферму Эпплов';
-            if (multLevel >= 1)  return 'Работа на дядю';
+            if (multLevel >= 4)  return 'Инвестиции в ферму Эпплов';
+            if (multLevel >= 3)  return 'Работа на дядю';
             return 'Разнести почту';
         }
         function getAutoName() {
