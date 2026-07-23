@@ -1,5 +1,7 @@
 # алло!
 ты как тут оказался?
-если хочешь чухать, иди на https://para-b3llum.github.io/chux/
 
-если нужен чат, он здесь https://para-b3llum.github.io/gdh-chat/
+если нужен мой мессенджер шмякс, он здесь [http://95.154.67.151/](http://95.154.67.151/)
+если нужен официальный сайт ДружПрома™, он тут [https://para-b3llum.github.io/frienprom/](https://para-b3llum.github.io/frienprom/)
+
+остальные страницы придётся поискать
