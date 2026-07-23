@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кликер — корпоративный</title>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js">
+    </script>
+
+    <style>
+        :root {
+            --accent: #BE423E;
+            --accent-hover: #a53531;
+            --bg: #ffffff;
+            --text: #1a1a2e;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --font: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: -0.01em;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 40px 0 40px;
+            background: var(--bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .static-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .static-logo svg {
+            width: 17px;
+            height: 17px;
+            fill: #ffffff;
+        }
+
+        .brand-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text);
+            letter-spacing: -0.02em;
+        }
+
+        /* Навигация с индикатором */
+        .header-nav {
+            display: flex;
+            gap: 32px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            align-items: center;
+            height: 40px;
+        }
+
+        .nav-tab {
+            padding: 6px 4px 10px 4px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: color var(--transition);
+            border: none;
+            background: transparent;
+            letter-spacing: -0.01em;
+            white-space: nowrap;
+            line-height: 1.2;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-tab.active {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .nav-tab:hover {
+            color: var(--text);
+        }
+
+        /* Индикатор подчёркивания */
+        .nav-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            background: var(--accent);
+            border-radius: 1px;
+            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+
+        /* ===== MAIN ===== */
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+        }
+
+        .page {
+            display: none;
+            width: 100%;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        /* ===== HOME PAGE ===== */
+        .home-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 60px 32px 80px;
+            gap: 8px;
+        }
+
+        .clicker-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .clicker-logo-wrapper {
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .clicker-logo-placeholder {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fdf2f2 0%, #fce4e4 50%, #fef2f2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 30px rgba(190, 66, 62, 0.12), 0 2px 8px rgba(0, 0, 0, 0.02);
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .clicker-logo-placeholder svg {
+            width: 58px;
+            height: 58px;
+            fill: var(--accent);
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        .clicker-logo-placeholder.clicked {
+            animation: clickPop 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes clickPop {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 8px 30px rgba(190, 66, 62, 0.12);
+            }
+            30% {
+                transform: scale(0.88);
+                box-shadow: 0 4px 15px rgba(190, 66, 62, 0.08);
+            }
+            55% {
+                transform: scale(1.06);
+                box-shadow: 0 0 0 14px rgba(190, 66, 62, 0.06);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 8px 30px rgba(190, 66, 62, 0.12);
+            }
+        }
+
+        .float-plus {
+            position: absolute;
+            pointer-events: none;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--accent);
+            animation: floatUp 0.8s ease-out forwards;
+            z-index: 10;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            60% {
+                opacity: 0.7;
+                transform: translateY(-50px) scale(1.25);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-80px) scale(0.8);
+            }
+        }
+
+        .points-display {
+            font-size: 72px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.03em;
+            line-height: 1;
+            transition: transform 0.1s ease;
+        }
+
+        .points-display.bump {
+            animation: bumpNum 0.3s ease;
+        }
+
+        @keyframes bumpNum {
+            0% {
+                transform: scale(1);
+            }
+            40% {
+                transform: scale(1.12);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .points-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 500;
+            margin-bottom: 18px;
+        }
+
+        .nickname-row {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nickname-input {
+            padding: 10px 16px;
+            border: none;
+            border-bottom: 1.5px solid #e5e7eb;
+            font-size: 14px;
+            font-family: var(--font);
+            width: 200px;
+            outline: none;
+            background: transparent;
+            color: var(--text);
+            transition: border-color var(--transition);
+            letter-spacing: -0.01em;
+        }
+
+        .nickname-input:focus {
+            border-bottom-color: var(--accent);
+        }
+
+        .nickname-input::placeholder {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .btn {
+            padding: 8px 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: var(--accent);
+            transition: color var(--transition), opacity var(--transition);
+            font-family: var(--font);
+            letter-spacing: -0.01em;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            color: var(--accent-hover);
+            opacity: 0.9;
+        }
+
+        .btn:active {
+            opacity: 0.7;
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .btn-sm {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .btn-sm:hover {
+            color: var(--accent);
+        }
+
+        /* ===== ТАБЛИЦА ЛИДЕРОВ (отдельная страница) ===== */
+        .leaderboard-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 60px 32px 80px;
+            gap: 6px;
+        }
+
+        .leaderboard-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            margin-bottom: 2px;
+        }
+
+        .leaderboard-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 24px;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            max-width: 520px;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-bottom: 14px;
+        }
+
+        .leaderboard-table thead th {
+            text-align: left;
+            padding: 10px 8px;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            border-bottom: none;
+        }
+
+        .leaderboard-table tbody td {
+            padding: 14px 8px;
+            color: var(--text);
+            font-weight: 500;
+            border-bottom: none;
+        }
+
+        .leaderboard-table .rank-col {
+            width: 40px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .leaderboard-table .rank-1 {
+            color: #f59e0b;
+            font-size: 18px;
+        }
+
+        .leaderboard-table .rank-2 {
+            color: #94a3b8;
+            font-size: 16px;
+        }
+
+        .leaderboard-table .rank-3 {
+            color: #b9754e;
+            font-size: 15px;
+        }
+
+        .leaderboard-table .nickname-col {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .leaderboard-table .points-col {
+            text-align: right;
+            font-weight: 700;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+        }
+
+        .leaderboard-table .empty-row td {
+            color: var(--text-muted);
+            font-style: italic;
+            font-weight: 400;
+            text-align: center;
+        }
+
+        .refresh-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+        }
+
+        .last-updated {
+            font-size: 10px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* ===== КОНТАКТЫ ===== */
+        .contacts-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: calc(100vh - 80px);
+        }
+
+        .contacts-card {
+            text-align: center;
+            max-width: 500px;
+            padding: 40px;
+        }
+
+        .contacts-card h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: -0.02em;
+        }
+
+        .contacts-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 32px;
+        }
+
+        .contact-item {
+            margin-bottom: 18px;
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .contact-item strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        /* ===== ТОСТ ===== */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1a1a2e;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: #065f46;
+        }
+
+        .toast.error {
+            background: #991b1b;
+        }
+
+        /* Адаптив */
+        @media (max-width: 640px) {
+            .header {
+                padding: 20px 20px 0 20px;
+            }
+            .header-nav {
+                gap: 20px;
+            }
+            .brand-name {
+                display: none;
+            }
+            .home-page,
+            .leaderboard-page {
+                padding: 30px 16px 40px;
+            }
+            .clicker-logo-placeholder {
+                width: 120px;
+                height: 120px;
+            }
+            .clicker-logo-placeholder svg {
+                width: 48px;
+                height: 48px;
+            }
+            .points-display {
+                font-size: 52px;
+            }
+            .nickname-input {
+                width: 150px;
+            }
+            .leaderboard-table {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-left">
+            <div class="static-logo" title="Логотип">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </div>
+            <span class="brand-name">ClickCorp</span>
+        </div>
+        <nav class="header-nav" id="headerNav">
+            <button class="nav-tab active" data-page="home">Главная</button>
+            <button class="nav-tab" data-page="leaderboard">Рейтинг</button>
+            <button class="nav-tab" data-page="contacts">Контакты</button>
+            <div class="nav-indicator" id="navIndicator"></div>
+        </nav>
+    </header>
+
+    <!-- MAIN -->
+    <main class="main">
+        <!-- HOME -->
+        <div class="page active" id="page-home">
+            <div class="home-page">
+                <div class="clicker-section">
+                    <div class="clicker-logo-wrapper" id="clickerWrapper">
+                        <div class="clicker-logo-placeholder" id="clickerPlaceholder" title="Кликайте!">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 1L15.09 7.26L22 8.27L17 13.14L18.18 20.02L12 16.77L5.82 20.02L7 13.14L2 8.27L8.91 7.26L12 1Z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="points-display" id="pointsDisplay">0</div>
+                    <div class="points-label">очков</div>
+                    <div class="nickname-row">
+                        <input type="text" class="nickname-input" id="nicknameInput" placeholder="Ваш никнейм" maxlength="30" autocomplete="off">
+                        <button class="btn" id="saveBtn">Сохранить</button>
+                        <button class="btn btn-sm" id="loadBtn">Загрузить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEADERBOARD -->
+        <div class="page" id="page-leaderboard">
+            <div class="leaderboard-page">
+                <div class="leaderboard-title">Таблица лидеров</div>
+                <div class="leaderboard-subtitle">Топ-10 игроков</div>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th class="rank-col">#</th>
+                            <th>Ник</th>
+                            <th class="points-col">Очки</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                        <tr class="empty-row">
+                            <td colspan="3">Загрузка...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="refresh-row">
+                    <button class="btn btn-sm" id="refreshLeaderboardBtn">Обновить рейтинг</button>
+                    <span class="last-updated" id="lastUpdated"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTACTS -->
+        <div class="page" id="page-contacts">
+            <div class="contacts-page">
+                <div class="contacts-card">
+                    <h2>Контакты</h2>
+                    <div class="contacts-subtitle">Свяжитесь с нами</div>
+                    <div class="contact-item"><strong>Email</strong><br><span style="color: var(--text-muted);">hello@clickcorp.example.com</span></div>
+                    <div class="contact-item"><strong>Телефон</strong><br><span style="color: var(--text-muted);">+7 (999) 123-45-67</span></div>
+                    <div class="contact-item"><strong>Адрес</strong><br><span style="color: var(--text-muted);">Москва, ул. Примерная, д. 1</span></div>
+                    <div style="margin-top: 24px; font-size: 12px; color: var(--text-muted);">(заполните своими данными)</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+    <script>
+        (function() {
+            // ⚠️ ЗАМЕНИТЕ НА ВАШ КОНФИГ FIREBASE
+            const firebaseConfig = {
+            apiKey: "AIzaSyCCbTlENHjkS1eMpcFu3laNVrwjzQThZ8w",
+            authDomain: "frienprom.firebaseapp.com",
+            databaseURL: "https://frienprom-default-rtdb.firebaseio.com",
+            projectId: "frienprom",
+            storageBucket: "frienprom.firebasestorage.app",
+            messagingSenderId: "807128009668",
+            appId: "1:807128009668:web:39f36af28bf28455dd7291",
+            measurementId: "G-15WZBJNE67"
+            };
+
+            let db = null;
+            let firestoreReady = false;
+            try {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                firestoreReady = true;
+                console.log('✅ Firebase готов');
+            } catch (e) {
+                console.warn('⚠️ Firebase не настроен.');
+            }
+
+            // DOM-элементы
+            const headerNav = document.getElementById('headerNav');
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const navIndicator = document.getElementById('navIndicator');
+            const pages = document.querySelectorAll('.page');
+            const clickerPlaceholder = document.getElementById('clickerPlaceholder');
+            const clickerWrapper = document.getElementById('clickerWrapper');
+            const pointsDisplay = document.getElementById('pointsDisplay');
+            const nicknameInput = document.getElementById('nicknameInput');
+            const saveBtn = document.getElementById('saveBtn');
+            const loadBtn = document.getElementById('loadBtn');
+            const refreshBtn = document.getElementById('refreshLeaderboardBtn');
+            const leaderboardBody = document.getElementById('leaderboardBody');
+            const lastUpdatedEl = document.getElementById('lastUpdated');
+            const toast = document.getElementById('toast');
+
+            let totalPoints = 0;
+            let currentNickname = '';
+            let toastTimer;
+
+            // ============ ИНДИКАТОР ПОДЧЁРКИВАНИЯ ============
+            function updateIndicator(activeTab) {
+                if (!activeTab || !navIndicator) return;
+                const navRect = headerNav.getBoundingClientRect();
+                const tabRect = activeTab.getBoundingClientRect();
+                const left = tabRect.left - navRect.left;
+                const width = tabRect.width;
+                navIndicator.style.left = left + 'px';
+                navIndicator.style.width = width + 'px';
+            }
+
+            function setActiveTab(tab) {
+                navTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                updateIndicator(tab);
+                const target = tab.getAttribute('data-page');
+                pages.forEach(p => p.classList.remove('active'));
+                const pageEl = document.getElementById('page-' + target);
+                if (pageEl) pageEl.classList.add('active');
+                // Если перешли на страницу рейтинга — обновить таблицу
+                if (target === 'leaderboard' && firestoreReady) {
+                    fetchLeaderboard();
+                }
+            }
+
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', () => setActiveTab(tab));
+            });
+
+            // Инициализация индикатора при загрузке
+            const initialActive = document.querySelector('.nav-tab.active');
+            if (initialActive) {
+                // Небольшая задержка, чтобы DOM отрисовался
+                setTimeout(() => updateIndicator(initialActive), 50);
+            }
+            window.addEventListener('resize', () => {
+                const active = document.querySelector('.nav-tab.active');
+                if (active) updateIndicator(active);
+            });
+
+            // ============ ТОСТ ============
+            function showToast(msg, type = '') {
+                clearTimeout(toastTimer);
+                toast.textContent = msg;
+                toast.className = 'toast ' + type + ' show';
+                toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+            }
+
+            // ============ АНИМАЦИЯ КЛИКА ============
+            function animateClick() {
+                clickerPlaceholder.classList.remove('clicked');
+                void clickerPlaceholder.offsetWidth;
+                clickerPlaceholder.classList.add('clicked');
+                setTimeout(() => clickerPlaceholder.classList.remove('clicked'), 350);
+            }
+
+            function bumpPoints() {
+                pointsDisplay.classList.remove('bump');
+                void pointsDisplay.offsetWidth;
+                pointsDisplay.classList.add('bump');
+            }
+
+            function spawnPlus(x, y) {
+                const el = document.createElement('span');
+                el.className = 'float-plus';
+                el.textContent = '+1';
+                const rect = clickerWrapper.getBoundingClientRect();
+                el.style.left = (x - rect.left - 14) + 'px';
+                el.style.top = (y - rect.top - 20) + 'px';
+                clickerWrapper.appendChild(el);
+                setTimeout(() => el.remove(), 800);
+            }
+
+            clickerPlaceholder.addEventListener('click', (e) => {
+                totalPoints++;
+                pointsDisplay.textContent = totalPoints.toLocaleString('ru-RU');
+                animateClick();
+                bumpPoints();
+                spawnPlus(e.clientX, e.clientY);
+            });
+
+            clickerWrapper.addEventListener('click', (e) => {
+                if (e.target.classList.contains('clicker-logo')) {
+                    totalPoints++;
+                    pointsDisplay.textContent = totalPoints.toLocaleString('ru-RU');
+                    bumpPoints();
+                    spawnPlus(e.clientX, e.clientY);
+                }
+            });
+
+            // ============ FIREBASE: ХЕЛПЕРЫ ============
+            function sanitize(nick) {
+                return nick.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-zа-яё0-9_-]/gi, '').substring(0, 60);
+            }
+
+            async function saveToFB(nick, points) {
+                if (!firestoreReady) { showToast('Firebase не настроен', 'error'); return false; }
+                const id = sanitize(nick);
+                if (!id) { showToast('Введите никнейм', 'error'); return false; }
+                try {
+                    await db.collection('leaderboard').doc(id).set({
+                        nickname: nick.trim(),
+                        points: points,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+                    showToast('Сохранено!', 'success');
+                    return true;
+                } catch (err) { showToast('Ошибка: ' + err.message, 'error'); return false; }
+            }
+
+            async function loadFromFB(nick) {
+                if (!firestoreReady) { showToast('Firebase не настроен', 'error'); return null; }
+                const id = sanitize(nick);
+                if (!id) return null;
+                try {
+                    const snap = await db.collection('leaderboard').doc(id).get();
+                    if (snap.exists) return snap.data();
+                    showToast('Пользователь не найден');
+                    return null;
+                } catch (err) { showToast('Ошибка: ' + err.message, 'error'); return null; }
+            }
+
+            async function fetchLeaderboard() {
+                if (!firestoreReady) {
+                    leaderboardBody.innerHTML =
+                        '<tr class="empty-row"><td colspan="3">Firebase не настроен</td></tr>';
+                    return;
+                }
+                try {
+                    const snap = await db.collection('leaderboard').orderBy('points', 'desc').limit(10)
+                .get();
+                    const players = [];
+                    snap.forEach(d => players.push(d.data()));
+                    renderLeaderboard(players);
+                    lastUpdatedEl.textContent = 'Обновлено: ' + new Date().toLocaleTimeString('ru-RU', { hour: '2-digit',
+                        minute: '2-digit' });
+                } catch (e) {
+                    leaderboardBody.innerHTML =
+                    '<tr class="empty-row"><td colspan="3">Ошибка загрузки</td></tr>';
+                }
+            }
+
+            function renderLeaderboard(players) {
+                if (!players.length) {
+                    leaderboardBody.innerHTML = '<tr class="empty-row"><td colspan="3">Пока пусто</td></tr>';
+                    return;
+                }
+                const ranks = ['', 'rank-1', 'rank-2', 'rank-3'];
+                const symbols = ['', '🥇', '🥈', '🥉'];
+                let html = '';
+                for (let i = 0; i < 10; i++) {
+                    if (i < players.length) {
+                        const p = players[i];
+                        html += `<tr>
+                            <td class="rank-col ${ranks[i+1] || ''}">${symbols[i+1] || i+1}</td>
+                            <td class="nickname-col">${escapeHTML(p.nickname)}</td>
+                            <td class="points-col">${(p.points||0).toLocaleString('ru-RU')}</td>
+                        </tr>`;
+                    } else {
+                        html +=
+                            `<tr><td class="rank-col" style="color:#d1d5db;">${i+1}</td><td style="color:#d1d5db;">—</td><td class="points-col" style="color:#d1d5db;">—</td></tr>`;
+                    }
+                }
+                leaderboardBody.innerHTML = html;
+            }
+
+            function escapeHTML(s) { const d = document.createElement('div');
+                d.textContent = s; return d.innerHTML; }
+
+            // ============ КНОПКИ СОХРАНИТЬ / ЗАГРУЗИТЬ ============
+            saveBtn.addEventListener('click', async () => {
+                const nick = nicknameInput.value.trim();
+                if (!nick) { showToast('Введите никнейм', 'error'); return; }
+                currentNickname = nick;
+                saveBtn.disabled = true;
+                const ok = await saveToFB(nick, totalPoints);
+                saveBtn.disabled = false;
+                if (ok) {
+                    // Обновить таблицу, если страница рейтинга активна
+                    const activePage = document.querySelector('.page.active');
+                    if (activePage && activePage.id === 'page-leaderboard') {
+                        await fetchLeaderboard();
+                    }
+                }
+            });
+
+            loadBtn.addEventListener('click', async () => {
+                const nick = nicknameInput.value.trim();
+                if (!nick) { showToast('Введите никнейм', 'error'); return; }
+                currentNickname = nick;
+                loadBtn.disabled = true;
+                const data = await loadFromFB(nick);
+                loadBtn.disabled = false;
+                if (data && typeof data.points === 'number') {
+                    totalPoints = Math.max(totalPoints, data.points);
+                    pointsDisplay.textContent = totalPoints.toLocaleString('ru-RU');
+                }
+            });
+
+            refreshBtn.addEventListener('click', async () => {
+                refreshBtn.disabled = true;
+                await fetchLeaderboard();
+                refreshBtn.disabled = false;
+            });
+
+            // ============ LOCALSTORAGE ============
+            function loadLocal() {
+                try {
+                    const s = localStorage.getItem('clickcorp_v3');
+                    if (s) {
+                        const p = JSON.parse(s);
+                        if (typeof p.totalPoints === 'number') totalPoints = p.totalPoints;
+                        if (p.nickname) { currentNickname = p.nickname;
+                            nicknameInput.value = currentNickname; }
+                    }
+                } catch (e) {}
+                pointsDisplay.textContent = totalPoints.toLocaleString('ru-RU');
+            }
+
+            function saveLocal() {
+                localStorage.setItem('clickcorp_v3', JSON.stringify({ totalPoints,
+                    nickname: currentNickname }));
+            }
+            setInterval(saveLocal, 4000);
+            window.addEventListener('beforeunload', saveLocal);
+
+            // ============ ИНИЦИАЛИЗАЦИЯ ============
+            loadLocal();
+            // Первоначальная загрузка таблицы (если активна страница рейтинга)
+            const startPage = document.querySelector('.page.active');
+            if (startPage && startPage.id === 'page-leaderboard' && firestoreReady) {
+                fetchLeaderboard();
+            }
+            // Также загружаем при переходе на вкладку рейтинга (уже в setActiveTab)
+        })();
+    </script>
+    
+</body>
+</html>
